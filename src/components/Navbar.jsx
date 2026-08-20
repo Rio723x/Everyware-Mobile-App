@@ -11,8 +11,8 @@ export default function Navbar({ onOpenQrModal }) {
   const navItems = [
     { label: 'Home', href: '#home' },
     { label: 'How It Works', href: '#how-it-works' },
-    { label: 'Platform', href: '#platform' },
     { label: 'Features', href: '#features' },
+    { label: 'Platform', href: '#platform' },
     { label: 'Reviews', href: '#testimonials' },
     { label: 'FAQ', href: '#faq' },
   ];

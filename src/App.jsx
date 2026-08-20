@@ -21,21 +21,21 @@ export default function App() {
   return (
     <div style={{ position: 'relative', width: '100%', minHeight: '100vh' }}>
       <Navbar onOpenQrModal={() => setShowQrModal(true)} />
-      
+
       <main style={{ position: 'relative' }}>
         <ThreeHeroCanvas />
         <Hero onOpenQrModal={() => setShowQrModal(true)} />
         <SocialProof />
         <HowItWorks />
-        <BentoGrid />
         <LiveTrackingFeature />
         <AiCopilotFeature />
         <ApplianceHealthFeature />
-        <TrustBand />
+        <BentoGrid />
+        {/* <TrustBand /> */}
         <StatsBand />
         <TestimonialsGrid />
         <FaqSection />
-        
+
         {/* Global QR Download Popup Modal */}
         <DownloadCTA
           showModal={showQrModal}
