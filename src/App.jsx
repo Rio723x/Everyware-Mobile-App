@@ -5,10 +5,7 @@ import Hero from './components/Hero';
 import SocialProof from './components/SocialProof';
 import HowItWorks from './components/HowItWorks';
 import BentoGrid from './components/BentoGrid';
-import LiveTrackingFeature from './components/LiveTrackingFeature';
-import AiCopilotFeature from './components/AiCopilotFeature';
-import ApplianceHealthFeature from './components/ApplianceHealthFeature';
-import TrustBand from './components/TrustBand';
+import FeaturesStack from './components/FeaturesStack';
 import StatsBand from './components/StatsBand';
 import TestimonialsGrid from './components/TestimonialsGrid';
 import FaqSection from './components/FaqSection';
@@ -27,9 +24,10 @@ export default function App() {
         <Hero onOpenQrModal={() => setShowQrModal(true)} />
         <SocialProof />
         <HowItWorks />
-        <LiveTrackingFeature />
-        <AiCopilotFeature />
-        <ApplianceHealthFeature />
+        
+        {/* Sticky Stacking Features Cards Section */}
+        <FeaturesStack />
+        
         <BentoGrid />
         {/* <TrustBand /> */}
         <StatsBand />

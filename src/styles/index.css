@@ -699,14 +699,35 @@ button {
 }
 
 /* ─── FEATURE DEMOS ─── */
-.feature-card-section-wrapper {
-  padding: 80px 0;
+.features-stack-container {
+  padding: 100px 0;
   width: 100%;
 }
 
-.premium-feature-card {
-  width: 100%;
+.features-stack-list {
   position: relative;
+  max-width: 1500px;
+  margin: 0 auto;
+  width: 95%;
+}
+
+.sticky-card-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stacked-feature-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  padding: 80px 100px;
+  border: 1px solid rgba(8, 27, 30, 0.05);
+  box-shadow: 0 30px 80px rgba(8, 27, 30, 0.05);
+  display: flex;
+  align-items: center;
+  transform-origin: top center;
 }
 
 .feature-grid {

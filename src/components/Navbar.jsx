@@ -17,12 +17,58 @@ export default function Navbar({ onOpenQrModal }) {
     { label: 'FAQ', href: '#faq' },
   ];
 
+  // 1. Navbar shrink on scroll
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 40);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 2. High-performance IntersectionObserver Scroll Spy
+  useEffect(() => {
+    const sectionIds = ['home', 'how-it-works', 'features', 'platform', 'testimonials', 'faq'];
+
+    const observerOptions = {
+      root: null,
+      // Triggers when the section crosses into the middle/upper portion of the viewport
+      rootMargin: '-25% 0px -45% 0px',
+      threshold: 0.1
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.getAttribute('id');
+          const labelMap = {
+            'home': 'Home',
+            'how-it-works': 'How It Works',
+            'features': 'Features',
+            'platform': 'Platform',
+            'testimonials': 'Reviews',
+            'faq': 'FAQ'
+          };
+          if (labelMap[id]) {
+            setActiveTab(labelMap[id]);
+          }
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      sectionIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) observer.unobserve(el);
+      });
+    };
   }, []);
 
   return (
@@ -46,7 +92,14 @@ export default function Navbar({ onOpenQrModal }) {
                   <a
                     href={item.href}
                     className={`nav-link ${activeTab === item.label ? 'active' : ''}`}
-                    onClick={() => setActiveTab(item.label)}
+                    onClick={() => {
+                      setActiveTab(item.label);
+                      // Smooth scroll target if clicked
+                      const target = document.querySelector(item.href);
+                      if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
                   >
                     {item.label}
                   </a>

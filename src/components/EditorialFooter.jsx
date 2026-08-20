@@ -37,25 +37,19 @@ export default function EditorialFooter({ onOpenQrModal }) {
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {/* Standard circular capsule container as seen in the mockup */}
-            <div style={{
-              background: 'rgba(255, 255, 255, 0.45)',
-              backdropFilter: 'blur(16px)',
-              borderRadius: '24px',
-              padding: '24px',
-              border: '1.5px solid rgba(255, 255, 255, 0.6)',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 12,
-              width: 170,
-              height: 170,
-              boxShadow: '0 20px 40px rgba(0,0,0,0.1)'
-            }}>
-              <img src={EverywareIcon} style={{ width: 68, height: 68, borderRadius: 20 }} alt="EveryWare App" />
-              <span style={{ fontWeight: 700, color: 'var(--text-dark)', fontSize: '0.9rem' }}>EveryWare</span>
-            </div>
+            {/* Merged logo directly inside the card without extra white box or text */}
+            <motion.img
+              src={EverywareIcon}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: '32px',
+                boxShadow: '0 20px 45px rgba(8, 27, 30, 0.16)'
+              }}
+              whileHover={{ scale: 1.05, rotate: -2 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              alt="EveryWare App Logo"
+            />
           </div>
         </motion.div>
 
