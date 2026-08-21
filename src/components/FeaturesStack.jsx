@@ -5,6 +5,41 @@ import TrackingAnimVideo from '../assets/LiveTrackingAnim.mp4';
 import CopilotPhoneImage from '../assets/CopilotPhoneOnly.webp';
 import HealthPhoneImage from '../assets/HealthPhoneOnly.webp';
 
+function LazyVideo({ src, className }) {
+  const videoRef = useRef(null);
+  const [shouldLoad, setShouldLoad] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={videoRef}
+      src={shouldLoad ? src : undefined}
+      autoPlay={shouldLoad}
+      loop
+      muted
+      playsInline
+      disablePictureInPicture
+      preload="none"
+      className={className}
+    />
+  );
+}
+
 export default function FeaturesStack() {
   const cards = [
     {
@@ -29,14 +64,8 @@ export default function FeaturesStack() {
         <div className="hero-phone-showcase-wrapper" style={{ padding: 0 }}>
           <div className="phone-glow-aura" />
           <div className="tracking-video-phone-frame" style={{ maxWidth: 360 }}>
-            <video
+            <LazyVideo
               src={TrackingAnimVideo}
-              autoPlay
-              loop
-              muted
-              playsInline
-              disablePictureInPicture
-              preload="none"
               className="tracking-video-element"
             />
           </div>
