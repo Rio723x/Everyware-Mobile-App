@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React from 'react';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -6,16 +6,13 @@ import SocialProof from './components/SocialProof';
 import HowItWorks from './components/HowItWorks';
 
 import ThreeHeroCanvas from './components/ThreeHeroCanvas';
-
-// Below-fold sections — lazy parsed, don't block initial render
-const FeaturesStack  = lazy(() => import('./components/FeaturesStack'));
-const BentoGrid      = lazy(() => import('./components/BentoGrid'));
-const StatsBand      = lazy(() => import('./components/StatsBand'));
-const TestimonialsGrid = lazy(() => import('./components/TestimonialsGrid'));
-const FaqSection     = lazy(() => import('./components/FaqSection'));
-const DownloadCTA    = lazy(() => import('./components/DownloadCTA'));
-const EditorialFooter = lazy(() => import('./components/EditorialFooter'));
-
+import FeaturesStack from './components/FeaturesStack';
+import BentoGrid from './components/BentoGrid';
+import StatsBand from './components/StatsBand';
+import TestimonialsGrid from './components/TestimonialsGrid';
+import FaqSection from './components/FaqSection';
+import DownloadCTA from './components/DownloadCTA';
+import EditorialFooter from './components/EditorialFooter';
 import { useState } from 'react';
 
 export default function App() {
@@ -35,38 +32,19 @@ export default function App() {
           <SocialProof />
           <HowItWorks />
 
-          {/* Below-fold sections load progressively as user scrolls */}
-          <Suspense fallback={null}>
-            <FeaturesStack />
-          </Suspense>
-
-          <Suspense fallback={null}>
-            <BentoGrid />
-          </Suspense>
-
-          <Suspense fallback={null}>
-            <StatsBand />
-          </Suspense>
-
-          <Suspense fallback={null}>
-            <TestimonialsGrid />
-          </Suspense>
-
-          <Suspense fallback={null}>
-            <FaqSection />
-          </Suspense>
-
-          <Suspense fallback={null}>
-            <DownloadCTA
-              showModal={showQrModal}
-              onCloseModal={() => setShowQrModal(false)}
-            />
-          </Suspense>
+          {/* Below-fold sections render deterministically on initial layout */}
+          <FeaturesStack />
+          <BentoGrid />
+          <StatsBand />
+          <TestimonialsGrid />
+          <FaqSection />
+          <DownloadCTA
+            showModal={showQrModal}
+            onCloseModal={() => setShowQrModal(false)}
+          />
         </main>
 
-        <Suspense fallback={null}>
-          <EditorialFooter onOpenQrModal={() => setShowQrModal(true)} />
-        </Suspense>
+        <EditorialFooter onOpenQrModal={() => setShowQrModal(true)} />
       </div>
     </LazyMotion>
   );

@@ -460,6 +460,7 @@ button {
   max-width: 380px;
   width: 100%;
   height: auto;
+  aspect-ratio: 520 / 900;
   filter: drop-shadow(0 25px 50px rgba(8, 27, 30, 0.18)) drop-shadow(0 10px 25px rgba(0, 196, 204, 0.15));
   transition: transform 0.4s var(--ease-spring), filter 0.4s var(--ease-smooth);
 }
