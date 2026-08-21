@@ -24,6 +24,16 @@
     <!-- Performance: Preconnect for Google Fonts (Oxygen) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Non-blocking font load: media=print loads async, onload switches to all -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap" />
+    </noscript>
 
     <!-- LCP Preload: Hero phone mockup image -->
     <link rel="preload" as="image" href="/PhoneOnly.png" fetchpriority="high" />

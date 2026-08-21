@@ -9,7 +9,7 @@ export default function SocialProof() {
       <div className="container social-proof-content">
         <div className="social-proof-label">
           <img src={EverywareIcon} style={{ width: 24, height: 24, borderRadius: 6 }} alt="Logo" />
-          <span>Built by Fixolutions — Powering after-sales service for leading brands</span>
+          <span>Built by Fixolutions - Powering after-sales service for leading brands</span>
         </div>
 
         <div className="brand-logos-row">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import EverywareIcon from '../assets/Everywware.webp';
 
@@ -74,7 +74,7 @@ export default function Navbar({ onOpenQrModal }) {
   return (
     <>
       <div className="navbar-wrapper">
-        <motion.nav
+        <m.nav
           className={`navbar ${isScrolled ? 'scrolled' : ''}`}
           initial={{ y: -50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -104,7 +104,7 @@ export default function Navbar({ onOpenQrModal }) {
                     {item.label}
                   </a>
                   {activeTab === item.label && (
-                    <motion.div
+                    <m.div
                       layoutId="activePill"
                       className="nav-indicator-pill"
                       style={{ inset: 0, opacity: 1 }}
@@ -127,7 +127,7 @@ export default function Navbar({ onOpenQrModal }) {
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
-        </motion.nav>
+        </m.nav>
       </div>
 
       {/* Mobile Drawer */}

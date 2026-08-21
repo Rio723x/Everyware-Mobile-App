@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+﻿import React from 'react';
+import { m } from 'framer-motion';
 import { ArrowRight, Box, Home as HomeIcon, ShieldCheck, TrendingUp, Wallet } from 'lucide-react';
 
 export default function BentoGrid() {
@@ -7,7 +7,7 @@ export default function BentoGrid() {
     <section className="bento-features-section" id="platform">
       <div className="container">
         <div className="bento-header-grid">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -19,9 +19,9 @@ export default function BentoGrid() {
             <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
               Our platform provides you with the tools and resources you need to keep your home appliances running flawlessly.
             </p>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className="bento-card bento-card-gradient"
             whileHover={{ y: -6, scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 300 }}
@@ -31,9 +31,9 @@ export default function BentoGrid() {
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: 6 }}>Exclusive</h3>
               <p>1-Tap instant appliance service assigned to your home on demand.</p>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className="bento-card"
             whileHover={{ y: -6, scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 300 }}
@@ -45,11 +45,11 @@ export default function BentoGrid() {
                 Radius based verified technicians within 5 miles from you, prioritizing those closer to you.
               </p>
             </div>
-          </motion.div>
+          </m.div>
         </div>
 
         <div className="bento-bottom-grid">
-          <motion.div
+          <m.div
             className="bento-card"
             whileHover={{ y: -6, scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 300 }}
@@ -61,9 +61,9 @@ export default function BentoGrid() {
                 100% background checked, police verified, and certified technical specialists.
               </p>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className="bento-card"
             whileHover={{ y: -6, scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 300 }}
@@ -75,9 +75,9 @@ export default function BentoGrid() {
                 AI engine predicting maintenance needs before unexpected breakdowns occur.
               </p>
             </div>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className="bento-card bento-card-green"
             whileHover={{ y: -6, scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 300 }}
@@ -92,9 +92,10 @@ export default function BentoGrid() {
                 View pricing <ArrowRight size={16} />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </section>
   );
 }
+

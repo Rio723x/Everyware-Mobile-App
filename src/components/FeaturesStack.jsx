@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { m, useScroll, useTransform } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import TrackingAnimVideo from '../assets/LiveTrackingAnim.mp4';
-import CopilotPhoneImage from '../assets/CopilotPhoneOnly.png';
-import HealthPhoneImage from '../assets/HealthPhoneOnly.png';
+import CopilotPhoneImage from '../assets/CopilotPhoneOnly.webp';
+import HealthPhoneImage from '../assets/HealthPhoneOnly.webp';
 
 export default function FeaturesStack() {
   const cards = [
@@ -36,6 +36,7 @@ export default function FeaturesStack() {
               muted
               playsInline
               disablePictureInPicture
+              preload="none"
               className="tracking-video-element"
             />
           </div>
@@ -140,7 +141,7 @@ function Card({ card, index, total }) {
         marginBottom: index === total - 1 ? '0' : '8vh'
       }}
     >
-      <motion.div
+      <m.div
         className="stacked-feature-card"
         style={{
           scale,
@@ -163,7 +164,7 @@ function Card({ card, index, total }) {
             {card.visual}
           </div>
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

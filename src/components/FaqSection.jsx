@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+﻿import React, { useState } from 'react';
+import { m, AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 
 export default function FaqSection() {
@@ -127,7 +127,7 @@ export default function FaqSection() {
           {/* Right Column Dynamic Detail Panel */}
           <div className="faq-detail-panel" style={{ background: '#F4F8FA', borderRadius: '32px', border: '1px solid rgba(8, 27, 30, 0.04)', padding: '40px' }}>
             <AnimatePresence mode="wait">
-              <motion.div
+              <m.div
                 key={activeKey}
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -180,7 +180,7 @@ export default function FaqSection() {
                     <div style={{ width: 44, height: 4, borderRadius: 2, background: '#FFFFFF', opacity: 0.8 }} />
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             </AnimatePresence>
           </div>
         </div>
@@ -188,3 +188,4 @@ export default function FaqSection() {
     </section>
   );
 }
+

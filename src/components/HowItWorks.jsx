@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 export default function HowItWorks() {
   const steps = [
@@ -21,7 +21,7 @@ export default function HowItWorks() {
 
         <div className="steps-grid">
           {steps.map((step, i) => (
-            <motion.div
+            <m.div
               key={step.num}
               className="step-card"
               initial={{ opacity: 0, y: 30 }}
@@ -33,7 +33,7 @@ export default function HowItWorks() {
               <div className="step-number">{step.num}</div>
               <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8 }}>{step.title}</h3>
               <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)' }}>{step.text}</p>
-            </motion.div>
+            </m.div>
           ))}
         </div>
       </div>
