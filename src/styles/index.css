@@ -1345,3 +1345,57 @@ button {
   .mobile-toggle { display: block; }
   .footer-columns-row { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   GPU-Accelerated CSS Ambient Glass Mesh (Replaces Three.js)
+   ══════════════════════════════════════════════════════════════════ */
+.ambient-glass-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.blob-cyan {
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(0, 196, 204, 0.4) 0%, rgba(56, 189, 248, 0.1) 70%, transparent 100%);
+  top: 5%;
+  right: 10%;
+  animation: floatAmbientCyan 14s ease-in-out infinite alternate;
+}
+
+.blob-sky {
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(0, 196, 204, 0.08) 70%, transparent 100%);
+  top: 25%;
+  left: 5%;
+  animation: floatAmbientSky 18s ease-in-out infinite alternate;
+}
+
+@keyframes floatAmbientCyan {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(-30px, 45px, 0) scale(1.1) rotate(15deg);
+  }
+  100% {
+    transform: translate3d(40px, -25px, 0) scale(0.95) rotate(-10deg);
+  }
+}
+
+@keyframes floatAmbientSky {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.95) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(35px, -30px, 0) scale(1.08) rotate(-12deg);
+  }
+  100% {
+    transform: translate3d(-20px, 35px, 0) scale(1) rotate(10deg);
+  }
+}

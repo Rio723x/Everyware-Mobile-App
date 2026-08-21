@@ -5,8 +5,7 @@ import Hero from './components/Hero';
 import SocialProof from './components/SocialProof';
 import HowItWorks from './components/HowItWorks';
 
-// Three.js deferred — biggest TBT culprit, loaded after hero is interactive
-const ThreeHeroCanvas = lazy(() => import('./components/ThreeHeroCanvas'));
+import ThreeHeroCanvas from './components/ThreeHeroCanvas';
 
 // Below-fold sections — lazy parsed, don't block initial render
 const FeaturesStack  = lazy(() => import('./components/FeaturesStack'));
@@ -29,10 +28,7 @@ export default function App() {
         <Navbar onOpenQrModal={() => setShowQrModal(true)} />
 
         <main style={{ position: 'relative' }}>
-          {/* Three.js canvas loads silently after hero — null fallback keeps layout stable */}
-          <Suspense fallback={null}>
-            <ThreeHeroCanvas />
-          </Suspense>
+          <ThreeHeroCanvas />
 
           {/* Hero and SocialProof are above fold — loaded eagerly */}
           <Hero onOpenQrModal={() => setShowQrModal(true)} />
