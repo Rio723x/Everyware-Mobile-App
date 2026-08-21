@@ -99,8 +99,12 @@ export default function Hero({ onOpenQrModal }) {
           <div className="phone-glow-aura" />
           <img
             src={PhoneOnlyImage}
-            alt="EveryWare App Phone Mockup"
+            alt="EveryWare App — Book home appliance repair on your phone"
             className="hero-phone-mockup-img"
+            width="520"
+            height="900"
+            fetchpriority="high"
+            decoding="async"
           />
         </motion.div>
       </div>

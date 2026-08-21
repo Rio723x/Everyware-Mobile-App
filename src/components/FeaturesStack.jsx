@@ -58,9 +58,13 @@ export default function FeaturesStack() {
           <div className="phone-glow-aura" />
           <img
             src={CopilotPhoneImage}
-            alt="EveryWare AI Copilot App"
+            alt="EveryWare AI Copilot — automated appliance symptom diagnosis on iPhone"
             className="hero-phone-mockup-img"
             style={{ maxWidth: 360 }}
+            width="360"
+            height="720"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       ),
@@ -77,9 +81,13 @@ export default function FeaturesStack() {
           <div className="phone-glow-aura" />
           <img
             src={HealthPhoneImage}
-            alt="EveryWare Appliance Health App"
+            alt="EveryWare Appliance Health Dashboard — track usage and get maintenance alerts on iPhone"
             className="hero-phone-mockup-img"
             style={{ maxWidth: 360 }}
+            width="360"
+            height="720"
+            loading="lazy"
+            decoding="async"
           />
         </div>
       ),
