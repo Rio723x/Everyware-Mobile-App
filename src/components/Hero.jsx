@@ -101,8 +101,8 @@ export default function Hero({ onOpenQrModal }) {
             src={PhoneOnlyImage}
             alt="EveryWare App — Book home appliance repair on your phone"
             className="hero-phone-mockup-img"
-            width="520"
-            height="900"
+            width="641"
+            height="1339"
             fetchpriority="high"
             decoding="async"
           />

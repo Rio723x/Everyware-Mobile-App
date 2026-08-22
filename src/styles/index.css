@@ -457,10 +457,10 @@ button {
 .hero-phone-mockup-img {
   position: relative;
   z-index: 1;
-  max-width: 380px;
+  max-width: 420px;
   width: 100%;
   height: auto;
-  aspect-ratio: 520 / 900;
+  aspect-ratio: 641 / 1339;
   filter: drop-shadow(0 25px 50px rgba(8, 27, 30, 0.18)) drop-shadow(0 10px 25px rgba(0, 196, 204, 0.15));
   transition: transform 0.4s var(--ease-spring), filter 0.4s var(--ease-smooth);
 }
