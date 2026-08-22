@@ -2,8 +2,8 @@ import React, { useRef } from 'react';
 import { m, useScroll, useTransform } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import TrackingAnimVideo from '../assets/LiveTrackingAnim.mp4';
-import CopilotPhoneImage from '../assets/CopilotPhoneOnly.webp';
-import HealthPhoneImage from '../assets/HealthPhoneOnly.webp';
+import CopilotPhoneImage from '../assets/CopilotPhoneOnly.png';
+import HealthPhoneImage from '../assets/HealthPhoneOnly.png';
 
 function LazyVideo({ src, className }) {
   const videoRef = useRef(null);

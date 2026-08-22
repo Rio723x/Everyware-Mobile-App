@@ -1,7 +1,7 @@
 import React from 'react';
 import { m } from 'framer-motion';
 import { ArrowRight, Star, Users, Download } from 'lucide-react';
-import PhoneOnlyImage from '../assets/PhoneOnly.webp';
+import PhoneOnlyImage from '../assets/PhoneOnly.png';
 
 export default function Hero({ onOpenQrModal }) {
   const containerVariants = {
