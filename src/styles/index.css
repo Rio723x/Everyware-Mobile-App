@@ -1328,6 +1328,10 @@ button {
   color: var(--text-muted);
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE DESIGN SYSTEM (TABLET & MOBILE)
+   ══════════════════════════════════════════════════════════════════ */
+
 @media (max-width: 1024px) {
   .hero-grid-full, .feature-grid, .download-banner-card {
     grid-template-columns: 1fr;
@@ -1339,13 +1343,220 @@ button {
   .steps-grid::before { display: none; }
   .bento-header-grid, .bento-bottom-grid { grid-template-columns: 1fr; }
   .footer-columns-row { grid-template-columns: 1fr 1fr; }
+  
+  .stacked-feature-card {
+    padding: 60px 48px;
+    border-radius: 32px;
+  }
 }
 
 @media (max-width: 768px) {
+  /* Navigation Mobile Toggle */
   .nav-menu, .nav-actions .btn-nav-signup { display: none; }
   .mobile-toggle { display: block; }
-  .footer-columns-row { grid-template-columns: 1fr; }
+
+  /* Hero Section Mobile Polish */
+  .hero-section-full {
+    padding-top: 110px;
+    padding-bottom: 50px;
+  }
+
+  .hero-grid-full {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .heading-xl {
+    font-size: clamp(2.1rem, 7.5vw, 3.2rem) !important;
+    line-height: 1.15 !important;
+  }
+
+  .text-lead {
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.98rem !important;
+  }
+
+  .hero-ctas-row {
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .hero-store-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .btn-store-black {
+    padding: 10px 18px;
+    font-size: 0.85rem;
+  }
+
+  .hero-stats-row {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-top: 20px;
+  }
+
+  .hero-phone-showcase-wrapper {
+    padding: 16px 0;
+  }
+
+  .hero-phone-mockup-img {
+    max-width: min(340px, 88vw) !important;
+    height: auto !important;
+  }
+
+  /* How It Works Mobile */
+  .how-it-works-section {
+    padding: 60px 0;
+  }
+
+  .steps-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  /* Features Stack Mobile Layout Protection */
+  .features-stack-container {
+    padding: 60px 0;
+  }
+
+  .sticky-card-section {
+    position: relative !important;
+    top: 0 !important;
+    height: auto !important;
+    margin-bottom: 24px !important;
+  }
+
+  .stacked-feature-card {
+    padding: 36px 20px !important;
+    border-radius: 24px !important;
+    height: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .feature-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    text-align: center;
+  }
+
+  .feature-grid.reverse .feature-content { order: 1 !important; }
+  .feature-grid.reverse .feature-visual { order: 2 !important; }
+
+  .hero-phone-showcase-wrapper {
+    padding: 8px 0;
+  }
+
+  /* Bento Grid Mobile */
+  .bento-features-section {
+    padding: 60px 0;
+  }
+
+  .bento-card {
+    padding: 24px;
+    border-radius: 20px;
+  }
+
+  /* Testimonials Mobile */
+  .testimonials-section-new {
+    padding: 60px 0;
+  }
+
+  .test-tile {
+    min-height: 200px;
+    padding: 28px 24px;
+    border-radius: 24px;
+  }
+
+  /* FAQ Section Mobile */
+  .faq-section-new {
+    padding: 60px 0;
+  }
+
+  .faq-title-center {
+    font-size: 1.8rem !important;
+    margin-bottom: 32px;
+  }
+
+  .faq-2col-layout {
+    grid-template-columns: 1fr !important;
+    gap: 24px;
+  }
+
+  .faq-detail-panel {
+    padding: 28px 20px !important;
+    border-radius: 24px !important;
+  }
+
+  .faq-artwork-box {
+    height: 180px !important;
+  }
+
+  /* Download CTA Mobile */
+  .download-banner-card {
+    padding: 40px 24px !important;
+    border-radius: 28px !important;
+    text-align: center;
+  }
+
+  /* Footer Mobile */
+  .editorial-footer {
+    padding-top: 60px;
+  }
+
+  .footer-columns-row {
+    grid-template-columns: 1fr !important;
+    gap: 32px;
+    text-align: center;
+  }
+
+  .footer-bottom-copyright {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+    margin-top: 40px;
+  }
 }
+
+@media (max-width: 480px) {
+  .hero-ctas-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-store-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-store-black {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .store-or-text {
+    display: none;
+  }
+
+  .hero-stats-row {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .stat-item-box {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 
 /* ══════════════════════════════════════════════════════════════════
    GPU-Accelerated CSS Ambient Glass Mesh (Replaces Three.js)
