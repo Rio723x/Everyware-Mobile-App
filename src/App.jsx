@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -13,7 +14,6 @@ import TestimonialsGrid from './components/TestimonialsGrid';
 import FaqSection from './components/FaqSection';
 import DownloadCTA from './components/DownloadCTA';
 import EditorialFooter from './components/EditorialFooter';
-import { useState } from 'react';
 
 export default function App() {
   const [showQrModal, setShowQrModal] = useState(false);
@@ -22,6 +22,7 @@ export default function App() {
     // LazyMotion: loads only domAnimation subset (~80KB vs ~120KB full bundle)
     <LazyMotion features={domAnimation}>
       <div style={{ position: 'relative', width: '100%', minHeight: '100vh' }}>
+        <Analytics />
         <Navbar onOpenQrModal={() => setShowQrModal(true)} />
 
         <main style={{ position: 'relative' }}>
