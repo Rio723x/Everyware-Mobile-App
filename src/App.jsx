@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -23,6 +24,7 @@ export default function App() {
     <LazyMotion features={domAnimation}>
       <div style={{ position: 'relative', width: '100%', minHeight: '100vh' }}>
         <Analytics />
+        <SpeedInsights />
         <Navbar onOpenQrModal={() => setShowQrModal(true)} />
 
         <main style={{ position: 'relative' }}>
