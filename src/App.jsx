@@ -16,6 +16,7 @@ import DownloadCTA from './components/DownloadCTA';
 import EditorialFooter from './components/EditorialFooter';
 import ExperiencesPage from './components/ExperiencesPage';
 import InfoDirectoryPage from './components/InfoDirectoryPage';
+import SEOMetaManager from './components/SEOMetaManager';
 
 export default function App() {
   const [showQrModal, setShowQrModal] = useState(false);
@@ -61,6 +62,7 @@ export default function App() {
 
   return (
     <LazyMotion features={domAnimation}>
+      <SEOMetaManager currentRoute={currentRoute} activePersonaId={activePersonaId} />
       <div style={{ position: 'relative', width: '100%', minHeight: '100vh' }}>
         <Analytics />
         <SpeedInsights />

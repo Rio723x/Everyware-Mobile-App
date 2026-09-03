@@ -1,15 +1,52 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- Homepage -->
+  <!-- Main Landing Page -->
   <url>
-    <loc>https://geteveryware.com/</loc>
-    <lastmod>2026-08-21</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <loc>https://everyware.in/</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.00</priority>
   </url>
 
+  <!-- Customer Support Directory (50 White Goods Brands) -->
+  <url>
+    <loc>https://everyware.in/#info</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <!-- User Experiences Index -->
+  <url>
+    <loc>https://everyware.in/#experiences</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- 20 Individual User Persona Stories -->
+  <url><loc>https://everyware.in/#experiences/1</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/2</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/3</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/4</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/5</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/6</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/7</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/8</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/9</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/10</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/11</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/12</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/13</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/14</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/15</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/16</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/17</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/18</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/19</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://everyware.in/#experiences/20</loc><lastmod>2026-09-03</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
 </urlset>
