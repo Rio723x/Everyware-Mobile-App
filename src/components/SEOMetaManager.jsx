@@ -4,24 +4,29 @@ import { brandInfoData } from '../data/brandInfoData';
 
 export default function SEOMetaManager({ currentRoute, activePersonaId }) {
   useEffect(() => {
-    let title = "EveryWare — Verified Home Appliance Repair & White Goods Directory | LG, Samsung, Panasonic, Voltas & 50+ Brands";
+    // Generate high-density keywords for all 50 brands
+    const all50BrandKeywords = brandInfoData
+      .map((b) => `${b.name} customer care number, ${b.name} helpline`)
+      .join(', ');
+
+    let title = "EveryWare — Verified Home Appliance Repair & Customer Support Directory | LG, Samsung, Panasonic, Voltas & 50+ Brands";
     let description = "Find direct customer care toll-free numbers for LG (1800-315-9999), Samsung (1800-5-7267864), Panasonic (1800-103-1333), Voltas (1860-233-4554), KENT (9278912345), Whirlpool, Bosch & 50+ white goods brands in India. Book 1-tap verified appliance repair on EveryWare.";
-    let keywords = "LG customer care number, Samsung customer care number, Panasonic customer care number, Voltas customer care number, KENT RO customer care number, Whirlpool customer care, Bosch customer care number, home appliance repair India, AC service Gurgaon, Geyser repair Bangalore, EveryWare app, everyware.in";
+    let keywords = `${all50BrandKeywords}, home appliance repair India, AC service Gurgaon, Geyser repair Bangalore, EveryWare app, everyware.in`;
     let canonical = "https://everyware.in/";
 
     let dynamicSchema = null;
 
     if (currentRoute === 'info') {
-      title = "Customer Support Directory — LG, Samsung, Panasonic, Voltas 50+ Brands | EveryWare";
-      description = "Official customer care toll-free numbers, support emails & resolution steps for LG (1800-315-9999), Samsung (1800-5-7267864), Panasonic (1800-103-1333), Voltas (1860-233-4554), KENT (9278912345), Whirlpool & 50+ white goods brands in India.";
-      keywords = "LG customer care number, LG email support, Samsung customer care number, Panasonic service center, Voltas AC helpline, KENT RO helpline number, Whirlpool toll free number, Godrej customer care, Haier care number, IFB customer service, Bosch India support, EveryWare directory";
+      title = "Customer Support Directory — LG, Samsung, Panasonic, Voltas & 50 Top Brands | EveryWare";
+      description = "Official customer care toll-free numbers, support emails & resolution steps for LG (1800-315-9999), Samsung (1800-5-7267864), Panasonic (1800-103-1333), Voltas (1860-233-4554), KENT (9278912345), Whirlpool, Godrej, Haier, IFB, Bosch & 50+ white goods brands in India.";
+      keywords = `Customer Support Directory, ${all50BrandKeywords}, EveryWare directory India`;
       canonical = "https://everyware.in/#info";
 
-      // JSON-LD ItemList Schema for Brands Directory
+      // JSON-LD ItemList Schema for ALL 50 Brands Directory
       dynamicSchema = {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        "name": "Customer Support Directory of Leading Appliance Brands in India",
+        "name": "Customer Support Directory of 50 Leading Appliance Brands in India",
         "description": "Directory of 50 top White Goods & Home Appliance companies in India with toll-free numbers, email IDs, and service areas.",
         "itemListElement": brandInfoData.map((b, index) => ({
           "@type": "ListItem",
@@ -76,9 +81,13 @@ export default function SEOMetaManager({ currentRoute, activePersonaId }) {
           };
         }
       } else {
-        title = "Real-Life Home Service Experiences in Urban India | EveryWare User Personas";
+        const personaKeywords = userPersonas
+          .map((p) => `${p.appliance} repair ${p.city}`)
+          .join(', ');
+
+        title = "Real-Life Home Service Experiences in Urban India | 20 EveryWare User Personas";
         description = "20 original user stories drawn from everyday Indian households. Discover real appliance repair pain points across Gurgaon, Bangalore, Mumbai, Delhi, Pune, Chennai and how EveryWare solves them.";
-        keywords = "Indian user personas, home service stories, AC repair experience, geyser repair story, water purifier AMC issue, EveryWare user stories";
+        keywords = `User Experiences, ${personaKeywords}, EveryWare user stories`;
         canonical = "https://everyware.in/#experiences";
       }
     }
