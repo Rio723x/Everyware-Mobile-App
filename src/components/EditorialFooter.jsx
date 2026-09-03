@@ -65,21 +65,23 @@ export default function EditorialFooter({ onOpenQrModal }) {
 
           <div>
             <div className="footer-col-title">LOCATION</div>
-            <p style={{ fontWeight: 600 }}>Fixolutions HQ<br />Bangalore, KA 560001</p>
+            <p style={{ fontWeight: 600 }}>EveryWare HQ<br />Grand Omaxe, Noida, NCR</p>
           </div>
 
           <div>
             <div className="footer-col-title">CONTACT</div>
             <ul className="footer-nav-links">
-              <li><a href="mailto:hello@geteveryware.com">hello@geteveryware.com</a></li>
-              <li><a href="tel:+918000000000">+91 800 000 0000</a></li>
+              <li><a href="mailto:admin@everyware.in">admin@everyware.in</a></li>
+              <li><a href="tel:+919810290492">+91 9810290492</a></li>
             </ul>
           </div>
 
           <div>
             <div className="footer-col-title">NAVIGATION</div>
             <ul className="footer-nav-links">
-              <li><a href="#platform">Platform</a></li>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#experiences">User Experiences</a></li>
+              <li><a href="#info">Brand Directory (Info)</a></li>
               <li><a href="#features">Features</a></li>
               <li><a href="#testimonials">Reviews</a></li>
               <li><a href="#faq">FAQ</a></li>

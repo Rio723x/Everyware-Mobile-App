@@ -3,7 +3,7 @@ import { m } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import EverywareIcon from '../assets/Everywware.webp';
 
-export default function Navbar({ onOpenQrModal }) {
+export default function Navbar({ onOpenQrModal, currentView }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState('Home');
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -12,9 +12,10 @@ export default function Navbar({ onOpenQrModal }) {
     { label: 'Home', href: '#home' },
     { label: 'How It Works', href: '#how-it-works' },
     { label: 'Features', href: '#features' },
-    { label: 'Platform', href: '#platform' },
     { label: 'Reviews', href: '#testimonials' },
     { label: 'FAQ', href: '#faq' },
+    { label: 'Experiences', href: '#experiences' },
+    { label: 'Info', href: '#info' },
   ];
 
   // 1. Navbar shrink on scroll
@@ -26,13 +27,18 @@ export default function Navbar({ onOpenQrModal }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // 2. High-performance IntersectionObserver Scroll Spy
+  // 2. High-performance IntersectionObserver Scroll Spy (only when on home view)
   useEffect(() => {
+    if (currentView !== 'home') {
+      if (currentView === 'experiences') setActiveTab('Experiences');
+      if (currentView === 'info') setActiveTab('Info');
+      return;
+    }
+
     const sectionIds = ['home', 'how-it-works', 'features', 'platform', 'testimonials', 'faq'];
 
     const observerOptions = {
       root: null,
-      // Triggers when the section crosses into the middle/upper portion of the viewport
       rootMargin: '-25% 0px -45% 0px',
       threshold: 0.1
     };
@@ -69,7 +75,7 @@ export default function Navbar({ onOpenQrModal }) {
         if (el) observer.unobserve(el);
       });
     };
-  }, []);
+  }, [currentView]);
 
   return (
     <>
@@ -80,7 +86,7 @@ export default function Navbar({ onOpenQrModal }) {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <a href="#" className="nav-brand">
+          <a href="#home" className="nav-brand" onClick={() => { window.location.hash = '#home'; window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
             <img src={EverywareIcon} alt="EveryWare Logo" />
             <span>EveryWare</span>
           </a>
@@ -92,12 +98,20 @@ export default function Navbar({ onOpenQrModal }) {
                   <a
                     href={item.href}
                     className={`nav-link ${activeTab === item.label ? 'active' : ''}`}
-                    onClick={() => {
+                    onClick={(e) => {
                       setActiveTab(item.label);
-                      // Smooth scroll target if clicked
-                      const target = document.querySelector(item.href);
-                      if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
+                      if (item.href === '#experiences' || item.href === '#info') {
+                        window.location.hash = item.href;
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      } else {
+                        if (currentView !== 'home') {
+                          window.location.hash = item.href;
+                        } else {
+                          const target = document.querySelector(item.href);
+                          if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }
                       }
                     }}
                   >
@@ -117,8 +131,6 @@ export default function Navbar({ onOpenQrModal }) {
           </div>
 
           <div className="nav-actions">
-            {/* <button className="btn-nav-login" onClick={onOpenQrModal}>Log in</button>
-            <a href="#download" className="btn-nav-signup">Book Service</a> */}
             <button
               className="mobile-toggle"
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -144,6 +156,12 @@ export default function Navbar({ onOpenQrModal }) {
                 onClick={() => {
                   setActiveTab(item.label);
                   setMobileOpen(false);
+                  if (item.href === '#experiences' || item.href === '#info') {
+                    window.location.hash = item.href;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  } else if (currentView !== 'home') {
+                    window.location.hash = item.href;
+                  }
                 }}
               >
                 {item.label}
@@ -151,9 +169,9 @@ export default function Navbar({ onOpenQrModal }) {
             </li>
           ))}
         </ul>
-        <a href="#download" className="btn btn-coral" style={{ width: '100%' }}>
+        <button onClick={() => { setMobileOpen(false); onOpenQrModal(); }} className="btn btn-coral" style={{ width: '100%' }}>
           Book a Service Now
-        </a>
+        </button>
       </div>
     </>
   );
