@@ -29,17 +29,29 @@ every later ticket be developed and tested with no Ghost credentials.
 
 ## Acceptance criteria
 
-- [ ] All six `GhostClient` methods are implemented by `InMemoryGhostClient` and return domain types.
-- [ ] `listTags()` excludes `hash-` tags; a fixture post carrying one exposes it in neither
+- [x] All six `GhostClient` methods are implemented by `InMemoryGhostClient` and return domain types.
+- [x] `listTags()` excludes `hash-` tags; a fixture post carrying one exposes it in neither
       `post.tags` nor `listTags()`.
-- [ ] `getPostBySlug("does-not-exist")` resolves to `null` — it does not throw.
-- [ ] `listPosts()` is sorted by `publishedAt` descending.
-- [ ] Excerpt falls back correctly: a fixture with `custom_excerpt` uses it; one without uses `excerpt`.
-- [ ] `readingTimeMinutes` is at least 1 for a 10-word fixture post.
-- [ ] A fixture mutated to drop a required field makes the schema parse throw an error naming that
+- [x] `getPostBySlug("does-not-exist")` resolves to `null` — it does not throw.
+- [x] `listPosts()` is sorted by `publishedAt` descending.
+- [x] Excerpt falls back correctly: a fixture with `custom_excerpt` uses it; one without uses `excerpt`.
+- [x] `readingTimeMinutes` is at least 1 for a 10-word fixture post.
+- [x] A fixture mutated to drop a required field makes the schema parse throw an error naming that
       post's slug.
-- [ ] No `any` anywhere in the package; `npm run typecheck`, `lint`, `test` exit 0.
+- [x] No `any` anywhere in the package; `npm run typecheck`, `lint`, `test` exit 0.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 18 tests in this package,
+54 across the workspace.
+
+### Notes
+
+- `createGhostClient` is **not** in this ticket after all: adapter selection needs
+  the HTTP adapter to select between, so it lands with T-01-006. `InMemoryGhostClient`
+  is constructed directly for now, which is all any consumer needs at this point.
+- The domain `BlogPost` carries three fields spec 01 §5.1 did not list —
+  `metaTitle`, `metaDescription`, `canonicalUrl` — because spec 02 §3.4 requires
+  all three (editor overrides for title and description, and the republished-content
+  canonical). Adding them now avoids reopening the schema in the next spec.
+- `wordCount` is likewise carried, for the `BlogPosting` JSON-LD in T-02-007.

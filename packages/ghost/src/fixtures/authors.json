@@ -1,0 +1,18 @@
+[
+  {
+    "id": "author-priya",
+    "name": "Priya Nair",
+    "slug": "priya-nair",
+    "bio": "Priya has spent nine years around appliance service desks in Bengaluru and Chennai. She writes about what actually goes wrong with machines, and what it costs to put right.",
+    "profile_image": "https://cms.everyware.in/content/images/2026/07/priya-nair.jpg",
+    "website": null
+  },
+  {
+    "id": "author-rahul",
+    "name": "Rahul Menon",
+    "slug": "rahul-menon",
+    "bio": "Rahul covers buying decisions and running costs for Indian households.",
+    "profile_image": null,
+    "website": null
+  }
+]

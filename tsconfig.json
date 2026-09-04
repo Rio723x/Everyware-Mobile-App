@@ -16,6 +16,9 @@
   "references": [
     {
       "path": "./packages/seo-core"
+    },
+    {
+      "path": "./packages/ghost"
     }
   ]
 }

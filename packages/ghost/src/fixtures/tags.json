@@ -1,0 +1,34 @@
+[
+  {
+    "id": "tag-maintenance",
+    "name": "Appliance Maintenance",
+    "slug": "appliance-maintenance",
+    "description": "Servicing schedules, warning signs, and the upkeep that keeps a machine out of the repair queue.",
+    "feature_image": null,
+    "visibility": "public"
+  },
+  {
+    "id": "tag-costs",
+    "name": "Service Costs",
+    "slug": "service-costs",
+    "description": "What repairs and servicing actually cost across Indian cities, with the pricing traps to watch for.",
+    "feature_image": null,
+    "visibility": "public"
+  },
+  {
+    "id": "tag-guides",
+    "name": "Buying Guides",
+    "slug": "buying-guides",
+    "description": "How to choose an appliance you will not regret in year three.",
+    "feature_image": null,
+    "visibility": "public"
+  },
+  {
+    "id": "tag-internal-featured",
+    "name": "#featured",
+    "slug": "hash-featured",
+    "description": null,
+    "feature_image": null,
+    "visibility": "internal"
+  }
+]
