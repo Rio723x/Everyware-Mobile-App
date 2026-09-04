@@ -172,7 +172,7 @@ The blog does **not** import `apps/site/src/styles/index.css` (2,804 lines, over
 
 Instead:
 
-1. Extract the `:root` custom-property block (`index.css:13–51`) verbatim into **`apps/blog/src/styles/tokens.css`**, and have `apps/site` `@import` that same file so the two can never drift. One file, two consumers — that is the actual shared surface.
+1. Extract the `:root` custom-property block (`index.css:13–51`) verbatim into **`packages/tokens/tokens.css`**, and have both `apps/site` and `apps/blog` `@import` it so the two can never drift. One file, two consumers — that is the actual shared surface. It sits in a package rather than inside either app so that neither app reaches into the other, and so package resolution works identically under Vite and Astro with no dev-server filesystem allowances.
 2. Build `BlogHeader.astro` / `BlogFooter.astro` reproducing the Everyware visual language from those tokens, with **real absolute links** (`/`, `/#experiences`, `/#info`, `/blog`) that work from any URL. They ship zero JavaScript, which is also the right answer for article-page CLS and Core Web Vitals.
 3. React islands are used only where interactivity is genuinely required. For the templates in this spec that is **nowhere** — every blog page is static HTML. `@astrojs/react` is still installed and configured so future islands (and reuse of existing components under a `LazyMotion` wrapper) are one `client:visible` away.
 

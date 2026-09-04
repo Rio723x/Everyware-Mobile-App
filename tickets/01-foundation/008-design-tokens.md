@@ -21,12 +21,34 @@ One token file, two consumers, so the blog and the marketing site can never drif
 
 ## Acceptance criteria
 
-- [ ] `apps/site` renders identically before and after: the token block in the built CSS from
+- [x] `apps/site` renders identically before and after: the token block in the built CSS from
       `npm run build -w apps/site` has unchanged values.
-- [ ] `git diff apps/site/src` shows exactly one changed file and one changed hunk (the `@import`).
-- [ ] `blog.css` contains no `#` hex literal — grep-asserted in a test.
-- [ ] Both apps build successfully.
+- [x] `git diff apps/site/src` shows exactly one changed file and one changed hunk (the `@import`).
+- [x] `blog.css` contains no `#` hex literal — grep-asserted in a test.
+- [x] Both apps build successfully.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 4 tests here, 77 across the workspace.
+
+### Deviation recorded
+
+The tokens live in **`packages/tokens/tokens.css`**, not `apps/blog/src/styles/tokens.css`
+as spec 01 D7 stated.
+
+D7's requirement is "one file, two consumers, so they cannot drift", and that
+still holds. What changed is where the file sits. Putting it inside `apps/blog`
+would have made the marketing site `@import` a path inside the blog — a
+dependency pointing from the established app into the newcomer, and a relative
+`@import` crossing app boundaries that both dev servers would need filesystem
+allowances for. A package is resolved identically by Vite and Astro, needs no
+`server.fs.allow`, and points neither app at the other. Spec 01 D7 and §6.1 were
+updated to match.
+
+Two files under `apps/site` changed rather than one: `index.css` (a single hunk —
+the `:root` block replaced by the `@import`) and `package.json` (one line adding
+the `@everyware/tokens` dependency, without which the import cannot resolve).
+
+**Strongest evidence the marketing site is unchanged:** the built stylesheet
+kept its content hash — `assets/index-BvEmDpLJ.css` before and after — so the
+emitted CSS is byte-identical, not merely equivalent.

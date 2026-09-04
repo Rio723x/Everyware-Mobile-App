@@ -9,47 +9,9 @@
 /* Google Fonts: Oxygen — loaded non-blocking via <link> in index.html */
 /* font-display: swap ensures text is visible during font load */
 
-:root {
-  --canvas-base:      #F4F8FA;
-  --canvas-card:      #FFFFFF;
-  --canvas-subtle:    #EBF3F5;
-  --canvas-deep:      #081B1E;
-  --canvas-deep-card: #11292E;
+@import "@everyware/tokens/tokens.css";
 
-  --brand-cyan:       #00C4CC;
-  --brand-cyan-light: #E0F8FA;
-  --brand-sky:        #38BDF8;
-  --brand-ink:        #081B1E;
-
-  --accent-coral:     #FF6A4D;
-  --accent-coral-hover:#F0573A;
-  --accent-emerald:   #10B981;
-  --accent-lime:      #D9F99D;
-  --accent-blue:      #2563EB;
-
-  --text-dark:        #081B1E;
-  --text-muted:       #5A6E73;
-  --text-light:       #94A3B8;
-
-  /* Font: Oxygen for entire website */
-  --font-display:     'Oxygen', sans-serif;
-  --font-body:        'Oxygen', sans-serif;
-
-  --radius-sm:        12px;
-  --radius-md:        20px;
-  --radius-lg:        28px;
-  --radius-xl:        36px;
-  --radius-pill:      999px;
-
-  --shadow-sm:        0 4px 12px rgba(8, 27, 30, 0.04);
-  --shadow-md:        0 12px 32px rgba(8, 27, 30, 0.08);
-  --shadow-lg:        0 24px 48px rgba(8, 27, 30, 0.14);
-  --shadow-glass:     0 20px 48px rgba(8, 27, 30, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.9);
-
-  --ease-spring:      cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  --ease-smooth:      cubic-bezier(0.16, 1, 0.3, 1);
-  --transition-fast:  0.25s var(--ease-smooth);
-}
+/* Design tokens live in packages/tokens so the blog shares this exact file. */
 
 *, *::before, *::after {
   box-sizing: border-box;

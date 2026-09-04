@@ -6,6 +6,7 @@ export default defineConfig({
       "packages/**/*.test.ts",
       "services/**/*.test.ts",
       "apps/blog/**/*.test.ts",
+      "apps/blog/test/**/*.test.ts",
       "scripts/**/*.test.ts",
     ],
     exclude: ["**/node_modules/**", "**/dist/**"],
