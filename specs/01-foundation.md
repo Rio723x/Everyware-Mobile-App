@@ -160,7 +160,7 @@ Astro `trailingSlash: 'never'`, `build.format: 'file'`; `vercel.json` sets `"cle
 
 | Route | Source file | Emitted file | Public URL |
 |---|---|---|---|
-| Blog index | `pages/blog/index.astro` | `dist/blog/index.html` | `/blog` |
+| Blog index | `pages/blog/index.astro` | `dist/blog.html` | `/blog` |
 | Article | `pages/blog/[slug].astro` | `dist/blog/<slug>.html` | `/blog/<slug>` |
 | Category | `pages/blog/category/[slug].astro` | `dist/blog/category/<slug>.html` | `/blog/category/<slug>` |
 | Author | `pages/blog/author/[slug].astro` | `dist/blog/author/<slug>.html` | `/blog/author/<slug>` |
@@ -407,7 +407,7 @@ Root `package.json`:
 1. Empty `./dist`.
 2. Copy `apps/blog/dist/**` → `dist/` **first** — Astro wins any contested path, which is what implements D1's migration path.
 3. Copy `apps/site/dist/**` → `dist/`, **skipping** any path that already exists, and **exit non-zero listing every skipped path**. A collision means the two apps are fighting for a URL: that must be a loud build failure, never a silent overwrite.
-4. Assert `dist/index.html`, `dist/blog/index.html` and at least one `dist/blog/*.html` exist.
+4. Assert `dist/index.html`, `dist/blog.html` and at least one `dist/blog/*.html` exist.
 
 `vercel.json`:
 
@@ -475,7 +475,7 @@ Every line is objectively checkable. `[m]` = machine-verifiable in CI.
 
 **Rendering**
 
-- [ ] `npm run build` produces `dist/index.html` (SPA), `dist/blog/index.html`, one `dist/blog/<slug>.html` per published post, plus one file per public tag and per author. Emitted article count === `listPosts()` count. `[m]`
+- [ ] `npm run build` produces `dist/index.html` (SPA), `dist/blog.html`, one `dist/blog/<slug>.html` per published post, plus one file per public tag and per author. Emitted article count === `listPosts()` count. `[m]`
 - [ ] Every generated blog page contains **exactly one** `<h1>`. `[m]`
 - [ ] Every generated blog page contains `<article>` or `<main>`, a `<nav aria-label="Breadcrumb">`, and `<time datetime="…">` parseable as ISO-8601. `[m]`
 - [ ] Every `<img>` on every generated blog page has a non-empty `alt`. `[m]`

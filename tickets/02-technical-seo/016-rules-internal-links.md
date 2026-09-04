@@ -16,7 +16,7 @@
   boundaries; `not-applicable` elsewhere.
 
 Link resolution must handle the Spec 01 D6 URL-to-file mapping (`/blog/x` maps to `blog/x.html`,
-`/blog` maps to `blog/index.html`), and must ignore `mailto:`, `tel:`, and off-site links.
+`/blog` maps to `blog.html`), and must ignore `mailto:`, `tel:`, and off-site links.
 
 ## Acceptance criteria
 

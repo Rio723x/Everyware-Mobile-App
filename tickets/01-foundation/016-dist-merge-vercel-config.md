@@ -16,7 +16,7 @@ directory, with collisions treated as build failures.
    - Copy `apps/site/dist/**` into `dist/`, **skipping** any path that already exists, then
      **exit non-zero listing every skipped path**. A collision means the two apps are fighting for
      a URL; that must be loud, never a silent overwrite.
-   - Assert `dist/index.html`, `dist/blog/index.html` and at least one `dist/blog/*.html` exist.
+   - Assert `dist/index.html`, `dist/blog.html` and at least one `dist/blog/*.html` exist.
 2. Root `build` script: `npm run build -w apps/site && npm run build -w apps/blog && node scripts/merge-dist.mjs`.
 3. `vercel.json`: `buildCommand: "npm run build"`, `outputDirectory: "dist"`, `cleanUrls: true`,
    `trailingSlash: false`.
@@ -25,10 +25,10 @@ directory, with collisions treated as build failures.
 
 ## Acceptance criteria
 
-- [ ] `npm run build` from the repo root produces `dist/index.html` (the SPA), `dist/blog/index.html`,
+- [ ] `npm run build` from the repo root produces `dist/index.html` (the SPA), `dist/blog.html`,
       and one `dist/blog/<slug>.html` per fixture post.
 - [ ] The merge reports zero collisions on a clean tree.
-- [ ] Planting a deliberate collision (e.g. `apps/site/public/blog/index.html`) makes the build exit
+- [ ] Planting a deliberate collision (e.g. `apps/site/public/blog.html`) makes the build exit
       non-zero and print that path. Remove the plant afterwards.
 - [ ] `npx serve dist` then: `/` loads the SPA; `#experiences/3` and `#info` still work;
       `/blog` and `/blog/<slug>` load the blog.

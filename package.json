@@ -14,16 +14,18 @@
   },
   "scripts": {
     "dev:site": "npm run dev -w apps/site",
-    "dev:blog": "echo \"apps/blog does not exist yet - see tickets/01-foundation/007-astro-scaffold.md\" && exit 1",
+    "dev:blog": "npm run dev -w apps/blog",
     "build": "npm run build -w apps/site",
-    "typecheck": "tsc -b",
+    "typecheck": "tsc -b && npm run astro-check -w apps/blog",
     "test": "vitest run",
     "lint": "eslint ."
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.4.1",
+    "astro-eslint-parser": "^3.1.0",
     "eslint": "^10.10.0",
+    "eslint-plugin-astro": "^3.1.0",
     "globals": "^17.12.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.69.0",

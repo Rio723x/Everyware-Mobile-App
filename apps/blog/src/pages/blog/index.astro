@@ -1,0 +1,20 @@
+---
+// Temporary scaffold page: proves the Ghost client, the Astro build and the
+// route shape all work end to end. T-01-011 replaces it with the real listing.
+import { ghost } from "../../lib/content";
+
+const posts = await ghost.listPosts();
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>Everyware Blog</h1>
+    <ul>
+      {posts.map((post) => <li>{post.title}</li>)}
+    </ul>
+  </body>
+</html>

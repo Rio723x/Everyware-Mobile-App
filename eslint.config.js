@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
+import astro from "eslint-plugin-astro";
 
 /**
  * Flat config for the Everyware monorepo.
@@ -47,4 +48,8 @@ export default tseslint.config(
     files: ["**/*.js", "**/*.mjs"],
     languageOptions: { globals: { ...globals.node } },
   },
+  // Deferred here from T-01-003: the Astro parser has no reason to exist in the
+  // tree before Astro does, and a rule set for a file type the repo does not
+  // contain cannot be exercised.
+  ...astro.configs.recommended,
 );

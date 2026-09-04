@@ -16,8 +16,8 @@
 
 ## Acceptance criteria
 
-- [ ] With 5 fixture posts, the build emits `dist/blog/index.html` and **no** `blog/page/*` files.
-- [ ] With 25 fixture posts, it emits `blog/index.html`, `blog/page/2.html`, `blog/page/3.html`,
+- [ ] With 5 fixture posts, the build emits `dist/blog.html` and **no** `blog/page/*` files.
+- [ ] With 25 fixture posts, it emits `blog.html`, `blog/page/2.html`, `blog/page/3.html`,
       and no `blog/page/1.html`.
 - [ ] Page 1 shows posts 1-12 in `publishedAt` descending order; page 2 shows 13-24; page 3 shows 25.
 - [ ] `/blog` carries `rel="next"` to `/blog/page/2` and no `rel="prev"`; the last page carries

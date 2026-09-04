@@ -26,7 +26,7 @@ The framework the 32 rules plug into. No individual rules yet.
 - [ ] `RuleId` is a literal union; adding a rule result with an unregistered id is a compile error.
 - [ ] Scoring: all pass returns 100; one failed error rule among 10 passing error rules returns 90;
       an all-`not-applicable` page returns 100 rather than dividing by zero.
-- [ ] `DistPageSource` maps `dist/blog/index.html` to `https://everyware.in/blog`,
+- [ ] `DistPageSource` maps `dist/blog.html` to `https://everyware.in/blog`,
       `dist/blog/x.html` to `https://everyware.in/blog/x`, and `dist/index.html` to
       `https://everyware.in/` — asserted for all five route kinds.
 - [ ] It excludes `404.html` from the indexable page set.
