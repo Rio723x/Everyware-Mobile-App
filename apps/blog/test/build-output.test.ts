@@ -19,10 +19,18 @@ const walk = (dir: string): string[] =>
     return statSync(full).isDirectory() ? walk(full) : [full];
   });
 
-export const htmlFiles = (): readonly string[] =>
+const allHtmlFiles = (): readonly string[] =>
   walk(distDir)
     .filter((file) => file.endsWith(".html"))
     .map((file) => relative(distDir, file).split("\\").join("/"));
+
+/**
+ * Every indexable page. 404.html is excluded: it is served for URLs that do not
+ * exist, so assertions about the content set - one file per post, links that
+ * resolve to real posts - do not apply to it. It gets its own tests below.
+ */
+export const htmlFiles = (): readonly string[] =>
+  allHtmlFiles().filter((file) => file !== "404.html");
 
 const client = new InMemoryGhostClient();
 
@@ -316,5 +324,29 @@ describe("category and author routes", () => {
         expect(emitted.has(target), `${file} links to ${href}, which was not emitted`).toBe(true);
       }
     }
+  });
+});
+
+describe("404 page", () => {
+  it("is emitted", () => {
+    expect(allHtmlFiles()).toContain("404.html");
+  });
+
+  it("offers a way onward to both the blog and the homepage", () => {
+    const html = readFileSync(resolve(distDir, "404.html"), "utf8");
+    expect(html).toMatch(/href="\/blog"/);
+    expect(html).toMatch(/href="\/"/);
+  });
+
+  it("has exactly one h1 and ships no JavaScript", () => {
+    const html = readFileSync(resolve(distDir, "404.html"), "utf8");
+    expect(html.match(/<h1/g) ?? []).toHaveLength(1);
+    expect(html.match(/<script/g) ?? []).toEqual([]);
+  });
+
+  it("renders the same chrome as every other page", () => {
+    const html = readFileSync(resolve(distDir, "404.html"), "utf8");
+    expect(html).toMatch(/class="blog-header"/);
+    expect(html).toMatch(/class="blog-footer"/);
   });
 });

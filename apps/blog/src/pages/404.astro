@@ -1,0 +1,86 @@
+---
+/**
+ * Unknown blog slugs are never generated, so the host serves this file for
+ * them. It has to work as an entry point in its own right: someone arriving
+ * from a stale link or a typo needs a way onward, not an apology.
+ */
+import BlogLayout from "../layouts/BlogLayout.astro";
+import DownloadCtaBand from "../components/DownloadCtaBand.astro";
+import Breadcrumbs from "../components/Breadcrumbs.astro";
+---
+
+<BlogLayout>
+  <div class="container">
+    <Breadcrumbs trail={[{ label: "Home", href: "/" }, { label: "Page not found", href: null }]} />
+
+    <div class="notfound">
+      <p class="notfound-code">404</p>
+      <h1 class="blog-h1">We could not find that page</h1>
+      <p class="blog-lead">
+        The link may be out of date, or the address may have a typo in it.
+        Everything we have published is still one click away.
+      </p>
+
+      <div class="notfound-actions">
+        <a class="notfound-primary" href="/blog">Browse the blog</a>
+        <a class="notfound-secondary" href="/">Go to the homepage</a>
+      </div>
+    </div>
+
+    <DownloadCtaBand />
+  </div>
+</BlogLayout>
+
+<style>
+  .notfound {
+    max-width: 62ch;
+    margin: 56px 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .notfound-code {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 3.4rem;
+    line-height: 1;
+    color: var(--brand-cyan);
+    letter-spacing: -0.04em;
+  }
+
+  .notfound-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .notfound-primary,
+  .notfound-secondary {
+    padding: 12px 26px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    font-size: 0.93rem;
+    transition: all var(--transition-fast);
+  }
+
+  .notfound-primary {
+    background: var(--brand-ink);
+    color: var(--canvas-card);
+  }
+
+  .notfound-primary:hover {
+    background: var(--canvas-deep-card);
+  }
+
+  .notfound-secondary {
+    border: 1px solid color-mix(in srgb, var(--brand-ink) 18%, transparent);
+    color: var(--text-dark);
+  }
+
+  .notfound-secondary:hover {
+    border-color: var(--brand-cyan);
+    color: var(--brand-cyan);
+  }
+</style>
