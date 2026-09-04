@@ -17,8 +17,9 @@
     "dev:blog": "npm run dev -w apps/blog",
     "build": "npm run build -w apps/site",
     "typecheck": "tsc -b && npm run astro-check -w apps/blog",
-    "test": "vitest run",
-    "lint": "eslint ."
+    "test": "npm run build -w apps/blog && vitest run",
+    "lint": "eslint .",
+    "test:unit": "vitest run"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,0 +1,54 @@
+---
+import type { GetStaticPaths } from "astro";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import Pagination from "../../../components/Pagination.astro";
+import PostGrid from "../../../components/PostGrid.astro";
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import { listingTrail } from "../../../lib/breadcrumbs";
+import { ghost } from "../../../lib/content";
+import { extraPageNumbers, paginate } from "../../../lib/pagination";
+
+/**
+ * Pages 2..n only. Page 1 lives at /blog, and generating /blog/page/1 as well
+ * would put identical content on two URLs.
+ */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const posts = await ghost.listPosts();
+  return extraPageNumbers(posts.length).map((page) => ({
+    params: { page: String(page) },
+  }));
+};
+
+const posts = await ghost.listPosts();
+const pageNumber = Number(Astro.params.page);
+const page = paginate(posts, pageNumber, "/blog");
+---
+
+<BlogLayout>
+  <div class="container">
+    <Breadcrumbs trail={listingTrail()} />
+
+    <header class="listing-header">
+      <h1 class="blog-h1">Everyware Blog</h1>
+      <p class="blog-lead">Page {page.page} of {page.totalPages}</p>
+    </header>
+
+    <PostGrid posts={page.items} />
+
+    <Pagination
+      page={page.page}
+      totalPages={page.totalPages}
+      prevHref={page.prevHref}
+      nextHref={page.nextHref}
+    />
+  </div>
+</BlogLayout>
+
+<style>
+  .listing-header {
+    margin: 28px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>
