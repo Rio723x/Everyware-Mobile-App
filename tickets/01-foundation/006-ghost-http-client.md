@@ -23,18 +23,24 @@ rather than reimplementing it.
 
 ## Acceptance criteria
 
-- [ ] With `fetch` mocked to return two pages of results, `listPosts()` returns the union of both
+- [x] With `fetch` mocked to return two pages of results, `listPosts()` returns the union of both
       and issues exactly two requests.
-- [ ] A 500, 500, 200 sequence resolves successfully after exactly 3 attempts.
-- [ ] A 400 response throws immediately, after exactly 1 attempt.
-- [ ] `getPostBySlug` returns `null` on 404 and throws on 500 after retries.
-- [ ] A malformed post in the response throws an error whose message contains that post's slug.
-- [ ] `HttpGhostClient` and `InMemoryGhostClient` return deep-equal domain objects for the same
+- [x] A 500, 500, 200 sequence resolves successfully after exactly 3 attempts.
+- [x] A 400 response throws immediately, after exactly 1 attempt.
+- [x] `getPostBySlug` returns `null` on 404 and throws on 500 after retries.
+- [x] A malformed post in the response throws an error whose message contains that post's slug.
+- [x] `HttpGhostClient` and `InMemoryGhostClient` return deep-equal domain objects for the same
       underlying payload — asserted by one shared conformance test run against both adapters.
-- [ ] With no env vars and `NODE_ENV` not `production`, `createGhostClient` returns the in-memory
+- [x] With no env vars and `NODE_ENV` not `production`, `createGhostClient` returns the in-memory
       adapter and warns; with `NODE_ENV=production` it throws.
-- [ ] `npm run typecheck`, `lint`, `test` exit 0.
+- [x] `npm run typecheck`, `lint`, `test` exit 0.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 37 tests in this package,
+73 across the workspace.
+
+### Note
+
+`createGhostClient` landed here rather than in T-01-005, since adapter selection
+needs two adapters to select between. It lives in `src/create-client.ts`.
