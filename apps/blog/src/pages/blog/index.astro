@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import DownloadCtaBand from "../../components/DownloadCtaBand.astro";
 import Pagination from "../../components/Pagination.astro";
 import PostGrid from "../../components/PostGrid.astro";
 import BlogLayout from "../../layouts/BlogLayout.astro";
@@ -31,6 +32,8 @@ const page = paginate(posts, 1, "/blog");
       prevHref={page.prevHref}
       nextHref={page.nextHref}
     />
+
+    <DownloadCtaBand />
   </div>
 </BlogLayout>
 

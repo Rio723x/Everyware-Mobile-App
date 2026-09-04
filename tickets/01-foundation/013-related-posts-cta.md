@@ -16,15 +16,28 @@
 
 ## Acceptance criteria
 
-- [ ] Related-post selection is deterministic: the same fixture corpus produces the same three
+- [x] Related-post selection is deterministic: the same fixture corpus produces the same three
       slugs across 10 runs.
-- [ ] The source post never appears in its own related list.
-- [ ] With only 1 tag-matching post available, the block still renders 3 cards, filled by recency.
-- [ ] With a corpus of exactly 1 post, the aside renders nothing rather than an empty container.
-- [ ] Every article now links to at least one other internal Everyware URL — no orphan pages.
+- [x] The source post never appears in its own related list.
+- [x] With only 1 tag-matching post available, the block still renders 3 cards, filled by recency.
+- [x] With a corpus of exactly 1 post, the aside renders nothing rather than an empty container.
+- [x] Every article now links to at least one other internal Everyware URL — no orphan pages.
       Asserted across every emitted article.
-- [ ] The CTA band emits no `<script>`.
+- [x] The CTA band emits no `<script>`.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 141 tests across the workspace.
+
+### Notes
+
+- **Selection ends with a slug tiebreak.** Shared-tag count then recency leaves
+  ties possible; without the final `localeCompare` two equally-scored posts could
+  order differently between builds, and a rebuild with unchanged content would
+  produce a different page. Determinism is asserted over 10 runs.
+- **The CTA band is on the listing pages too**, not only articles. Every entry
+  point into the blog should be able to convert, and the band ships no
+  JavaScript, so it costs nothing to include.
+- The marketing app opens a QR modal here, which needs React state and a click
+  handler. On an article page that would mean shipping a bundle to every reader
+  for one button; a link to the home page's download section does the same job.

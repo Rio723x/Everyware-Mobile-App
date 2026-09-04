@@ -1,0 +1,36 @@
+---
+import type { BlogPost } from "@everyware/ghost";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  readonly posts: readonly BlogPost[];
+}
+
+const { posts } = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <aside class="related" aria-label="Related articles">
+      <h2 class="related-heading">Keep reading</h2>
+      <div class="post-grid">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    </aside>
+  )
+}
+
+<style>
+  .related {
+    margin-top: 72px;
+  }
+
+  .related-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+</style>

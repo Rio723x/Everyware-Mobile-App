@@ -5,9 +5,12 @@ import { prepareArticleHtml } from "@everyware/seo-core";
 import AuthorByline from "../../components/AuthorByline.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import TagChips from "../../components/TagChips.astro";
+import DownloadCtaBand from "../../components/DownloadCtaBand.astro";
+import RelatedPosts from "../../components/RelatedPosts.astro";
 import BlogLayout from "../../layouts/BlogLayout.astro";
 import { articleTrail } from "../../lib/breadcrumbs";
 import { ghost } from "../../lib/content";
+import { relatedPosts } from "../../lib/related";
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await ghost.listPosts();
@@ -40,6 +43,8 @@ const body = prepareArticleHtml(post.html, post.slug);
  */
 const HERO_WIDTH = 1200;
 const HERO_HEIGHT = 630;
+
+const related = relatedPosts(post, await ghost.listPosts());
 ---
 
 <BlogLayout>
@@ -75,6 +80,9 @@ const HERO_HEIGHT = 630;
         <TagChips tags={post.tags} />
       </footer>
     </article>
+
+    <RelatedPosts posts={related} />
+    <DownloadCtaBand />
   </div>
 </BlogLayout>
 

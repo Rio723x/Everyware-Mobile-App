@@ -210,3 +210,32 @@ describe("article pages", () => {
     expect(crumbs.length).toBeGreaterThan(0);
   });
 });
+
+describe("related posts and CTA", () => {
+  it("renders a related-articles aside on every article", async () => {
+    for (const post of await client.listPosts()) {
+      const html = readFileSync(resolve(distDir, `blog/${post.slug}.html`), "utf8");
+      expect(html, post.slug).toMatch(/<aside[^>]*aria-label="Related articles"/);
+    }
+  });
+
+  it("links three other articles from every article", async () => {
+    for (const post of await client.listPosts()) {
+      const html = readFileSync(resolve(distDir, `blog/${post.slug}.html`), "utf8");
+      const aside = /<aside[^>]*aria-label="Related articles"[\s\S]*?<\/aside>/.exec(html)?.[0] ?? "";
+      const linked = new Set(
+        [...aside.matchAll(/href="\/blog\/([a-z0-9-]+)"/g)].map((m) => m[1]),
+      );
+      expect(linked.size, post.slug).toBe(3);
+      expect(linked.has(post.slug), `${post.slug} links to itself`).toBe(false);
+    }
+  });
+
+  it("renders the CTA band with no script on every page", () => {
+    for (const file of htmlFiles()) {
+      const html = readFileSync(resolve(distDir, file), "utf8");
+      expect(html, file).toMatch(/aria-label="Get the EveryWare app"/);
+      expect(html.match(/<script/g) ?? [], file).toEqual([]);
+    }
+  });
+});
