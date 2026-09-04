@@ -14,6 +14,9 @@ jspm_packages/
 # Build outputs
 dist/
 dist-ssr/
+.astro/
+.vercel/
+.seo-store/
 *.local
 out/
 

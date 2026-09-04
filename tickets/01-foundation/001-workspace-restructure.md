@@ -22,14 +22,14 @@ Do the move as a pure rename commit. Any content edit belongs in a later ticket.
 
 ## Acceptance criteria
 
-- [ ] `npm install` at the repo root succeeds and links `apps/site`.
-- [ ] `npm run dev:site` starts Vite on port 3000 and the site renders exactly as before.
-- [ ] `npm run build -w apps/site` produces `apps/site/dist/index.html` plus `assets/`.
-- [ ] `git log --follow apps/site/src/App.jsx` shows the pre-move history.
-- [ ] `git diff --find-renames HEAD~1 -- apps/site` reports renames only — **zero content changes**.
-- [ ] `apps/site/public/robots.txt` and `apps/site/public/sitemap.xml` still exist untouched
+- [x] `npm install` at the repo root succeeds and links `apps/site`.
+- [x] `npm run dev:site` starts Vite on port 3000 and the site renders exactly as before.
+- [x] `npm run build -w apps/site` produces `apps/site/dist/index.html` plus `assets/`.
+- [x] `git log --follow apps/site/src/App.jsx` shows the pre-move history.
+- [x] `git diff --find-renames HEAD~1 -- apps/site` reports renames only — **zero content changes**.
+- [x] `apps/site/public/robots.txt` and `apps/site/public/sitemap.xml` still exist untouched
       (Spec 02 deletes them later).
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
