@@ -30,3 +30,10 @@ export {
   findImagesWithoutAlt,
   prepareArticleHtml,
 } from "./html.js";
+
+export {
+  fileToPath,
+  listEmittedPages,
+  listHtmlFiles,
+  type EmittedPage,
+} from "./dist-files.js";
