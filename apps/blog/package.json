@@ -10,16 +10,16 @@
     "astro-check": "astro check"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.0",
+    "@astrojs/react": "^6.0.5",
     "@everyware/ghost": "*",
     "@everyware/seo-core": "*",
     "@everyware/tokens": "*",
-    "astro": "^5.14.1",
+    "astro": "^7.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.10",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1"
   }

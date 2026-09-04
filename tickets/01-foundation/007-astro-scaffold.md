@@ -41,10 +41,25 @@
    assertion and its DoD, plus tickets 01-011, 01-016, 02-012 and 02-016, were
    all updated in the same commit.
 
-2. **Astro version.** Pinned to `^5.14.1`, resolving to 5.18.2. Astro 7.3.1 is
-   published. Nothing here depends on staying on 5 and the config surface this
-   project uses is four options wide, so the upgrade is cheap whenever it is
-   wanted — flagged for a decision rather than taken silently.
+2. **Astro version — upgraded to 7.** Started on `^5.14.1`; now `astro@^7.3.1`
+   with `@astrojs/react@^6.0.5`, done here while the surface area was four
+   config options wide rather than after the templates landed.
+
+   Astro 7's breaking changes were checked against the upgrade guide before the
+   bump. Three matter in principle, none in practice here: the Rust compiler is
+   stricter about unclosed tags and no longer auto-corrects invalid HTML;
+   Sätteri replaces remark/rehype as the Markdown processor (irrelevant — Ghost
+   supplies rendered HTML, and this project has no `.md` content collections);
+   and `compressHTML` now defaults to `'jsx'`. `output: 'static'`,
+   `trailingSlash: 'never'` and `build.format: 'file'` are all unchanged, and
+   the v7 configuration reference explicitly confirms `blog/index.astro` builds
+   `/blog.html` — the same correction recorded in note 1.
+
+   Verified after the bump: build emits `dist/blog.html` with fixture content
+   and zero `<script>` tags, `astro check` reports 0 errors across 5 files, and
+   the workspace typecheck, lint and 77 tests all pass. `apps/site` is a
+   separate workspace on Vite 5 and is untouched by the upgrade — it still
+   builds byte-identically.
 
 3. `astro check` reports 0 errors and is wired into `npm run typecheck`.
    `.astro` linting from T-01-003 is now in place, as promised there.
