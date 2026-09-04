@@ -6,7 +6,7 @@
 
 ## What to build
 
-Two Claude calls per publish is negligible at this volume; the expensive failure mode is a runaway
+Two Gemini calls per publish sit well inside the free tier; the failure mode worth guarding is a runaway
 loop, so guard that specifically.
 
 1. `MAX_ANALYSES_PER_HOUR = 20`, enforced with a rolling counter in the store. Exceeding it **skips

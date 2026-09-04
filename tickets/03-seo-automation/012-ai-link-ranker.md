@@ -7,7 +7,7 @@
 ## What to build
 
 `src/links/ranker.ts` — sends the top 10 candidates (title, excerpt, URL) plus the source article to
-Claude and returns at most 5 `LinkSuggestion`s (`targetUrl`, `anchorText`, `reason`, `confidence`).
+Gemini and returns at most 5 `LinkSuggestion`s (`targetUrl`, `anchorText`, `reason`, `confidence`).
 
 **Both constraints are enforced in code after the response, not requested in the prompt:**
 
@@ -17,8 +17,8 @@ Claude and returns at most 5 `LinkSuggestion`s (`targetUrl`, `anchorText`, `reas
 A suggestion violating either is dropped and counted in `droppedSuggestions`. The model therefore
 cannot invent a URL, and cannot propose an anchor the editor would have to write from scratch.
 
-Same model configuration as T-03-004 (`claude-opus-5`, adaptive thinking, structured outputs,
-prompt caching on the stable prefix). Failure returns an empty list, never a throw.
+Same model configuration as T-03-004 (`gemini-2.5-flash`, `responseMimeType: "application/json"`,
+a `responseJsonSchema`, thinking disabled). Failure returns an empty list, never a throw.
 
 ## Acceptance criteria
 
@@ -30,7 +30,7 @@ prompt caching on the stable prefix). Failure returns an empty list, never a thr
 - [ ] At most 5 suggestions are returned even when the model returns more.
 - [ ] `confidence` outside 0-1 fails schema validation.
 - [ ] An API failure returns an empty list and records the error; it does not throw.
-- [ ] With `ANTHROPIC_API_KEY` absent, the ranker is skipped and the deterministic candidate list is
+- [ ] With `GEMINI_API_KEY` absent, the ranker is skipped and the deterministic candidate list is
       still recorded on the report.
 
 ## Status

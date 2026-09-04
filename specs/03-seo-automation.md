@@ -31,7 +31,7 @@ The analyzer's output is data in a store. It never writes to Ghost, never writes
 - `services/seo-worker` — the analyzer, the validator runner, the link-recommendation engine, the store, and the deploy trigger. All logic, no HTTP.
 - `api/` — three thin Vercel Functions that adapt HTTP to that logic.
 - Ghost webhook wiring for `post.published`, `post.published.edited`, `post.unpublished`, `post.deleted`, with signature verification and idempotency.
-- The AI analyzer: Claude, structured JSON output, zod-validated, **advisory only**.
+- The AI analyzer: Gemini (free tier), structured JSON output, zod-validated, **advisory only**.
 - The deterministic validator: fetches the deployed URL and runs the Spec 02 rules over the response body.
 - Internal-link recommendations: deterministic candidate generation + AI ranking, surfaced to an editor.
 - The SEO report: per-article scores, errors, warnings and suggestions, readable via CLI and a token-protected endpoint.
@@ -120,7 +120,7 @@ Key: `` `${post.id}:${post.updated_at}` ``. Before processing, the worker does a
 export interface SeoAnalyzer {
   analyze(post: BlogPost, context: SiteContext): Promise<SeoAnalysis>;
 }
-export const createClaudeAnalyzer: (config: AnalyzerConfig) => SeoAnalyzer;
+export const createGeminiAnalyzer: (config: AnalyzerConfig) => SeoAnalyzer;
 ```
 
 **Output — validated, never trusted raw:**
@@ -144,17 +144,20 @@ export type SeoAnalysis = z.infer<typeof seoAnalysisSchema>;
 
 Note that the length bounds mirror Spec 02's *optimal* thresholds. A suggestion the deterministic validator would flag is not a useful suggestion, so the schema refuses it at the boundary.
 
-**Model call:**
+**Model call — Gemini, free tier:**
 
-- SDK `@anthropic-ai/sdk`, model **`claude-opus-5`**.
-- `thinking: { type: "adaptive" }`; `output_config: { effort: "medium" }` — this is a bounded extraction task, not a reasoning marathon.
-- **Structured outputs** via `client.messages.parse()` with the schema above, so the response is schema-valid on arrival. Do **not** use the deprecated `output_format` parameter; do **not** hand-parse a JSON blob out of a text block.
-- `max_tokens: 16000`, non-streaming (the output is ~1–2 KB).
-- **Prompt caching** on the system prompt and the site-context block (`cache_control: { type: "ephemeral" }`), which are identical across every article. Only the article body varies, and it goes last. Verify with `usage.cache_read_input_tokens > 0` on the second call — a test asserts this.
+- SDK **`@google/genai`**; client `new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })`.
+- Model **`gemini-2.5-flash`**. This is a bounded extraction task over one article, not a reasoning marathon, and Flash is the tier the free quota is generous on.
+- Call shape: `ai.models.generateContent({ model, contents, config })`.
+- **Structured output** via `config.responseMimeType: "application/json"` plus `config.responseJsonSchema`, derived from `seoAnalysisSchema` with `z.toJSONSchema()`. The model is constrained to the schema at generation time; the response is then parsed with the zod schema anyway, because a schema the provider enforces and a schema this codebase trusts must be verified to be the same schema, not assumed to be.
+- `config.thinkingConfig: { thinkingBudget: 0 }` — thinking is off. Extraction from supplied text needs none, and it is the largest avoidable draw on a free quota.
+- `config.systemInstruction` carries the stable brand and grounding rules; the article goes in `contents`.
 - On a schema-validation failure: retry once with the validation error appended; on a second failure, record `analysis: null` with the error in the report and continue. **A failed analysis must never fail the pipeline** — validation and deployment are independent of it.
-- Typed error handling per SDK class (`RateLimitError` → backoff and retry; `BadRequestError` → record and stop). No string-matching on error messages.
+- Free-tier rate limits are per-minute and per-day. A `429` is retried once after a short backoff, then degrades to `analysis: null`. The pipeline treats exhausted quota as an ordinary Tuesday, not an incident.
 
-**Prompt shape** (system, cached): the Everyware brand and audience, the India appliance-repair domain, the rule that suggestions must be grounded in the supplied article text only, and an explicit instruction never to invent facts, statistics or schema. The user message carries the title, excerpt, tag names and `plaintext` body. The article's own `plaintext` is passed **untruncated**; if a post ever exceeds the context window, that is reported as an error, not silently cut.
+*Why Gemini and not Claude:* the free tier. Nothing else in this spec depends on the provider — the analyzer sits behind the one-method `SeoAnalyzer` interface, so swapping it is one adapter. That is what the interface is for.
+
+**Prompt shape** (`systemInstruction`, stable across every call): the Everyware brand and audience, the India appliance-repair domain, the rule that suggestions must be grounded in the supplied article text only, and an explicit instruction never to invent facts, statistics or schema. `contents` carries the title, excerpt, tag names and `plaintext` body. The article's own `plaintext` is passed **untruncated**; if a post ever exceeds the context window, that is reported as an error, not silently cut.
 
 ### 5.2 The deterministic validator
 
@@ -201,7 +204,7 @@ Excludes the source article itself and anything already linked from its body. To
 
 *Why TF-IDF and not embeddings:* it needs no vector database, no embedding API, no extra infrastructure decision, and it is deterministic — the same corpus always yields the same ranking, which means it can be unit-tested against a fixed fixture corpus. Embeddings are a drop-in replacement behind the same `LinkRecommender` interface if relevance proves insufficient; nothing else changes.
 
-**AI ranking pass:** the top 10 candidates (title + excerpt + URL) plus the source article go to Claude, which returns at most 5 `LinkSuggestion`s:
+**AI ranking pass:** the top 10 candidates (title + excerpt + URL) plus the source article go to Gemini, which returns at most 5 `LinkSuggestion`s:
 
 ```ts
 interface LinkSuggestion {
@@ -272,7 +275,7 @@ services/seo-worker/
 └── src/
     ├── index.ts                  # processPost(postId) — the single entry point the API calls
     ├── analyzer/
-    │   ├── analyzer.ts           # SeoAnalyzer interface + createClaudeAnalyzer
+    │   ├── analyzer.ts           # SeoAnalyzer interface + createGeminiAnalyzer
     │   ├── schema.ts             # seoAnalysisSchema
     │   ├── prompt.ts             # cached system prompt + site context
     │   └── stub-analyzer.ts      # deterministic fixture analyzer for tests / no-API-key dev
@@ -306,30 +309,31 @@ Each file in `api/` is a **thin adapter**: parse, authenticate, delegate, serial
 |---|---|---|
 | `GHOST_CONTENT_API_URL` / `GHOST_CONTENT_API_KEY` | worker + build | Spec 01 |
 | `GHOST_WEBHOOK_SECRET` | `api/webhooks/ghost` | HMAC verification |
-| `ANTHROPIC_API_KEY` | analyzer, ranker | Claude |
+| `GEMINI_API_KEY` | analyzer, ranker | Google AI Studio key (free tier) |
 | `SEO_WORKER_TOKEN` | `api/seo/*` | bearer auth for internal endpoints |
 | `VERCEL_DEPLOY_HOOK_URL` | deploy trigger | rebuild |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | prod store | Redis |
 | `SEO_STORE_DRIVER` | worker | `file` \| `redis` (default `file` outside production) |
 | `PUBLIC_SITE_URL` | validator | `https://everyware.in` |
 
-A missing `ANTHROPIC_API_KEY` selects `StubAnalyzer` and disables the AI ranking pass — **the validator and the deploy trigger keep working**. Missing Ghost or site variables are a hard failure.
+A missing `GEMINI_API_KEY` selects `StubAnalyzer` and disables the AI ranking pass — **the validator and the deploy trigger keep working**. Missing Ghost or site variables are a hard failure.
 
 ---
 
 ## 7. Cost and rate limits
 
-Two Claude calls per publish (analysis + link ranking). At even 40 posts a month that is 80 calls against a cached system prompt — negligible. Guardrails anyway, because runaway loops are the expensive failure mode:
+Two Gemini calls per publish (analysis + link ranking), on the free tier. At even 40 posts a month that is 80 calls — far inside the free allowance. The binding constraint is therefore the free tier's **requests-per-minute and requests-per-day** limits, not money, so the guardrails target burst rate rather than spend:
 
 - `MAX_ANALYSES_PER_HOUR = 20`, enforced with a store counter. Exceeding it skips analysis, records the reason in the report, and **still validates and deploys**.
-- Retry once on `RateLimitError` with the SDK's backoff, then degrade to `analysis: null`.
-- Back-catalogue re-analysis is not automatic; it is a deliberate CLI invocation.
+- A `429` is retried once after a short backoff, then degrades to `analysis: null`. Exhausted free quota degrades the advisory layer and touches nothing else.
+- Back-catalogue re-analysis is not automatic; it is a deliberate CLI invocation, and it is the one operation that can plausibly hit a daily cap — so it processes serially with a delay between articles and resumes from where it stopped.
+- Log `usageMetadata` token counts per call so consumption against the quota is observable.
 
 ---
 
 ## 8. Testing strategy
 
-- **Analyzer:** run against recorded fixture responses; assert schema validation, that a malformed response triggers exactly one retry then degrades to `null`, and that prompt caching engages on the second live call (`cache_read_input_tokens > 0`). The stub analyzer covers every other test so the suite needs no API key.
+- **Analyzer:** run against recorded fixture responses; assert schema validation, that a malformed response triggers exactly one retry then degrades to `null`, and that the request carries `responseMimeType: "application/json"` with the JSON Schema derived from `seoAnalysisSchema`. The stub analyzer covers every other test so the suite needs no API key.
 - **Webhook:** signature verification against a **real captured Ghost request**; assert `401` on a bad signature, on a stale timestamp, and on a missing header; assert the duplicate key path returns `200 duplicate` without dispatching.
 - **Link recommender:** a fixed 12-article fixture corpus with hand-computed expected rankings; assert determinism across runs; assert that a suggestion with an off-corpus URL or a non-occurring anchor is dropped and counted.
 - **Validator:** a local static server serving deliberately broken HTML (missing canonical, `noindex`, two `<h1>`s, a 301) and asserting the exact rule ids that fail.
@@ -353,7 +357,7 @@ Two Claude calls per publish (analysis + link ranking). At even 40 posts a month
 **Analyzer (advisory)**
 
 - [ ] `analyze()` returns a `SeoAnalysis` valid against `seoAnalysisSchema` for every fixture post. `[m]`
-- [ ] Uses `claude-opus-5` with adaptive thinking and structured outputs via `messages.parse()`; the deprecated `output_format` appears nowhere in the codebase (grep-asserted). `[m]`
+- [ ] Uses `@google/genai` with `gemini-2.5-flash`, `responseMimeType: "application/json"`, a `responseJsonSchema` derived from `seoAnalysisSchema`, and `thinkingConfig.thinkingBudget: 0`. `[m]`
 - [ ] Malformed model output → one retry → `analysis: null` + `analysisError` set, **and the pipeline still completes**. `[m]`
 - [ ] **The independence test passes:** with the analyzer forced to throw, `npm run build` output is byte-identical to a successful run. `[m]`
 - [ ] `services/seo-worker` is imported by nothing under `apps/blog` — grep-asserted, so AI output structurally cannot reach a rendered page. `[m]`
@@ -380,7 +384,7 @@ Two Claude calls per publish (analysis + link ranking). At even 40 posts a month
 - [ ] `GET /api/seo/report?slug=…` returns `401` without a bearer token, `200` with one, `404` for an unknown slug. `[m]`
 - [ ] `npm run seo:report -- --slug …` prints the report and exits non-zero when the technical audit has errors. `[m]`
 - [ ] `report.technicalScore === report.technical.score` — one scoring function, no second implementation. `[m]`
-- [ ] The full suite runs with no `ANTHROPIC_API_KEY`, no Redis credentials and no Ghost instance. `[m]`
+- [ ] The full suite runs with no `GEMINI_API_KEY`, no Redis credentials and no Ghost instance. `[m]`
 
 **Cross-cutting**
 

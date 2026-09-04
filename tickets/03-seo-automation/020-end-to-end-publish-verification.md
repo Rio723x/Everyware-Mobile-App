@@ -12,7 +12,7 @@ exercise uncovers.
 1. In Ghost, add four webhooks on the "Everyware Web" integration, all pointing at
    `https://everyware.in/api/webhooks/ghost` with the shared `GHOST_WEBHOOK_SECRET`:
    `post.published`, `post.published.edited`, `post.unpublished`, `post.deleted`.
-2. Set the production env vars: `GHOST_WEBHOOK_SECRET`, `ANTHROPIC_API_KEY`, `SEO_WORKER_TOKEN`,
+2. Set the production env vars: `GHOST_WEBHOOK_SECRET`, `GEMINI_API_KEY`, `SEO_WORKER_TOKEN`,
    `VERCEL_DEPLOY_HOOK_URL`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
    `SEO_STORE_DRIVER=redis`.
 3. Publish a real article in Ghost and follow it through: webhook `202`, deploy, live page,

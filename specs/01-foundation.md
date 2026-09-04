@@ -139,11 +139,15 @@ Conventions for new code (enforced — see §9):
 - **Prefer inference.** Do not annotate local variables or the return types of non-exported functions. **Do** annotate the return type of every exported function that forms part of a module's interface — that is the contract, and letting it drift by inference is how interfaces rot.
 - **Discriminated unions** over boolean flags and optional-field soup; `as const` object maps over `enum`; `satisfies` for config objects so excess-property checking survives inference.
 
-### D4 — Ghost hosting
+### D4 — Ghost hosting: self-hosted via Docker Compose
 
-**Ghost(Pro) Starter at `cms.everyware.in`, used strictly headless.** Zero ops, managed upgrades and backups, native webhooks and Content API — everything Spec 03 needs — versus a droplet somebody has to patch. Cost is the trade-off; it is the right one for a team with no platform engineer.
+**Ghost, self-hosted, at `cms.everyware.in`, used strictly headless.** Ghost is MIT-licensed; the deployment is `infra/ghost/docker-compose.yml` — three containers (Ghost, MySQL 8, Caddy) and `docker compose up -d`. The Content API, Admin API and webhooks are identical to the hosted plan, so **nothing in this project depends on which one is running**.
 
-**Ghost's own public frontend must be de-indexed**, or it becomes a duplicate-content competitor to `everyware.in/blog`: enable *Settings → Advanced → Make this site private*, or serve `Disallow: /` from that host's robots.txt and set `X-Robots-Tag: noindex` on it. This is a required, verifiable step (§9).
+Cost: zero. Ops: one host, two Docker volumes to back up, and `docker compose pull && up -d` to upgrade. Caddy handles TLS issuance and renewal without configuration.
+
+**Ghost's own public frontend must be de-indexed**, or it becomes a duplicate-content competitor to `everyware.in/blog` — identical content on two URLs, splitting the ranking signal. This is enforced in the `Caddyfile` rather than by Ghost's *Make this site private* setting, because that setting also gates the Content API the blog build reads. Two rules do it: a hard `/robots.txt` override serving `Disallow: /`, and `X-Robots-Tag: noindex, nofollow, noarchive` on every other response. Both are verified by curl in §9.
+
+*Considered and rejected: Ghost(Pro).* It buys managed upgrades and backups for a monthly fee. With `docker compose` the operational delta is a nightly `mysqldump` and a periodic `pull`, which does not justify a recurring bill for a blog. Nothing about the architecture assumes either choice, so this is reversible at any point by pointing `GHOST_CONTENT_API_URL` somewhere else.
 
 ### D5 — Astro rendering mode: fully static, **no adapter**
 
@@ -195,7 +199,7 @@ Internal tags (`#`-prefixed, slug `hash-*`) are **never** rendered and never gen
 ### In scope
 
 - npm workspace restructure; existing app moved intact to `apps/site`.
-- Ghost(Pro) provisioning: branding, users, tags, Content API key, webhook-capable configuration, and **at least 3 real published posts** with distinct authors and tags for the templates to be built against.
+- Self-hosted Ghost deployment (`infra/ghost/`): branding, users, tags, Content API key, webhook-capable configuration, and **at least 3 real published posts** with distinct authors and tags for the templates to be built against.
 - Astro app with `@astrojs/react`, shared design tokens, `BlogHeader` / `BlogFooter`.
 - `packages/ghost` — a typed, validated, deep Content API client.
 - Five templates: listing (paginated), article, category, author, and a branded 404.
@@ -428,13 +432,18 @@ Vercel project settings: Framework Preset → **Other** (auto-detection now gues
 
 ## 7. Ghost setup runbook (Plan Phase 1)
 
-1. Create the Ghost(Pro) site; set the site URL to `https://cms.everyware.in` and point the DNS CNAME.
-2. Publication settings: title `Everyware Blog`, description, icon + logo from `apps/site/public/Everywware.webp`, accent `#00C4CC`, timezone `Asia/Kolkata`.
-3. Invite admin + editor users; create at least one author with name, bio and avatar.
-4. Create the initial public tags (e.g. `appliance-maintenance`, `buying-guides`, `service-costs`, `smart-home`) with names **and descriptions** — the description renders on the category page.
-5. **Integrations → Add custom integration "Everyware Web"** → copy the **Content API key** and API URL into Vercel env vars and `.env.local`. (The Admin API key from the same integration is used in Spec 03 — store it now, use it later.)
-6. **De-index the Ghost frontend** per D4, then verify: `curl -I https://cms.everyware.in/` shows `X-Robots-Tag: noindex`, and `curl https://cms.everyware.in/robots.txt` contains `Disallow: /`.
-7. Publish **3 real posts**, each with a feature image *with alt text*, a `custom_excerpt`, at least one public tag, an author, and body headings starting at H2.
+The deployment lives in `infra/ghost/` — compose file, Caddyfile, env template and a README. Full detail is there; this is the sequence.
+
+1. Point a DNS **A record** for `cms.everyware.in` at the host's public IP. Do this *first*: Caddy issues the TLS certificate on startup and needs the record to resolve.
+2. On the host: `cd infra/ghost && cp .env.example .env`, fill both passwords (`openssl rand -base64 32`), then `docker compose up -d`.
+3. Open `https://cms.everyware.in/ghost/` and create the owner account promptly — until it exists, anyone reaching that URL can claim it.
+4. Publication settings: title `Everyware Blog`, description, icon + logo from `apps/site/public/Everywware.webp`, accent `#00C4CC`, timezone `Asia/Kolkata`.
+5. Invite admin + editor users; create at least one author with name, bio and avatar.
+6. Create the initial public tags (e.g. `appliance-maintenance`, `buying-guides`, `service-costs`, `smart-home`) with names **and descriptions** — the description renders on the category page.
+7. **Integrations → Add custom integration "Everyware Web"** → copy the **Content API key** and API URL into Vercel env vars and `.env.local`. (The Admin API key is stored but never used: Spec 03 does not write to Ghost, which is what makes webhook loops structurally impossible.)
+8. Verify de-indexing: `curl -sI https://cms.everyware.in/` shows `X-Robots-Tag: noindex`, and `curl -s https://cms.everyware.in/robots.txt` contains `Disallow: /`. Both come from the `Caddyfile`, so they work before Ghost is even configured.
+9. Publish **3 real posts**, each with a feature image *with alt text*, a `custom_excerpt`, at least one public tag, an author, and body headings starting at H2.
+10. Set up the nightly backup of the two Docker volumes (see `infra/ghost/README.md`).
 
 ---
 
@@ -456,7 +465,7 @@ Every line is objectively checkable. `[m]` = machine-verifiable in CI.
 
 **Ghost**
 
-- [ ] Ghost(Pro) reachable at `https://cms.everyware.in`; Content API key issued and stored in Vercel env.
+- [ ] `docker compose up -d` in `infra/ghost/` brings up Ghost, MySQL and Caddy; `https://cms.everyware.in/ghost/` is reachable over valid TLS and the Content API key is issued and stored in Vercel env.
 - [ ] `curl -sI https://cms.everyware.in/ | grep -i x-robots-tag` shows `noindex`, **and** `curl -s https://cms.everyware.in/robots.txt` contains `Disallow: /`.
 - [ ] ≥ 3 published posts, ≥ 2 distinct public tags, ≥ 1 author with bio + avatar; every post has a feature image **with non-empty alt text** and a `custom_excerpt`.
 

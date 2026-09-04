@@ -27,7 +27,7 @@ rest of the pipeline can be developed and tested with no API key.
       `suggestedSlug` containing uppercase or underscores.
 - [ ] `StubAnalyzer` output validates against the schema for every fixture post.
 - [ ] `StubAnalyzer` is deterministic: identical output across 10 runs for the same post.
-- [ ] The system prompt is a module-level constant, identical across calls, so it is cacheable.
+- [ ] The system instruction is a module-level constant, identical across calls.
 - [ ] The user message contains the article `plaintext` **untruncated**.
 - [ ] The prompt text contains explicit instructions not to invent facts or schema — asserted by a
       test so a future edit cannot quietly drop them.

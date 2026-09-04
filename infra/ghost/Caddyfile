@@ -1,0 +1,26 @@
+# Automatic TLS via Let's Encrypt, plus the de-indexing that keeps Ghost's own
+# frontend out of search results.
+#
+# Ghost renders a complete public site of its own at this domain. Left
+# indexable, it would compete with everyware.in/blog for identical content and
+# split the ranking signal between two URLs. The two rules below are what
+# spec 01 D4 requires, and what its definition-of-done curl checks assert.
+
+{$GHOST_DOMAIN} {
+	encode gzip
+
+	# A hard override: Ghost serves its own robots.txt, and this wins.
+	handle /robots.txt {
+		header Content-Type "text/plain; charset=utf-8"
+		respond "User-agent: *
+Disallow: /
+" 200
+	}
+
+	handle {
+		# Belt and braces: the header covers every path, including ones a
+		# crawler reaches without consulting robots.txt first.
+		header X-Robots-Tag "noindex, nofollow, noarchive"
+		reverse_proxy ghost:2368
+	}
+}
