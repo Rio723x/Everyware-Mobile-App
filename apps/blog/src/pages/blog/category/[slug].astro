@@ -1,0 +1,66 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { BlogPost, BlogTag } from "@everyware/ghost";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import DownloadCtaBand from "../../../components/DownloadCtaBand.astro";
+import Pagination from "../../../components/Pagination.astro";
+import PostGrid from "../../../components/PostGrid.astro";
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import { categoryTrail } from "../../../lib/breadcrumbs";
+import { ghost } from "../../../lib/content";
+import { paginate } from "../../../lib/pagination";
+
+/**
+ * One route per public tag. `listTags()` already excludes internal `#tags`, so
+ * an editorial workflow tag can never generate a public category page.
+ */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const tags = await ghost.listTags();
+  const pages = await Promise.all(
+    tags.map(async (tag) => ({
+      params: { slug: tag.slug },
+      props: { tag, posts: await ghost.listPostsByTag(tag.slug) },
+    })),
+  );
+  return pages;
+};
+
+interface Props {
+  readonly tag: BlogTag;
+  readonly posts: readonly BlogPost[];
+}
+
+const { tag, posts } = Astro.props satisfies Props;
+const page = paginate(posts, 1, `/blog/category/${tag.slug}`);
+---
+
+<BlogLayout>
+  <div class="container">
+    <Breadcrumbs trail={categoryTrail(tag)} />
+
+    <header class="collection-header">
+      <h1 class="blog-h1">{tag.name}</h1>
+      {tag.description !== null && <p class="blog-lead">{tag.description}</p>}
+    </header>
+
+    <PostGrid posts={page.items} emptyMessage={`No articles tagged ${tag.name} yet.`} />
+
+    <Pagination
+      page={page.page}
+      totalPages={page.totalPages}
+      prevHref={page.prevHref}
+      nextHref={page.nextHref}
+    />
+
+    <DownloadCtaBand />
+  </div>
+</BlogLayout>
+
+<style>
+  .collection-header {
+    margin: 28px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>

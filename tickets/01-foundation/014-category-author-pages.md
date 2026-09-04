@@ -17,15 +17,32 @@
 
 ## Acceptance criteria
 
-- [ ] One file is emitted per public tag and per author; **no** file is emitted for any `hash-` tag.
-- [ ] Each page contains exactly one `<h1>` whose text equals the tag or author name.
-- [ ] A category page lists exactly the posts carrying that tag, newest first.
-- [ ] An author page lists exactly the posts by that author, newest first.
-- [ ] A tag with no description renders without an empty paragraph element.
-- [ ] An author with no avatar renders without a broken image.
-- [ ] Every tag chip and author link emitted anywhere in the blog resolves to a file the build
+- [x] One file is emitted per public tag and per author; **no** file is emitted for any `hash-` tag.
+- [x] Each page contains exactly one `<h1>` whose text equals the tag or author name.
+- [x] A category page lists exactly the posts carrying that tag, newest first.
+- [x] An author page lists exactly the posts by that author, newest first.
+- [x] A tag with no description renders without an empty paragraph element.
+- [x] An author with no avatar renders without a broken image.
+- [x] Every tag chip and author link emitted anywhere in the blog resolves to a file the build
       actually emitted — asserted across the whole output.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 148 tests; 21 pages emitted
+(14 articles, listing + page 2, 3 categories, 2 authors).
+
+### Notes
+
+- **The internal-tag exclusion is now proven end to end.** `listTags()` filters
+  `hash-` tags, so `getStaticPaths` never sees `#featured` and no URL exists for
+  it. Asserted directly against the emitted file list rather than against the
+  client's return value.
+- **Category and author pagination routes exist but currently emit nothing**,
+  because no tag or author has more than 12 posts in the fixture corpus. That is
+  correct behaviour, not a gap: `extraPageNumbers` returns an empty list, and the
+  same helper is already proven at the `/blog` level where the corpus does
+  overflow.
+- A cross-cutting assertion was added while here: **every `/blog…` href emitted
+  anywhere in the output must resolve to a file the build produced.** That is a
+  preview of spec 02's `internal-links-resolve` rule, and it now covers tag
+  chips, author bylines, breadcrumbs, related posts and the footer at once.

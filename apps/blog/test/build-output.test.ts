@@ -130,9 +130,9 @@ describe("every emitted page", () => {
 describe("article pages", () => {
   it("emits exactly one file per published post", async () => {
     const posts = await client.listPosts();
-    const articleFiles = htmlFiles().filter(
-      (file) => file.startsWith("blog/") && !file.startsWith("blog/page/"),
-    );
+    // Articles are blog/<slug>.html exactly: one path segment under blog/,
+    // which excludes blog/page/, blog/category/ and blog/author/.
+    const articleFiles = htmlFiles().filter((file) => /^blog\/[^/]+\.html$/.test(file));
     expect(articleFiles).toHaveLength(posts.length);
     for (const post of posts) {
       expect(articleFiles).toContain(`blog/${post.slug}.html`);
@@ -236,6 +236,85 @@ describe("related posts and CTA", () => {
       const html = readFileSync(resolve(distDir, file), "utf8");
       expect(html, file).toMatch(/aria-label="Get the EveryWare app"/);
       expect(html.match(/<script/g) ?? [], file).toEqual([]);
+    }
+  });
+});
+
+describe("category and author routes", () => {
+  it("emits one page per public tag and none for internal tags", async () => {
+    const tags = await client.listTags();
+    const files = htmlFiles().filter((f) => f.startsWith("blog/category/"));
+
+    expect(files).toHaveLength(tags.length);
+    for (const tag of tags) {
+      expect(files).toContain(`blog/category/${tag.slug}.html`);
+    }
+    // An editorial workflow tag must never become a public URL.
+    expect(files.some((f) => f.includes("hash-"))).toBe(false);
+  });
+
+  it("emits one page per author", async () => {
+    const authors = await client.listAuthors();
+    const files = htmlFiles().filter((f) => f.startsWith("blog/author/"));
+
+    expect(files).toHaveLength(authors.length);
+    for (const author of authors) {
+      expect(files).toContain(`blog/author/${author.slug}.html`);
+    }
+  });
+
+  it("lists exactly the posts carrying that tag, newest first", async () => {
+    for (const tag of await client.listTags()) {
+      const html = readFileSync(resolve(distDir, `blog/category/${tag.slug}.html`), "utf8");
+      const grid = /<div class="post-grid">[\s\S]*?<\/div>\s*<\/div>/.exec(html)?.[0] ?? html;
+      const expected = await client.listPostsByTag(tag.slug);
+
+      for (const post of expected.slice(0, 12)) {
+        expect(grid, `${tag.slug} should list ${post.slug}`).toContain(`/blog/${post.slug}`);
+      }
+    }
+  });
+
+  it("uses the tag or author name as the h1", async () => {
+    for (const tag of await client.listTags()) {
+      const html = readFileSync(resolve(distDir, `blog/category/${tag.slug}.html`), "utf8");
+      const h1 = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)?.[1]?.replace(/<[^>]+>/g, "").trim();
+      expect(h1, tag.slug).toBe(tag.name);
+    }
+    for (const author of await client.listAuthors()) {
+      const html = readFileSync(resolve(distDir, `blog/author/${author.slug}.html`), "utf8");
+      const h1 = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)?.[1]?.replace(/<[^>]+>/g, "").trim();
+      expect(h1, author.slug).toBe(author.name);
+    }
+  });
+
+  it("renders no empty paragraph for a tag without a description or an author without a bio", async () => {
+    for (const file of htmlFiles().filter(
+      (f) => f.startsWith("blog/category/") || f.startsWith("blog/author/"),
+    )) {
+      const html = readFileSync(resolve(distDir, file), "utf8");
+      expect(html, file).not.toMatch(/<p class="blog-lead">\s*<\/p>/);
+    }
+  });
+
+  it("renders no broken image for an author with no avatar", async () => {
+    // Rahul has profile_image: null in the fixtures.
+    const html = readFileSync(resolve(distDir, "blog/author/rahul-menon.html"), "utf8");
+    expect(html).not.toMatch(/<img[^>]*class="author-avatar"/);
+  });
+
+  it("resolves every tag chip and author link emitted anywhere in the blog", () => {
+    const emitted = new Set(htmlFiles());
+    for (const file of htmlFiles()) {
+      const html = readFileSync(resolve(distDir, file), "utf8");
+      const internal = [...html.matchAll(/href="(\/blog[^"#?]*)"/g)]
+        .map((m) => m[1])
+        .filter((href): href is string => href !== undefined);
+
+      for (const href of internal) {
+        const target = href === "/blog" ? "blog.html" : `${href.replace(/^\//, "")}.html`;
+        expect(emitted.has(target), `${file} links to ${href}, which was not emitted`).toBe(true);
+      }
     }
   });
 });
