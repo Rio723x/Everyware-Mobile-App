@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths } from "astro";
+import type { BlogPost } from "@everyware/ghost";
 import { prepareArticleHtml } from "@everyware/seo-core";
 import AuthorByline from "../../components/AuthorByline.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
@@ -13,7 +14,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
   return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
 };
 
-const { post } = Astro.props;
+/**
+ * `GetStaticPaths` does not propagate the props type to `Astro.props`, so the
+ * shape is declared here. Without it `post` arrives as `unknown` and every
+ * access below is an error rather than a checked field.
+ */
+interface Props {
+  readonly post: BlogPost;
+}
+
+const { post } = Astro.props satisfies Props;
 
 /**
  * Validates and transforms the Ghost body: refuses an <h1> or a skipped heading
