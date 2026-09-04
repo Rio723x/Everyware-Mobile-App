@@ -25,16 +25,42 @@ directory, with collisions treated as build failures.
 
 ## Acceptance criteria
 
-- [ ] `npm run build` from the repo root produces `dist/index.html` (the SPA), `dist/blog.html`,
+- [x] `npm run build` from the repo root produces `dist/index.html` (the SPA), `dist/blog.html`,
       and one `dist/blog/<slug>.html` per fixture post.
-- [ ] The merge reports zero collisions on a clean tree.
-- [ ] Planting a deliberate collision (e.g. `apps/site/public/blog.html`) makes the build exit
+- [x] The merge reports zero collisions on a clean tree.
+- [x] Planting a deliberate collision (e.g. `apps/site/public/blog.html`) makes the build exit
       non-zero and print that path. Remove the plant afterwards.
-- [ ] `npx serve dist` then: `/` loads the SPA; `#experiences/3` and `#info` still work;
+- [x] `npx serve dist` then: `/` loads the SPA; `#experiences/3` and `#info` still work;
       `/blog` and `/blog/<slug>` load the blog.
-- [ ] `dist/assets/` (Vite) and `dist/_astro/` (Astro) both exist and do not overlap.
+- [x] `dist/assets/` (Vite) and `dist/_astro/` (Astro) both exist and do not overlap.
 - [ ] `vercel.json` is valid JSON and is picked up by a preview deployment.
+      **Half-verified:** the JSON is valid and the local merged output is correct,
+      but no preview deployment exists yet. Vercel project settings (Framework
+      Preset → Other) still need changing by hand. Both land in T-01-018.
 
 ## Status
 
-Not started
+**Done in the repo** — commit on `feat/everyware-blog-platform`. One dashboard
+change is outstanding and belongs to T-01-018.
+
+### Verified
+
+- `npm run build` from the root: 25 blog files + 18 site files = **43 in `dist/`,
+  0 collisions**.
+- **The collision guard bites.** Planting `apps/site/public/blog.html` fails the
+  build with exit 1 and prints `1 path(s) are claimed by both apps: - blog.html`.
+- Serving the merged `dist/`: `/` is the SPA (still loading its own
+  `assets/index-*.js`), and `/blog`, `/blog/<slug>`, `/blog/category/<slug>`,
+  `/blog/author/<slug>` and `/blog/page/2` all return **200 with zero redirects**
+  — the no-trailing-slash promise in D6 holding in practice. An unknown path
+  returns 404.
+- `dist/assets/` (Vite) and `dist/_astro/` (Astro) coexist and do not overlap.
+
+### Bug found and fixed while writing this
+
+The first `listFiles` implementation relativised paths *inside* the recursion,
+so every nested file came back as a bare filename with its directory prefix
+stripped — the merge then tried to copy `assets/x.png` from the repo root and
+crashed. Fixed by walking to absolute paths and relativising once at the top.
+Worth noting because the failure mode was loud; a version that silently
+flattened `assets/` into `dist/` would have shipped a broken site.

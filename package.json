@@ -15,9 +15,9 @@
   "scripts": {
     "dev:site": "npm run dev -w apps/site",
     "dev:blog": "npm run dev -w apps/blog",
-    "build": "npm run build -w apps/site",
+    "build": "npm run build -w apps/site && npm run build -w apps/blog && node scripts/merge-dist.mjs",
     "typecheck": "tsc -b && npm run astro-check -w apps/blog",
-    "test": "npm run build -w apps/blog && vitest run",
+    "test": "npm run build && vitest run",
     "lint": "eslint .",
     "test:unit": "vitest run",
     "verify": "npm run typecheck && npm run lint && npm run test"
