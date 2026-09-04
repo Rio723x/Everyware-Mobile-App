@@ -21,13 +21,22 @@ The toolchain every new package inherits. No feature code.
 
 ## Acceptance criteria
 
-- [ ] `npm run typecheck` exits 0 on the empty workspace.
-- [ ] `npm run lint` exits 0.
-- [ ] `npm run test` exits 0 (no tests yet is a pass).
-- [ ] A scratch file containing `const x: any = 1` fails `npm run lint` with `no-explicit-any`;
+- [x] `npm run typecheck` exits 0 on the empty workspace.
+- [x] `npm run lint` exits 0.
+- [x] `npm run test` exits 0 (no tests yet is a pass).
+- [x] A scratch file containing `const x: any = 1` fails `npm run lint` with `no-explicit-any`;
       one containing `foo!.bar` fails with `no-non-null-assertion`. Delete the scratch file after proving it.
-- [ ] `apps/site/**` is untouched by lint and typecheck.
+- [x] `apps/site/**` is untouched by lint and typecheck.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+### Deviation recorded
+
+`.astro` linting is **not** wired up in this ticket. `astro-eslint-parser` and
+`eslint-plugin-astro` have no reason to exist in the tree before Astro does, and
+installing a parser for a file type the repo does not yet contain would be
+untestable. The `.astro` override is added in **T-01-007**, alongside the Astro
+install, where it can actually be exercised. Everything else in this ticket is
+complete and verified.

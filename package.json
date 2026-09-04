@@ -16,7 +16,16 @@
     "dev:site": "npm run dev -w apps/site",
     "dev:blog": "echo \"apps/blog does not exist yet - see tickets/01-foundation/007-astro-scaffold.md\" && exit 1",
     "build": "npm run build -w apps/site",
-    "typecheck": "echo \"no TypeScript packages yet - see tickets/01-foundation/003-typescript-lint-test-config.md\"",
-    "test": "echo \"no tests yet - see tickets/01-foundation/003-typescript-lint-test-config.md\""
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.10.0",
+    "globals": "^17.12.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.69.0",
+    "vitest": "^5.0.0"
   }
 }
