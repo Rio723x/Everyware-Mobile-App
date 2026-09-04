@@ -21,3 +21,12 @@ export {
   siteUrl,
   type AiUserAgent,
 } from "./config.js";
+
+export {
+  ArticleHtmlError,
+  addImageLoadingHints,
+  assertHeadingOrder,
+  assertNoH1,
+  findImagesWithoutAlt,
+  prepareArticleHtml,
+} from "./html.js";

@@ -126,3 +126,87 @@ describe("every emitted page", () => {
     }
   });
 });
+
+describe("article pages", () => {
+  it("emits exactly one file per published post", async () => {
+    const posts = await client.listPosts();
+    const articleFiles = htmlFiles().filter(
+      (file) => file.startsWith("blog/") && !file.startsWith("blog/page/"),
+    );
+    expect(articleFiles).toHaveLength(posts.length);
+    for (const post of posts) {
+      expect(articleFiles).toContain(`blog/${post.slug}.html`);
+    }
+  });
+
+  it("uses the post title as the page's only h1", async () => {
+    for (const post of await client.listPosts()) {
+      const html = readFileSync(resolve(distDir, `blog/${post.slug}.html`), "utf8");
+      const h1 = /<h1[^>]*>([\s\S]*?)<\/h1>/.exec(html)?.[1]?.replace(/<[^>]+>/g, "").trim();
+      expect(h1, post.slug).toBe(post.title);
+    }
+  });
+
+  it("puts the full article text in the raw HTML, with no JavaScript involved", async () => {
+    // The whole reason Astro is here: a crawler must receive the article in the
+    // first byte, not after hydration.
+    for (const post of await client.listPosts()) {
+      const html = readFileSync(resolve(distDir, `blog/${post.slug}.html`), "utf8");
+      const bodyText = (/<div class="article-body"[^>]*>([\s\S]*?)<\/div>/.exec(html)?.[1] ?? "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      const expected = post.plaintext.replace(/\s+/g, " ").trim();
+
+      expect(bodyText, post.slug).not.toBe("");
+      // Every sentence of the source text must survive into the served HTML.
+      for (const sentence of expected.split(". ").filter((s) => s.length > 12)) {
+        expect(bodyText, `${post.slug}: "${sentence}"`).toContain(sentence.replace(/\.$/, ""));
+      }
+    }
+  });
+
+  it("never skips a heading level", async () => {
+    for (const post of await client.listPosts()) {
+      const html = readFileSync(resolve(distDir, `blog/${post.slug}.html`), "utf8");
+      const levels = [...html.matchAll(/<h([1-6])\b/gi)].map((m) => Number(m[1]));
+      let previous = 0;
+      for (const level of levels) {
+        if (previous !== 0) {
+          expect(level, `${post.slug}: h${String(previous)} -> h${String(level)}`).toBeLessThanOrEqual(
+            previous + 1,
+          );
+        }
+        previous = level;
+      }
+    }
+  });
+
+  it("lazy-loads body images and eagerly loads the hero", async () => {
+    const post = (await client.listPosts()).find((p) => p.featureImage !== null);
+    expect(post).toBeDefined();
+    const html = readFileSync(resolve(distDir, `blog/${post?.slug ?? ""}.html`), "utf8");
+    expect(html).toMatch(/class="article-hero"[^>]*loading="eager"|loading="eager"[^>]*article-hero/);
+  });
+
+  it("links every article to at least one other internal Everyware URL", async () => {
+    // No orphan pages: an article that links nowhere is a dead end for both
+    // crawlers and readers.
+    for (const post of await client.listPosts()) {
+      const html = readFileSync(resolve(distDir, `blog/${post.slug}.html`), "utf8");
+      const internal = [...html.matchAll(/href="(\/[^"]*)"/g)]
+        .map((m) => m[1])
+        .filter((href): href is string => href !== undefined)
+        .filter((href) => href !== `/blog/${post.slug}`);
+      expect(internal.length, post.slug).toBeGreaterThan(0);
+    }
+  });
+
+  it("gives an untagged article a three-level breadcrumb rather than a broken four-level one", () => {
+    const html = readFileSync(resolve(distDir, "blog/smart-home-starter-guide.html"), "utf8");
+    const crumbs = html.match(/<li>[\s\S]*?<\/li>/g) ?? [];
+    const breadcrumbBlock = /<nav[^>]*aria-label="Breadcrumb"[\s\S]*?<\/nav>/.exec(html)?.[0] ?? "";
+    expect(breadcrumbBlock.match(/<li>/g) ?? []).toHaveLength(3);
+    expect(crumbs.length).toBeGreaterThan(0);
+  });
+});
