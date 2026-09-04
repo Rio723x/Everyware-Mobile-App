@@ -1,0 +1,82 @@
+---
+import type { BlogPost } from "@everyware/ghost";
+import TagChips from "./TagChips.astro";
+
+interface Props {
+  readonly post: BlogPost;
+  /** The first card on a listing page is usually above the fold. */
+  readonly eager?: boolean;
+}
+
+const { post, eager = false } = Astro.props;
+
+/**
+ * Ghost feature images are remote URLs whose real pixel dimensions are not
+ * known at build time without fetching every one. The width/height attributes
+ * below are therefore a declared 16:9 aspect ratio matching the CSS box, not a
+ * claim about the source file - which is precisely what the browser uses them
+ * for. Together with object-fit: cover, that reserves the right space and
+ * prevents layout shift, which is the whole reason the attributes are required.
+ */
+const CARD_IMAGE_WIDTH = 640;
+const CARD_IMAGE_HEIGHT = 360;
+
+const formatDate = (iso: string): string =>
+  new Date(iso).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "Asia/Kolkata",
+  });
+---
+
+<article class="post-card">
+  <a class="post-card-media" href={`/blog/${post.slug}`} tabindex="-1" aria-hidden="true">
+    {
+      post.featureImage === null ? (
+        <span class="post-card-placeholder" />
+      ) : (
+        <img
+          src={post.featureImage.url}
+          alt={post.featureImage.alt}
+          width={CARD_IMAGE_WIDTH}
+          height={CARD_IMAGE_HEIGHT}
+          loading={eager ? "eager" : "lazy"}
+          decoding="async"
+        />
+      )
+    }
+  </a>
+
+  <div class="post-card-body">
+    <TagChips tags={post.tags} />
+
+    <h2 class="post-card-title">
+      <a href={`/blog/${post.slug}`}>{post.title}</a>
+    </h2>
+
+    <p class="post-card-excerpt">{post.excerpt}</p>
+
+    <p class="blog-meta">
+      {post.primaryAuthor.name}
+      {" · "}
+      <time datetime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+      {` · ${String(post.readingTimeMinutes)} min read`}
+    </p>
+  </div>
+</article>
+
+<style>
+  /* A card with no feature image gets a branded block rather than a broken
+     image icon or a collapsed grid cell. */
+  .post-card-placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--brand-cyan-light), var(--canvas-subtle));
+  }
+
+  .post-card-title a:hover {
+    color: var(--brand-cyan);
+  }
+</style>

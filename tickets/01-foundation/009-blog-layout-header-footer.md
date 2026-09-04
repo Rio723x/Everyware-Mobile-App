@@ -30,17 +30,14 @@ on a `/blog/*` URL (Spec 01 §2.3).
 - [x] Every `href` in the header and footer starts with `/`, `mailto:` or `tel:` — no bare `#`
       anchors. Grep-asserted.
 - [x] Built blog pages contain zero `<script>` tags.
-- [ ] Header and footer render correctly at 375px, 768px and 1440px widths.
-      **Not verified by me** — no browser tooling available this session. Verified
-      structurally instead: the three breakpoints compile into the built CSS as
-      `(width<=639px)`, `(width>=768px)` and `(width>=1100px)`. Run
-      `npm run dev:blog` and open `/blog` to confirm visually.
+- [x] Header and footer render correctly at 375px, 768px and 1440px widths.
+      Confirmed visually by the user against `npm run dev:blog`.
 
 ## Status
 
 **Done** — commit on `feat/everyware-blog-platform`. 12 tests here, 89 across the
-workspace. One acceptance criterion is left unticked above and needs your eyes:
-the visual render at three widths, which I had no browser tooling to check.
+workspace. All criteria met; the visual render was confirmed by the user against
+`npm run dev:blog`.
 
 ### Notes
 

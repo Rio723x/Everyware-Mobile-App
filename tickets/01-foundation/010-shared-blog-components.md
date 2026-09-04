@@ -22,16 +22,34 @@ The presentational pieces the four route templates compose. All Astro, all stati
 
 ## Acceptance criteria
 
-- [ ] Every component renders from a fixture `BlogPost` with no runtime error.
-- [ ] Every `<img>` a component emits has a non-empty `alt` and explicit `width` and `height`.
-- [ ] `PostCard` renders the placeholder, not a broken image, when `featureImage` is null.
-- [ ] `AuthorByline` omits the "Updated" element when `updatedAt` equals `publishedAt`.
-- [ ] `Breadcrumbs` renders the final crumb as text, not an anchor.
-- [ ] `Pagination` emits no `rel="prev"` on page 1 and no `rel="next"` on the last page, and its
+- [x] Every component renders from a fixture `BlogPost` with no runtime error.
+- [x] Every `<img>` a component emits has a non-empty `alt` and explicit `width` and `height`.
+- [x] `PostCard` renders the placeholder, not a broken image, when `featureImage` is null.
+- [x] `AuthorByline` omits the "Updated" element when `updatedAt` equals `publishedAt`.
+- [x] `Breadcrumbs` renders the final crumb as text, not an anchor.
+- [x] `Pagination` emits no `rel="prev"` on page 1 and no `rel="next"` on the last page, and its
       page-1 href is `/blog`.
-- [ ] All `<time>` elements carry a `datetime` attribute parseable by `Date.parse`.
-- [ ] Components ship no client-side JavaScript.
+- [x] All `<time>` elements carry a `datetime` attribute parseable by `Date.parse`.
+- [x] Components ship no client-side JavaScript.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 15 tests here, 27 in the blog
+app, 104 across the workspace.
+
+### Notes
+
+- **Breadcrumb trails live in `src/lib/breadcrumbs.ts`, not in the component.**
+  Spec 02's `jsonld-matches-page` rule requires the BreadcrumbList JSON-LD to
+  agree with the visible trail. Generating both from one value makes
+  disagreement impossible rather than merely unlikely; T-02-008 imports the same
+  function.
+- **`width`/`height` on remote Ghost images are a declared aspect ratio**, not a
+  claim about the source file. Real pixel dimensions are unknowable at build
+  time without fetching every image, and the attributes' actual job in a browser
+  is to reserve the right box before the image loads. 640x360 on cards matches
+  the CSS 16:9 container, and with `object-fit: cover` that is what prevents
+  layout shift.
+- Page 1 is expressed once, in `paginate()`: it always lives at the base path,
+  never at `<base>/page/1`. The listing, category and author routes inherit that
+  because they all call the same helper.
