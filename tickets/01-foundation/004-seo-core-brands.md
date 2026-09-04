@@ -33,17 +33,17 @@ trailing slash).
 
 ## Acceptance criteria
 
-- [ ] `toSlug` accepts `washing-machine-care`; rejects `Washing_Machine`, `-lead`, `trail-`, `a--b`, `""`.
-- [ ] `toAbsoluteUrl` accepts `https://everyware.in/blog/x`; rejects `http://…`, `/blog/x`,
+- [x] `toSlug` accepts `washing-machine-care`; rejects `Washing_Machine`, `-lead`, `trail-`, `a--b`, `""`.
+- [x] `toAbsoluteUrl` accepts `https://everyware.in/blog/x`; rejects `http://…`, `/blog/x`,
       `https://everyware.in/blog/x/`, and anything containing `#` or `?`.
-- [ ] `toIsoDateTime` accepts a `Date` and a valid ISO string with offset; rejects `2026-09-04` and `""`.
-- [ ] `siteUrl("/blog")`, `siteUrl("blog")` and `siteUrl("//blog")` all return
+- [x] `toIsoDateTime` accepts a `Date` and a valid ISO string with offset; rejects `2026-09-04` and `""`.
+- [x] `siteUrl("/blog")`, `siteUrl("blog")` and `siteUrl("//blog")` all return
       `https://everyware.in/blog`; `siteUrl("/")` returns `https://everyware.in/`.
-- [ ] Every rejection message includes the offending value.
-- [ ] `AI_USER_AGENTS` matches the current `apps/site/public/robots.txt` exactly — asserted by a
+- [x] Every rejection message includes the offending value.
+- [x] `AI_USER_AGENTS` matches the current `apps/site/public/robots.txt` exactly — asserted by a
       test that reads that file.
-- [ ] `npm run typecheck`, `npm run lint`, `npm run test` exit 0.
+- [x] `npm run typecheck`, `npm run lint`, `npm run test` exit 0.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 36 tests.
