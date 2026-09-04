@@ -1,20 +1,20 @@
 ---
-// Temporary scaffold page: proves the Ghost client, the Astro build and the
-// route shape all work end to end. T-01-011 replaces it with the real listing.
+// Temporary scaffold page, now rendering inside BlogLayout so the chrome is
+// exercised end to end. T-01-011 replaces it with the real listing.
+import BlogLayout from "../../layouts/BlogLayout.astro";
 import { ghost } from "../../lib/content";
 
 const posts = await ghost.listPosts();
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
-  <body>
-    <h1>Everyware Blog</h1>
+<BlogLayout>
+  <div class="container">
+    <h1 class="blog-h1">Everyware Blog</h1>
+    <p class="blog-lead">
+      Appliance care, repair costs and buying guides for Indian households.
+    </p>
     <ul>
       {posts.map((post) => <li>{post.title}</li>)}
     </ul>
-  </body>
-</html>
+  </div>
+</BlogLayout>

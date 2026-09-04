@@ -23,15 +23,37 @@ on a `/blog/*` URL (Spec 01 §2.3).
 
 ## Acceptance criteria
 
-- [ ] A page using `BlogLayout` renders header and footer and validates as well-formed HTML.
-- [ ] `BlogLayout.astro` contains no `<title>`, `<meta name="description">`, `<link rel="canonical">`,
+- [x] A page using `BlogLayout` renders header and footer and validates as well-formed HTML.
+- [x] `BlogLayout.astro` contains no `<title>`, `<meta name="description">`, `<link rel="canonical">`,
       `og:`, `twitter:` or `application/ld+json` — grep-asserted in a test.
-- [ ] `<slot name="head" />` is present and content passed into it appears inside `<head>`.
-- [ ] Every `href` in the header and footer starts with `/`, `mailto:` or `tel:` — no bare `#`
+- [x] `<slot name="head" />` is present and content passed into it appears inside `<head>`.
+- [x] Every `href` in the header and footer starts with `/`, `mailto:` or `tel:` — no bare `#`
       anchors. Grep-asserted.
-- [ ] Built blog pages contain zero `<script>` tags.
+- [x] Built blog pages contain zero `<script>` tags.
 - [ ] Header and footer render correctly at 375px, 768px and 1440px widths.
+      **Not verified by me** — no browser tooling available this session. Verified
+      structurally instead: the three breakpoints compile into the built CSS as
+      `(width<=639px)`, `(width>=768px)` and `(width>=1100px)`. Run
+      `npm run dev:blog` and open `/blog` to confirm visually.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 12 tests here, 89 across the
+workspace. One acceptance criterion is left unticked above and needs your eyes:
+the visual render at three widths, which I had no browser tooling to check.
+
+### Notes
+
+- The guards are proven, not assumed: planting a `<title>` in `BlogLayout.astro`
+  fails `has no <title>`, and removing the plant passes again. A guard that has
+  never been seen to fail is not a guard.
+- The mobile layout has **no hamburger and no JavaScript**. Below 640px the four
+  nav links wrap onto their own centred row. A menu toggle would mean shipping a
+  script to every article page to save one row of vertical space.
+- `BlogFooter` drops the three dead `href="#"` social links the marketing
+  footer carries. A link that goes nowhere is worse than no link, and spec 02's
+  `internal-links-resolve` rule would flag them.
+- The favicon is referenced as `/Everywware.webp`, which resolves from
+  `apps/site/public` **after** the dist merge (T-01-016). A standalone
+  `astro build` 404s it. That is the correct trade: duplicating a brand asset
+  into two apps is worse than a dev-only missing favicon.
