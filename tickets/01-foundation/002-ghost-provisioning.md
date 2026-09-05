@@ -54,6 +54,43 @@ whether Ghost is self-hosted or hosted, so `packages/ghost`, `apps/blog` and
 
 ## Status
 
-Not started — **blocked on infrastructure only**. Everything downstream of this
-ticket builds and tests against committed fixtures, so it gates nothing except
-T-01-018 (live wiring and preview deploy).
+**Partly done.** Ghost and MySQL are deployed and running on the fixolutions
+services VM at `~/services/ghost`. Three items remain, all gated on DNS or root.
+
+### Done
+
+- [x] Stack deployed to `~/services/ghost`; `docker compose up -d` succeeded.
+- [x] Ghost booted in 24s; `ghost-db` reports healthy.
+- [x] nginx reaches Ghost by container name over the `proxy` network.
+- [x] **No host ports bound** — verified; the only 0.0.0.0 bindings on the box
+      are still supabase-pooler, supabase-envoy and nginx.
+- [x] All 10 Supabase containers and nginx still healthy after the deploy.
+- [x] Secrets generated on the VM with `openssl rand`, `.env` at mode 600,
+      never committed and never passed through a developer machine.
+
+### Remaining
+
+- [ ] **Cloudflare A record** `cms` → `35.207.232.124`, **grey cloud / DNS only**.
+- [ ] **Certificate** (needs root): `sudo certbot certonly --webroot -w /var/www/certbot -d cms.everyware.in`
+- [ ] **nginx vhost**, only after the cert exists: copy
+      `~/services/ghost/nginx/cms.everyware.in.conf` into `~/services/nginx/conf.d/`,
+      then `docker exec nginx nginx -t && docker exec nginx nginx -s reload`.
+- [ ] Owner account, branding, tags, Content API key, 3 seed posts.
+- [ ] Optional but recommended (needs root): 2 GB swapfile.
+
+### Deviation from the spec, recorded
+
+**Caddy is gone.** Spec 01 D4 assumed a dedicated host where Caddy could own
+ports 80 and 443. This box already runs an nginx reverse proxy on those ports
+serving git, chat and api-dev, with certbot and `/etc/letsencrypt` mounted. Ghost
+therefore binds no host ports and becomes a fourth vhost, and the de-indexing
+rules moved from the Caddyfile into `nginx/cms.everyware.in.conf`. Same two
+rules, same verification commands.
+
+### Measured, not estimated
+
+Ghost 115 MiB and ghost-db 184 MiB — about 300 MiB total, against the ~750 MiB
+I projected when arguing this box might be too small. The MySQL tuning
+(`innodb-buffer-pool-size=128M`, `performance-schema=OFF`) accounts for most of
+the gap. Available memory went 1,709 → 1,433 MiB. Swap is still worth adding as
+a backstop, but the headroom concern was overstated.
