@@ -12,7 +12,16 @@ declare const brand: unique symbol;
 
 type Brand<T, B extends string> = T & { readonly [brand]: B };
 
-/** A URL path segment: lowercase alphanumerics separated by single hyphens. */
+/**
+ * A URL path segment: lowercase alphanumerics separated by single hyphens or
+ * underscores.
+ *
+ * Underscores are allowed because Ghost emits them - an author whose username
+ * is `fixolutions_admin` gets that as a slug verbatim. This brand models what a
+ * valid slug *is*, and rejecting legal CMS data would fail the build on content
+ * nobody can fix from the code side. Hyphens remain preferable for readability,
+ * but that is an editorial preference, not a validity rule.
+ */
 export type Slug = Brand<string, "Slug">;
 
 /** An absolute `https://` URL with no fragment, no query, and no trailing slash. */
@@ -21,7 +30,7 @@ export type AbsoluteUrl = Brand<string, "AbsoluteUrl">;
 /** A full ISO-8601 timestamp including a UTC offset. */
 export type IsoDateTime = Brand<string, "IsoDateTime">;
 
-const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const SLUG_PATTERN = /^[a-z0-9]+(?:[-_][a-z0-9]+)*$/;
 
 export class BrandValidationError extends Error {
   constructor(brandName: string, value: unknown, reason: string) {
@@ -35,7 +44,7 @@ export const toSlug = (value: string): Slug => {
     throw new BrandValidationError(
       "Slug",
       value,
-      "must be lowercase alphanumerics separated by single hyphens",
+      "must be lowercase alphanumerics separated by single hyphens or underscores",
     );
   }
   // Invariant: the value matched SLUG_PATTERN on the line above.

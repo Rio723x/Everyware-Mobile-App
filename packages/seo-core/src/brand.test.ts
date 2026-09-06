@@ -6,12 +6,21 @@ describe("toSlug", () => {
     expect(toSlug("washing-machine-care")).toBe("washing-machine-care");
   });
 
+  it("accepts underscores, because Ghost emits them", () => {
+    // A Ghost user named fixolutions_admin gets that slug verbatim. Rejecting
+    // it would fail the build on legal CMS data.
+    expect(toSlug("fixolutions_admin")).toBe("fixolutions_admin");
+    expect(toSlug("a_b-c")).toBe("a_b-c");
+  });
+
   it.each([
-    ["Washing_Machine", "uppercase and underscore"],
+    ["Washing_Machine", "uppercase"],
     ["Washing-Machine", "uppercase"],
     ["-lead", "leading hyphen"],
     ["trail-", "trailing hyphen"],
     ["a--b", "double hyphen"],
+    ["a__b", "double underscore"],
+    ["_lead", "leading underscore"],
     ["", "empty string"],
     ["has space", "whitespace"],
   ])("rejects %s (%s)", (value) => {

@@ -247,3 +247,23 @@ describe("createGhostClient", () => {
     );
   });
 });
+
+describe("forceFixtures", () => {
+  it("returns the fixture adapter even when live credentials are present", () => {
+    // Guards the test suite: a developer with .env.local pointing at live Ghost
+    // must still get deterministic, offline builds when running tests.
+    const client = createGhostClient({
+      url: "https://cms.everyware.in",
+      key: "real-looking-key",
+      isProduction: true,
+      forceFixtures: true,
+    });
+    expect(client).toBeInstanceOf(InMemoryGhostClient);
+  });
+
+  it("does not throw in production when fixtures are forced", () => {
+    expect(() =>
+      createGhostClient({ url: undefined, key: undefined, isProduction: true, forceFixtures: true }),
+    ).not.toThrow();
+  });
+});

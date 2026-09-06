@@ -7,6 +7,16 @@ export interface CreateGhostClientOptions {
   readonly key?: string | undefined;
   /** Defaults to `process.env.NODE_ENV === "production"`. */
   readonly isProduction?: boolean;
+  /**
+   * Force the fixture adapter even when credentials are present.
+   *
+   * The test suite builds the site and asserts against the emitted HTML. Those
+   * assertions describe the fixture corpus, so a developer with live Ghost
+   * credentials in `.env.local` would otherwise see the suite fail for reasons
+   * that have nothing to do with their change - and a test that depends on a
+   * network service is not a test.
+   */
+  readonly forceFixtures?: boolean;
   readonly warn?: (message: string) => void;
 }
 
@@ -27,6 +37,11 @@ export class GhostConfigurationError extends Error {
  * since nothing alerts and every URL 404s.
  */
 export const createGhostClient = (options: CreateGhostClientOptions = {}): GhostClient => {
+  const forceFixtures = options.forceFixtures ?? process.env["GHOST_FIXTURES"] === "1";
+  if (forceFixtures) {
+    return new InMemoryGhostClient();
+  }
+
   const url = options.url ?? process.env["GHOST_CONTENT_API_URL"];
   const key = options.key ?? process.env["GHOST_CONTENT_API_KEY"];
   const isProduction = options.isProduction ?? process.env["NODE_ENV"] === "production";
