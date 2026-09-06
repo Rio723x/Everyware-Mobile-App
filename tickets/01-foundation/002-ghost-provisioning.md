@@ -68,15 +68,38 @@ services VM at `~/services/ghost`. Three items remain, all gated on DNS or root.
 - [x] Secrets generated on the VM with `openssl rand`, `.env` at mode 600,
       never committed and never passed through a developer machine.
 
-### Remaining
+### Also done — Ghost is live at https://cms.everyware.in
 
-- [ ] **Cloudflare A record** `cms` → `35.207.232.124`, **grey cloud / DNS only**.
-- [ ] **Certificate** (needs root): `sudo certbot certonly --webroot -w /var/www/certbot -d cms.everyware.in`
-- [ ] **nginx vhost**, only after the cert exists: copy
-      `~/services/ghost/nginx/cms.everyware.in.conf` into `~/services/nginx/conf.d/`,
-      then `docker exec nginx nginx -t && docker exec nginx nginx -s reload`.
-- [ ] Owner account, branding, tags, Content API key, 3 seed posts.
-- [ ] Optional but recommended (needs root): 2 GB swapfile.
+- [x] Cloudflare A record `cms` → `35.207.232.124`, DNS only.
+- [x] Certificate issued via `certbot --standalone`, matching the pattern used by
+      the four existing certs on this host. Expires **2026-12-05**.
+- [x] vhost installed at `~/services/nginx/conf.d/ghost.conf`; `nginx -t` passed
+      **before** the reload, guarded so an invalid config would have been removed
+      rather than reloaded.
+- [x] `https://cms.everyware.in/` → 200, `/ghost/` → 200, HTTP → HTTPS 301.
+- [x] De-indexing verified: `X-Robots-Tag: noindex, nofollow, noarchive` and
+      `robots.txt` serving `Disallow: /`.
+
+### Remaining — needs a human in the Ghost admin UI
+
+- [ ] Owner account at `https://cms.everyware.in/ghost/` — **claim it promptly**;
+      until it exists anyone reaching that URL can take it.
+- [ ] Branding, the four tags with descriptions, Content API key into Vercel.
+- [ ] 3 seed posts, headings starting at H2.
+- [ ] Optional: 2 GB swapfile.
+
+### Two pre-existing issues found, not caused by this work
+
+1. **`git` and `chat` were returning 502 before nginx was ever stopped**, and
+   still are. Their backends are down; the proxy is fine. `api-dev` returns 401,
+   which looks intentional.
+2. **Renewal will fail unattended.** All five certs on this host, Ghost's
+   included, use `authenticator = standalone` with no pre/post hooks, so
+   `certbot renew` will try to bind port 80 while nginx holds it. Renewal
+   currently requires `docker stop nginx && sudo certbot renew && docker start
+   nginx`. Worth `sudo certbot renew --dry-run` to confirm, and worth moving the
+   whole host to webroot — but that is shared infrastructure and not this
+   ticket's call.
 
 ### Deviation from the spec, recorded
 
