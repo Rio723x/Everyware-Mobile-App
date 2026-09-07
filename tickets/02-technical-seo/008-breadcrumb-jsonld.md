@@ -24,14 +24,16 @@ to both.
 
 ## Acceptance criteria
 
-- [ ] All four trails match the table exactly, including labels.
-- [ ] `position` values are contiguous integers starting at 1 with no gaps in every case.
-- [ ] The last item's `item` URL equals the page canonical exactly.
-- [ ] Every item URL passes `toAbsoluteUrl`.
-- [ ] An article with no public tag produces a 3-item list with positions 1, 2, 3.
-- [ ] The visible breadcrumb and the JSON-LD are generated from one shared trail value — asserted by
+- [x] All four trails match the table exactly, including labels.
+- [x] `position` values are contiguous integers starting at 1 with no gaps in every case.
+- [x] The last item's `item` URL equals the page canonical exactly.
+- [x] Every item URL passes `toAbsoluteUrl`.
+- [x] An article with no public tag produces a 3-item list with positions 1, 2, 3.
+- [x] The visible breadcrumb and the JSON-LD are generated from one shared trail value — asserted by
       a test comparing rendered crumb labels to the schema item names.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Positions are contiguous by construction, and the zod refinement rejects a trail shorter than two crumbs.

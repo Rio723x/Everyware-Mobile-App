@@ -20,14 +20,16 @@
 
 ## Acceptance criteria
 
-- [ ] Every required OG property is present and non-empty for all four page kinds.
-- [ ] `og:url` is reference-equal to the canonical passed in, asserted directly.
-- [ ] Article inputs produce `og:type: "article"` and all three `article:*` timestamps in ISO-8601;
+- [x] Every required OG property is present and non-empty for all four page kinds.
+- [x] `og:url` is reference-equal to the canonical passed in, asserted directly.
+- [x] Article inputs produce `og:type: "article"` and all three `article:*` timestamps in ISO-8601;
       non-article inputs produce `og:type: "website"` and **no** `article:*` properties.
-- [ ] Twitter title and description equal the page title and description exactly.
-- [ ] `twitter:card` is always `summary_large_image`.
-- [ ] Deterministic across repeated calls.
+- [x] Twitter title and description equal the page title and description exactly.
+- [x] `twitter:card` is always `summary_large_image`.
+- [x] Deterministic across repeated calls.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+`og:url` is the canonical value passed in, asserted identical rather than recomputed.

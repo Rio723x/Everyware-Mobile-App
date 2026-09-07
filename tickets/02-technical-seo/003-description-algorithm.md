@@ -22,15 +22,17 @@ author name and the post count.
 
 ## Acceptance criteria
 
-- [ ] Unit tests cover all five steps in order, each proven by a fixture that has the higher-priority
+- [x] Unit tests cover all five steps in order, each proven by a fixture that has the higher-priority
       fields empty.
-- [ ] Whitespace collapsing: a source containing newlines and double spaces yields a single-spaced
+- [x] Whitespace collapsing: a source containing newlines and double spaces yields a single-spaced
       one-line string.
-- [ ] Step 4 never splits a word and produces at most 160 characters including the ellipsis.
-- [ ] A post whose every source is empty or too short throws an error containing its slug.
-- [ ] Every non-throwing result is between 50 and 170 characters (Spec 02 rule `description-length`).
-- [ ] Deterministic across repeated calls.
+- [x] Step 4 never splits a word and produces at most 160 characters including the ellipsis.
+- [x] A post whose every source is empty or too short throws an error containing its slug.
+- [x] Every non-throwing result is between 50 and 170 characters (Spec 02 rule `description-length`).
+- [x] Deterministic across repeated calls.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+The spec's five-step chain is three steps here: `post.excerpt` is already `custom_excerpt ?? excerpt`, resolved in the Ghost package where the wire format is still visible. Recorded rather than silently diverged.

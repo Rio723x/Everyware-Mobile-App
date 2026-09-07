@@ -21,14 +21,16 @@
 
 ## Acceptance criteria
 
-- [ ] Canonicals for all five route kinds match the Spec 01 D6 table exactly, character for character.
-- [ ] No produced canonical ends in `/`, contains `#`, or contains `?`.
-- [ ] `/blog/page/2` canonicalises to itself, asserted explicitly.
-- [ ] A post with `canonical_url` set returns that value instead of the computed one.
-- [ ] `buildPrevNext` returns null `prev` on page 1, null `next` on the last page, and `/blog`
+- [x] Canonicals for all five route kinds match the Spec 01 D6 table exactly, character for character.
+- [x] No produced canonical ends in `/`, contains `#`, or contains `?`.
+- [x] `/blog/page/2` canonicalises to itself, asserted explicitly.
+- [x] A post with `canonical_url` set returns that value instead of the computed one.
+- [x] `buildPrevNext` returns null `prev` on page 1, null `next` on the last page, and `/blog`
       (not `/blog/page/1`) as page 2's `prev`.
-- [ ] The string `noindex` appears nowhere in `packages/seo-core/src` — grep-asserted.
+- [x] The string `noindex` appears nowhere in `packages/seo-core/src` — grep-asserted.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Paginated pages are self-canonical; page 2 links back to the base path, never `/page/1`.

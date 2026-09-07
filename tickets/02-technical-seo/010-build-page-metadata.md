@@ -15,18 +15,20 @@ Twitter and the JSON-LD documents appropriate to `input.kind`, returning a fully
 
 ## Acceptance criteria
 
-- [ ] All four `kind`s return a complete `PageMetadata` with no undefined field.
-- [ ] Calling it twice with the same input returns deep-equal output.
-- [ ] `openGraph["og:url"]`, `twitter` URLs and the last `BreadcrumbList` item URL all equal
+- [x] All four `kind`s return a complete `PageMetadata` with no undefined field.
+- [x] Calling it twice with the same input returns deep-equal output.
+- [x] `openGraph["og:url"]`, `twitter` URLs and the last `BreadcrumbList` item URL all equal
       `metadata.canonical` — one canonical, referenced everywhere, asserted directly.
-- [ ] `openGraph["og:title"]` equals `metadata.title` and `openGraph["og:description"]` equals
+- [x] `openGraph["og:title"]` equals `metadata.title` and `openGraph["og:description"]` equals
       `metadata.description`.
-- [ ] Article inputs yield exactly `[BlogPosting, BreadcrumbList]`; other kinds yield exactly
+- [x] Article inputs yield exactly `[BlogPosting, BreadcrumbList]`; other kinds yield exactly
       `[CollectionPage, BreadcrumbList]`.
-- [ ] Every `jsonLd` entry has already been validated by its builder — asserted by a test that
+- [x] Every `jsonLd` entry has already been validated by its builder — asserted by a test that
       stubs a builder to return an invalid document and expects a throw.
-- [ ] `npm run typecheck`, `lint`, `test` exit 0; no `any`.
+- [x] `npm run typecheck`, `lint`, `test` exit 0; no `any`.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+One canonical value flows to `og:url`, the BlogPosting `@id` and the final breadcrumb item; asserted identical at all three.

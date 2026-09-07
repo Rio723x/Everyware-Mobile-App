@@ -21,6 +21,7 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const LOCALE = "en-IN";
 export const OG_LOCALE = "en_IN";
 export const SITE_NAME = "EveryWare";
+export const BLOG_NAME = "Everyware Blog";
 export const TWITTER_HANDLE = "@geteveryware";
 
 export const POSTS_PER_PAGE = 12;

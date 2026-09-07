@@ -22,15 +22,17 @@
 
 ## Acceptance criteria
 
-- [ ] A Ghost URL containing `/content/images/2026/09/x.jpg` becomes `/content/images/size/w1200/2026/09/x.jpg`.
-- [ ] A URL already containing `/size/w600/` is normalised to `/size/w1200/`, not nested.
-- [ ] A non-Ghost absolute URL is returned unchanged.
-- [ ] A post with a null feature image returns the fallback asset, and that file exists in
+- [x] A Ghost URL containing `/content/images/2026/09/x.jpg` becomes `/content/images/size/w1200/2026/09/x.jpg`.
+- [x] A URL already containing `/size/w600/` is normalised to `/size/w1200/`, not nested.
+- [x] A non-Ghost absolute URL is returned unchanged.
+- [x] A post with a null feature image returns the fallback asset, and that file exists in
       `apps/site/public/` — asserted by reading the filesystem.
-- [ ] Every returned `url` passes `toAbsoluteUrl`, every `width` is at least 1200 and `height` at
+- [x] Every returned `url` passes `toAbsoluteUrl`, every `width` is at least 1200 and `height` at
       least 630, and `alt` is non-empty.
-- [ ] Deterministic across repeated calls.
+- [x] Deterministic across repeated calls.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+A URL already carrying a size segment is rewritten, not nested.

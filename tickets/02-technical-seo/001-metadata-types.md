@@ -19,13 +19,15 @@ The contract the rest of Spec 02 fills in. Types and stubs only — no algorithm
 
 ## Acceptance criteria
 
-- [ ] `PageMetadataInput` is a discriminated union on `kind`; a `switch` over it with all four arms
+- [x] `PageMetadataInput` is a discriminated union on `kind`; a `switch` over it with all four arms
       narrows exhaustively, proven by a `satisfies never` default arm that compiles.
-- [ ] Constructing a `PageMetadata` with a relative canonical is a **compile error** (the field is
+- [x] Constructing a `PageMetadata` with a relative canonical is a **compile error** (the field is
       `AbsoluteUrl`) — proven by an expect-error type test.
-- [ ] `buildPageMetadata` has an explicitly annotated return type.
-- [ ] No `any` in the new files; `npm run typecheck` and `lint` exit 0.
+- [x] `buildPageMetadata` has an explicitly annotated return type.
+- [x] No `any` in the new files; `npm run typecheck` and `lint` exit 0.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+39 metadata tests. The union is exhaustive: a `switch` over `kind` with all four arms compiles with no default.

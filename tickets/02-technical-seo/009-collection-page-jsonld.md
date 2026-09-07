@@ -17,13 +17,15 @@ Both exclusions are asserted, not merely documented.
 
 ## Acceptance criteria
 
-- [ ] Listing, category and author pages each emit exactly one `CollectionPage` and one
+- [x] Listing, category and author pages each emit exactly one `CollectionPage` and one
       `BreadcrumbList`, and no `BlogPosting`.
-- [ ] Article pages emit exactly one `BlogPosting` and one `BreadcrumbList`, and no `CollectionPage`.
-- [ ] The document validates against its zod schema.
-- [ ] `name` and `description` equal the page title and meta description.
-- [ ] The strings `ItemList` and `FAQPage` appear nowhere in `packages/seo-core/src` — grep-asserted.
+- [x] Article pages emit exactly one `BlogPosting` and one `BreadcrumbList`, and no `CollectionPage`.
+- [x] The document validates against its zod schema.
+- [x] `name` and `description` equal the page title and meta description.
+- [x] The strings `ItemList` and `FAQPage` appear nowhere in `packages/seo-core/src` — grep-asserted.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+No ItemList, no FAQPage — asserted by serialising the output and grepping it.

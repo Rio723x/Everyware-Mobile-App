@@ -37,3 +37,49 @@ export {
   listHtmlFiles,
   type EmittedPage,
 } from "./dist-files.js";
+
+export {
+  PAGE_KINDS,
+  type JsonLdDocument,
+  type OpenGraphMetadata,
+  type PageKind,
+  type PageMetadata,
+  type PageMetadataInput,
+  type SocialImage,
+  type TwitterMetadata,
+} from "./metadata/types.js";
+
+export { buildPageMetadata, type BreadcrumbTrail } from "./metadata/build.js";
+export { buildTitle, TITLE_MAX } from "./metadata/title.js";
+export {
+  DESCRIPTION_MAX,
+  DESCRIPTION_MIN,
+  DescriptionTooShortError,
+  buildDescription,
+} from "./metadata/description.js";
+export {
+  ROBOTS_DIRECTIVE,
+  basePathFor,
+  buildCanonical,
+  buildPrevNext,
+  type PrevNext,
+} from "./metadata/canonical.js";
+export {
+  OG_MIN_HEIGHT,
+  OG_MIN_WIDTH,
+  buildSocialImage,
+  toGhostWidth,
+} from "./metadata/images.js";
+export { buildOpenGraph, buildTwitter } from "./metadata/social.js";
+export { collapseWhitespace, stripHtml, truncateAtWord } from "./metadata/text.js";
+
+export { buildBlogPostingSchema } from "./schema-org/blog-posting.js";
+export { buildBreadcrumbSchema, type SchemaCrumb } from "./schema-org/breadcrumb.js";
+export { buildCollectionPageSchema } from "./schema-org/collection-page.js";
+export {
+  SchemaValidationError,
+  blogPostingSchema,
+  breadcrumbListSchema,
+  collectionPageSchema,
+  validateSchema,
+} from "./schema-org/validate.js";

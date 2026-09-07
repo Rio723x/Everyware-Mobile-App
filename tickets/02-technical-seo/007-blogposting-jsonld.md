@@ -19,19 +19,21 @@
 
 ## Acceptance criteria
 
-- [ ] The emitted document validates against the zod schema; a builder mutated to drop `datePublished`
+- [x] The emitted document validates against the zod schema; a builder mutated to drop `datePublished`
       throws rather than returning.
-- [ ] `@id` is `<canonical>#article` and `mainEntityOfPage.@id` is the bare canonical.
-- [ ] `publisher.@id` is `https://everyware.in/#org` and `isPartOf.@id` is
+- [x] `@id` is `<canonical>#article` and `mainEntityOfPage.@id` is the bare canonical.
+- [x] `publisher.@id` is `https://everyware.in/#org` and `isPartOf.@id` is
       `https://everyware.in/#website`, matching the ids in `apps/site/index.html` — asserted by
       reading that file.
-- [ ] `headline` never exceeds 110 characters and never splits a word.
-- [ ] `datePublished` and `dateModified` are full ISO-8601 with offset; `image` entries and
+- [x] `headline` never exceeds 110 characters and never splits a word.
+- [x] `datePublished` and `dateModified` are full ISO-8601 with offset; `image` entries and
       `author.url` all pass `toAbsoluteUrl`.
-- [ ] `wordCount` matches a hand-counted fixture body.
-- [ ] A post with no public tags omits `articleSection` and emits an empty `keywords` array rather
+- [x] `wordCount` matches a hand-counted fixture body.
+- [x] A post with no public tags omits `articleSection` and emits an empty `keywords` array rather
       than inventing a section.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+A test reads `apps/site/index.html` and asserts the `@id`s this schema references actually exist there, so the blog cannot drift into declaring a second Organization.
