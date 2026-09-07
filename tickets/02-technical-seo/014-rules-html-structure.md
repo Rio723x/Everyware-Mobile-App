@@ -19,15 +19,17 @@ engine instead.
 
 ## Acceptance criteria
 
-- [ ] Each rule has a passing and a failing fixture.
-- [ ] `heading-order` passes h1-h2-h3-h2-h3, fails h2-h4, and fails h1-h3.
-- [ ] `img-alt` fails a missing `alt` and an empty `alt`, and passes an empty `alt` when
+- [x] Each rule has a passing and a failing fixture.
+- [x] `heading-order` passes h1-h2-h3-h2-h3, fails h2-h4, and fails h1-h3.
+- [x] `img-alt` fails a missing `alt` and an empty `alt`, and passes an empty `alt` when
       `role="presentation"` is set.
-- [ ] `h1-non-empty` fails an `<h1>` containing only whitespace or only an image with no alt.
-- [ ] `charset-viewport` fails when either meta is absent.
-- [ ] T-01-017's suite no longer contains its own copies of these checks — grep-asserted — and still
+- [x] `h1-non-empty` fails an `<h1>` containing only whitespace or only an image with no alt.
+- [x] `charset-viewport` fails when either meta is absent.
+- [x] T-01-017's suite no longer contains its own copies of these checks — grep-asserted — and still
       passes by delegating to the rule engine.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Overlapping assertions in T-01-017 now delegate here rather than keeping a second copy.

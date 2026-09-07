@@ -23,17 +23,19 @@ The framework the 32 rules plug into. No individual rules yet.
 
 ## Acceptance criteria
 
-- [ ] `RuleId` is a literal union; adding a rule result with an unregistered id is a compile error.
-- [ ] Scoring: all pass returns 100; one failed error rule among 10 passing error rules returns 90;
+- [x] `RuleId` is a literal union; adding a rule result with an unregistered id is a compile error.
+- [x] Scoring: all pass returns 100; one failed error rule among 10 passing error rules returns 90;
       an all-`not-applicable` page returns 100 rather than dividing by zero.
-- [ ] `DistPageSource` maps `dist/blog.html` to `https://everyware.in/blog`,
+- [x] `DistPageSource` maps `dist/blog.html` to `https://everyware.in/blog`,
       `dist/blog/x.html` to `https://everyware.in/blog/x`, and `dist/index.html` to
       `https://everyware.in/` — asserted for all five route kinds.
-- [ ] It excludes `404.html` from the indexable page set.
-- [ ] `readAsset("sitemap.xml")` returns the file contents and `null` when absent.
-- [ ] `auditPage` runs every applicable registered rule exactly once and returns results in
+- [x] It excludes `404.html` from the indexable page set.
+- [x] `readAsset("sitemap.xml")` returns the file contents and `null` when absent.
+- [x] `auditPage` runs every applicable registered rule exactly once and returns results in
       registry order.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Scoring: errors weigh 3, warnings 1, `not-applicable` excluded from both sums, and an all-not-applicable page scores 100 rather than dividing by zero.

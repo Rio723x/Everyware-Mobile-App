@@ -20,18 +20,20 @@ parses rendered HTML rather than trusting the builders.
 
 ## Acceptance criteria
 
-- [ ] Each of the 11 rules has a passing and a failing fixture.
-- [ ] `og-required` names **which** property is missing in its message.
-- [ ] `og-url-canonical` fails when `og:url` and the canonical differ by a trailing slash alone.
-- [ ] `og-article-fields` returns `not-applicable` (not `pass`) on a listing page.
-- [ ] `jsonld-parses` fails on a script containing trailing-comma JSON, and the message names the
+- [x] Each of the 11 rules has a passing and a failing fixture.
+- [x] `og-required` names **which** property is missing in its message.
+- [x] `og-url-canonical` fails when `og:url` and the canonical differ by a trailing slash alone.
+- [x] `og-article-fields` returns `not-applicable` (not `pass`) on a listing page.
+- [x] `jsonld-parses` fails on a script containing trailing-comma JSON, and the message names the
       script index.
-- [ ] `jsonld-blogposting` fails a document with a non-ISO `datePublished` and one with a relative
+- [x] `jsonld-blogposting` fails a document with a non-ISO `datePublished` and one with a relative
       `image` URL.
-- [ ] `jsonld-breadcrumb` fails positions `1,2,4`, and fails when the last item URL is not the canonical.
-- [ ] `jsonld-matches-page` fails when the headline differs from the `<h1>` by more than whitespace
+- [x] `jsonld-breadcrumb` fails positions `1,2,4`, and fails when the last item URL is not the canonical.
+- [x] `jsonld-matches-page` fails when the headline differs from the `<h1>` by more than whitespace
       normalisation.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+`jsonld-matches-page` allows a headline truncated at Google's documented 110-character cap, since the visible h1 stays whole — a truncated headline must still be a prefix of what the page shows.

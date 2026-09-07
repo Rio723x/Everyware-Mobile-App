@@ -18,15 +18,17 @@
 
 ## Acceptance criteria
 
-- [ ] `dist/sitemap.xml` parses as XML with the correct root element and namespace.
-- [ ] Every `loc` is absolute `https://everyware.in`, unique, with no `#` and no `?`.
-- [ ] Every `lastmod` is a valid W3C datetime.
-- [ ] The `loc` set equals the set of canonicals produced by `buildPageMetadata` for all indexable
+- [x] `dist/sitemap.xml` parses as XML with the correct root element and namespace.
+- [x] Every `loc` is absolute `https://everyware.in`, unique, with no `#` and no `?`.
+- [x] Every `lastmod` is a valid W3C datetime.
+- [x] The `loc` set equals the set of canonicals produced by `buildPageMetadata` for all indexable
       pages — compared as sets, in both directions.
-- [ ] `404.html` is not listed.
-- [ ] `changefreq` and `priority` match the Spec 02 §5.1 table per entry type.
-- [ ] Rebuilding with unchanged content produces a byte-identical sitemap.
+- [x] `404.html` is not listed.
+- [x] `changefreq` and `priority` match the Spec 02 §5.1 table per entry type.
+- [x] Rebuilding with unchanged content produces a byte-identical sitemap.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Entries are sorted by `loc` so an unchanged rebuild produces a byte-identical file. Every `loc` comes from `buildCanonical`, the same function the page itself uses.

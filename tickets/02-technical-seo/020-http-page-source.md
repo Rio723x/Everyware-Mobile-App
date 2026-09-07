@@ -22,14 +22,16 @@ hypothetical one, and the one Spec 03's validator consumes.
 
 ## Acceptance criteria
 
-- [ ] Against a local static server serving `dist/`, `HttpPageSource` and `DistPageSource` produce
+- [x] Against a local static server serving `dist/`, `HttpPageSource` and `DistPageSource` produce
       **identical** `PageAudit` results for every page — asserted by deep comparison. Same rules,
       two adapters, one outcome.
-- [ ] A URL that 301s produces a failing result naming the redirect target.
-- [ ] `X-Robots-Tag: noindex` sent as a header fails `robots-not-noindex` even when the HTML is clean.
-- [ ] A URL returning 500 produces `fetch-failed` and does not abort the remaining pages.
-- [ ] Redirect chains longer than one hop are recorded in full.
+- [x] A URL that 301s produces a failing result naming the redirect target.
+- [x] `X-Robots-Tag: noindex` sent as a header fails `robots-not-noindex` even when the HTML is clean.
+- [x] A URL returning 500 produces `fetch-failed` and does not abort the remaining pages.
+- [x] Redirect chains longer than one hop are recorded in full.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Redirects are followed manually so the chain stays observable — `fetch`'s automatic following would hide exactly the defect the rule looks for.

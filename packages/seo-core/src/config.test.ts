@@ -5,7 +5,11 @@ import { describe, expect, it } from "vitest";
 import { AI_USER_AGENTS, SITE_URL, siteUrl } from "./config.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const robotsPath = resolve(here, "../../../apps/site/public/robots.txt");
+/**
+ * A snapshot of the hand-written robots.txt this project replaced, kept so the
+ * pin below still means something after the original was deleted in T-02-018.
+ */
+const robotsPath = resolve(here, "fixtures/original-robots.txt");
 
 describe("siteUrl", () => {
   it.each(["/blog", "blog", "//blog", "/blog/"])("normalises %s", (input) => {
@@ -27,10 +31,9 @@ describe("siteUrl", () => {
 });
 
 describe("AI_USER_AGENTS", () => {
-  // The generated robots.txt (spec 02) replaces the hand-written file. This test
-  // pins the constant to the original so the AI-crawler allowances cannot be
-  // silently dropped during that replacement.
-  it("matches every AI crawler allowed by the current hand-written robots.txt", () => {
+  // Pins the constant to the file this project replaced, so the deliberate
+  // AI-crawler allowances cannot be silently dropped in the rewrite.
+  it("matches every AI crawler the original hand-written robots.txt allowed", () => {
     const robots = readFileSync(robotsPath, "utf8");
     const declared = [...robots.matchAll(/^User-agent:\s*(.+)$/gm)]
       .map((match) => match[1]?.trim())

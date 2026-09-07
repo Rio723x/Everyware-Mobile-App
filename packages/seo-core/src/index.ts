@@ -83,3 +83,48 @@ export {
   collectionPageSchema,
   validateSchema,
 } from "./schema-org/validate.js";
+
+export {
+  RULE_IDS,
+  check,
+  fail,
+  pass,
+  skip,
+  type PageAudit,
+  type PageContext,
+  type PageRule,
+  type RuleId,
+  type RuleResult,
+  type RuleSeverity,
+  type RuleStatus,
+  type SiteAudit,
+} from "./audit/registry.js";
+
+export {
+  PAGE_RULES,
+  auditPage,
+  auditSite,
+  hasErrors,
+  kindOfPath,
+  scoreOf,
+  type SiteAuditInput,
+  type SitePage,
+  type SiteRule,
+} from "./audit/audit.js";
+
+export { SITE_RULES } from "./audit/rules/site.js";
+export { buildSitemapXml, type ChangeFrequency, type SitemapEntry } from "./sitemap.js";
+export { buildRobotsTxt } from "./robots.js";
+
+export { distPageSource } from "./audit/dist-source.js";
+
+export { httpPageSource, type HttpSourceOptions } from "./audit/http-source.js";
+
+export {
+  auditReportSchema,
+  formatText,
+  parseArgs,
+  runCli,
+  toReport,
+  type AuditReport,
+} from "./audit/cli.js";

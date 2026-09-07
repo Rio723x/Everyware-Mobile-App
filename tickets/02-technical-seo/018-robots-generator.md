@@ -17,17 +17,19 @@
 
 ## Acceptance criteria
 
-- [ ] `dist/robots.txt` contains `Sitemap: https://everyware.in/sitemap.xml` exactly once.
-- [ ] All seven preserved user-agents (GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot,
+- [x] `dist/robots.txt` contains `Sitemap: https://everyware.in/sitemap.xml` exactly once.
+- [x] All seven preserved user-agents (GPTBot, ChatGPT-User, PerplexityBot, ClaudeBot,
       Google-Extended, Bytespider, Amazonbot) are present with `Allow: /`.
-- [ ] The `User-agent: *` group does not contain `Disallow: /`.
-- [ ] No line contains `#` as a path fragment directive.
-- [ ] `apps/site/public/robots.txt` and `apps/site/public/sitemap.xml` no longer exist in the repo.
-- [ ] `npm run build` completes with zero merge collisions.
-- [ ] The generated file lists the seven user-agents in the order given by `AI_USER_AGENTS`, and
+- [x] The `User-agent: *` group does not contain `Disallow: /`.
+- [x] No line contains `#` as a path fragment directive.
+- [x] `apps/site/public/robots.txt` and `apps/site/public/sitemap.xml` no longer exist in the repo.
+- [x] `npm run build` completes with zero merge collisions.
+- [x] The generated file lists the seven user-agents in the order given by `AI_USER_AGENTS`, and
       removing one from that constant removes it from the output — proving the two are wired
       together rather than independently hardcoded. Restore the constant afterwards.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+The original hand-written robots.txt is committed as `packages/seo-core/src/fixtures/original-robots.txt` so the AI-crawler pin still has something to pin against after the deletion.

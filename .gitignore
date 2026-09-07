@@ -42,3 +42,6 @@ Thumbs.db
 
 # TS incremental build info
 *.tsbuildinfo
+
+# Generated audit artifact
+seo-audit.json

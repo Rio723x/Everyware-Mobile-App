@@ -20,14 +20,16 @@ Link resolution must handle the Spec 01 D6 URL-to-file mapping (`/blog/x` maps t
 
 ## Acceptance criteria
 
-- [ ] A page whose only links are `mailto:` and off-site fails `internal-links-present`.
-- [ ] `internal-links-resolve` fails on `/blog/typo-slug` and names the offending href **and** the
+- [x] A page whose only links are `mailto:` and off-site fails `internal-links-present`.
+- [x] `internal-links-resolve` fails on `/blog/typo-slug` and names the offending href **and** the
       page containing it.
-- [ ] `mailto:`, `tel:` and `https://example.com` links are ignored by both rules.
-- [ ] A link to `/` resolves against `dist/index.html`.
-- [ ] A link with a fragment (`/blog/x#section`) resolves against `/blog/x`.
-- [ ] `pagination-rel` returns `not-applicable` on an article and fails when page 2 lacks `rel="prev"`.
+- [x] `mailto:`, `tel:` and `https://example.com` links are ignored by both rules.
+- [x] A link to `/` resolves against `dist/index.html`.
+- [x] A link with a fragment (`/blog/x#section`) resolves against `/blog/x`.
+- [x] `pagination-rel` returns `not-applicable` on an article and fails when page 2 lacks `rel="prev"`.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Fragment- and query-stripped before resolution, so `/blog#top` resolves against `/blog`.

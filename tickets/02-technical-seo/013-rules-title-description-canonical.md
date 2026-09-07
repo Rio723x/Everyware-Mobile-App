@@ -21,17 +21,19 @@ message that only says "title-length failed" costs the next engineer a debugging
 
 ## Acceptance criteria
 
-- [ ] Each of the 14 rules has a passing fixture and at least one failing fixture.
-- [ ] Boundary tests: a 10-character title passes `title-length`, a 9-character one fails; 70 passes,
+- [x] Each of the 14 rules has a passing fixture and at least one failing fixture.
+- [x] Boundary tests: a 10-character title passes `title-length`, a 9-character one fails; 70 passes,
       71 fails. Same for description at 50/49 and 170/171.
-- [ ] `canonical-self` fails when the canonical differs from the page's own URL, and the message
+- [x] `canonical-self` fails when the canonical differs from the page's own URL, and the message
       shows both values.
-- [ ] `canonical-no-trailing-slash` fails on `https://everyware.in/blog/x/` and passes on the root.
-- [ ] `robots-not-noindex` detects `noindex` in a `<meta name="robots">` regardless of casing,
+- [x] `canonical-no-trailing-slash` fails on `https://everyware.in/blog/x/` and passes on the root.
+- [x] `robots-not-noindex` detects `noindex` in a `<meta name="robots">` regardless of casing,
       spacing, or its position in a comma-separated list.
-- [ ] Two pages with the same title both fail `title-unique`, and both URLs appear in the messages.
-- [ ] Every failure message contains the observed value — asserted generically across the group.
+- [x] Two pages with the same title both fail `title-unique`, and both URLs appear in the messages.
+- [x] Every failure message contains the observed value — asserted generically across the group.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Boundary tests at 9/10, 70/71, 49/50 and 170/171. `canonical-self` also fails on a redirect chain, which the HTML alone cannot reveal.
