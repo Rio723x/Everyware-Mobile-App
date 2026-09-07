@@ -5,15 +5,26 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { toSlug } from "../brand.js";
 import { ORG_ID, SITE_URL, WEBSITE_ID } from "../config.js";
+import { buildPageMetadata } from "../metadata/build.js";
 import { buildCanonical } from "../metadata/canonical.js";
 import { buildDescription } from "../metadata/description.js";
 import { buildSocialImage } from "../metadata/images.js";
-import { buildPageMetadata } from "../metadata/build.js";
 import { buildBlogPostingSchema } from "./blog-posting.js";
 import { buildBreadcrumbSchema, type SchemaCrumb } from "./breadcrumb.js";
 import { buildCollectionPageSchema } from "./collection-page.js";
-import { SchemaValidationError } from "./validate.js";
+import {
+  SchemaValidationError,
+  blogPostingSchema,
+  breadcrumbListSchema,
+  collectionPageSchema,
+  validateSchema,
+} from "./validate.js";
 
+/**
+ * Documents are read back through the zod schemas rather than with type
+ * assertions. That gives typed access without an `as` in sight, and the parse
+ * itself is a second assertion that what the builder emitted is valid.
+ */
 const client = new InMemoryGhostClient();
 const posts = await client.listPosts();
 const [tag] = await client.listTags();
@@ -23,15 +34,14 @@ if (post === undefined || tag === undefined || author === undefined) {
   throw new Error("fixture corpus incomplete");
 }
 
-const forPost = (p: BlogPost): Parameters<typeof buildBlogPostingSchema>[0] => {
-  const canonical = buildCanonical({ kind: "article", post: p });
-  return {
-    post: p,
-    canonical,
-    description: buildDescription({ kind: "article", post: p }),
-    image: buildSocialImage({ kind: "article", post: p }),
-  };
-};
+const forPost = (p: BlogPost): Parameters<typeof buildBlogPostingSchema>[0] => ({
+  post: p,
+  canonical: buildCanonical({ kind: "article", post: p }),
+  description: buildDescription({ kind: "article", post: p }),
+  image: buildSocialImage({ kind: "article", post: p }),
+});
+
+const articlePosting = (p: BlogPost) => blogPostingSchema.parse(buildBlogPostingSchema(forPost(p)));
 
 const articleTrail = (p: BlogPost): SchemaCrumb[] => {
   const primary = p.tags[0];
@@ -45,6 +55,11 @@ const articleTrail = (p: BlogPost): SchemaCrumb[] => {
   ];
 };
 
+const listingTrail: SchemaCrumb[] = [
+  { label: "Home", href: "/" },
+  { label: "Blog", href: null },
+];
+
 describe("buildBlogPostingSchema", () => {
   it("validates for every fixture post", () => {
     for (const p of posts) {
@@ -52,25 +67,33 @@ describe("buildBlogPostingSchema", () => {
     }
   });
 
-  it("throws rather than returning an invalid document", () => {
-    const broken = { ...post, publishedAt: "" as BlogPost["publishedAt"] };
-    expect(() => buildBlogPostingSchema(forPost(broken))).toThrow(SchemaValidationError);
+  it("refuses an invalid document rather than returning it", () => {
+    // Driven through validateSchema directly: forging an invalid branded date
+    // would need a type assertion, and the behaviour under test is that a
+    // malformed document is refused, whatever produced it.
+    const { datePublished: _dropped, ...missingDate } = articlePosting(post);
+    expect(() => validateSchema("BlogPosting", blogPostingSchema, missingDate)).toThrow(
+      SchemaValidationError,
+    );
+    expect(() => validateSchema("BlogPosting", blogPostingSchema, missingDate)).toThrow(
+      /datePublished/,
+    );
   });
 
   it("anchors @id and mainEntityOfPage to the canonical", () => {
-    const doc = buildBlogPostingSchema(forPost(post));
     const canonical = buildCanonical({ kind: "article", post });
+    const doc = articlePosting(post);
     expect(doc["@id"]).toBe(`${canonical}#article`);
-    expect(doc["mainEntityOfPage"]).toEqual({ "@type": "WebPage", "@id": canonical });
+    expect(doc.mainEntityOfPage).toEqual({ "@type": "WebPage", "@id": canonical });
   });
 
   it("references the Organization and WebSite nodes the marketing site declares", () => {
-    const doc = buildBlogPostingSchema(forPost(post));
-    expect(doc["publisher"]).toEqual({ "@id": ORG_ID });
-    expect(doc["isPartOf"]).toEqual({ "@id": WEBSITE_ID });
+    const doc = articlePosting(post);
+    expect(doc.publisher).toEqual({ "@id": ORG_ID });
+    expect(doc.isPartOf).toEqual({ "@id": WEBSITE_ID });
 
-    // Those @ids must match the ones already in apps/site/index.html, or the
-    // blog declares a second, competing Organization on the same domain.
+    // Those @ids must exist in apps/site/index.html, or the blog declares a
+    // second, competing Organization on the same domain.
     const here = dirname(fileURLToPath(import.meta.url));
     const indexHtml = readFileSync(resolve(here, "../../../../apps/site/index.html"), "utf8");
     expect(indexHtml).toContain(ORG_ID);
@@ -78,73 +101,63 @@ describe("buildBlogPostingSchema", () => {
   });
 
   it("caps the headline at 110 characters without splitting a word", () => {
-    const long = { ...post, title: "Word ".repeat(40).trim() };
-    const doc = buildBlogPostingSchema(forPost(long));
-    const headline = doc["headline"];
-    expect(typeof headline).toBe("string");
-    expect(String(headline).length).toBeLessThanOrEqual(110);
-    expect(String(headline)).not.toMatch(/\s…$/);
+    const doc = articlePosting({ ...post, title: "Word ".repeat(40).trim() });
+    expect(doc.headline.length).toBeLessThanOrEqual(110);
+    expect(doc.headline).not.toMatch(/\s…$/);
   });
 
   it("uses the same description string the page will render", () => {
-    const doc = buildBlogPostingSchema(forPost(post));
-    expect(doc["description"]).toBe(buildDescription({ kind: "article", post }));
+    expect(articlePosting(post).description).toBe(buildDescription({ kind: "article", post }));
   });
 
   it("reports a word count matching the body text", () => {
-    const doc = buildBlogPostingSchema(forPost(post));
-    expect(doc["wordCount"]).toBe(post.plaintext.trim().split(/\s+/).length);
+    expect(articlePosting(post).wordCount).toBe(post.plaintext.trim().split(/\s+/).length);
   });
 
   it("omits articleSection for an untagged post rather than inventing one", async () => {
     const untagged = await client.getPostBySlug(toSlug("smart-home-starter-guide"));
     if (untagged === null) throw new Error("fixture missing");
-    const doc = buildBlogPostingSchema(forPost(untagged));
-    expect(doc["articleSection"]).toBeUndefined();
-    expect(doc["keywords"]).toEqual([]);
+    const doc = articlePosting(untagged);
+    expect(doc.articleSection).toBeUndefined();
+    expect(doc.keywords).toEqual([]);
   });
 
   it("emits absolute https URLs for image and author", () => {
-    const doc = buildBlogPostingSchema(forPost(post));
-    expect((doc["image"] as string[])[0]).toMatch(/^https:\/\//);
-    expect((doc["author"] as { url: string }).url).toMatch(/^https:\/\//);
+    const doc = articlePosting(post);
+    expect(doc.image[0]).toMatch(/^https:\/\//);
+    expect(doc.author.url).toMatch(/^https:\/\//);
   });
 });
 
 describe("buildBreadcrumbSchema", () => {
+  const canonical = buildCanonical({ kind: "article", post });
+  const parsed = (trail: SchemaCrumb[], url = canonical) =>
+    breadcrumbListSchema.parse(buildBreadcrumbSchema(trail, url));
+
   it("numbers positions contiguously from 1", () => {
-    const canonical = buildCanonical({ kind: "article", post });
-    const doc = buildBreadcrumbSchema(articleTrail(post), canonical);
-    const items = doc["itemListElement"] as { position: number }[];
-    expect(items.map((i) => i.position)).toEqual(items.map((_, index) => index + 1));
+    const items = parsed(articleTrail(post)).itemListElement;
+    expect(items.map((entry) => entry.position)).toEqual(items.map((_, index) => index + 1));
   });
 
   it("ends at the page's own canonical", () => {
-    const canonical = buildCanonical({ kind: "article", post });
-    const doc = buildBreadcrumbSchema(articleTrail(post), canonical);
-    const items = doc["itemListElement"] as { item: string }[];
-    expect(items.at(-1)?.item).toBe(canonical);
+    expect(parsed(articleTrail(post)).itemListElement.at(-1)?.item).toBe(canonical);
   });
 
   it("produces a three-item trail for an untagged post", async () => {
     const untagged = await client.getPostBySlug(toSlug("smart-home-starter-guide"));
     if (untagged === null) throw new Error("fixture missing");
-    const canonical = buildCanonical({ kind: "article", post: untagged });
-    const doc = buildBreadcrumbSchema(articleTrail(untagged), canonical);
-    expect((doc["itemListElement"] as unknown[]).length).toBe(3);
+    const url = buildCanonical({ kind: "article", post: untagged });
+    expect(parsed(articleTrail(untagged), url).itemListElement).toHaveLength(3);
   });
 
-  it("rejects a trail with non-contiguous positions", () => {
-    // Constructed directly to prove the schema's refinement bites.
-    expect(() =>
-      buildBreadcrumbSchema([{ label: "Only", href: null }], buildCanonical({ kind: "listing", page: 1, totalPages: 1 })),
-    ).toThrow(SchemaValidationError);
+  it("rejects a trail too short to be a breadcrumb", () => {
+    expect(() => buildBreadcrumbSchema([{ label: "Only", href: null }], canonical)).toThrow(
+      SchemaValidationError,
+    );
   });
 
   it("resolves relative crumb hrefs against the site origin", () => {
-    const canonical = buildCanonical({ kind: "article", post });
-    const doc = buildBreadcrumbSchema(articleTrail(post), canonical);
-    const items = doc["itemListElement"] as { item: string }[];
+    const items = parsed(articleTrail(post)).itemListElement;
     expect(items[0]?.item).toBe(`${SITE_URL}/`);
     expect(items[1]?.item).toBe(`${SITE_URL}/blog`);
   });
@@ -152,58 +165,70 @@ describe("buildBreadcrumbSchema", () => {
 
 describe("buildCollectionPageSchema", () => {
   it("validates and points at the WebSite node", () => {
-    const canonical = buildCanonical({ kind: "category", tag, postCount: 3, page: 1, totalPages: 1 });
-    const doc = buildCollectionPageSchema(canonical, "Name", "A description of the collection.");
+    const canonical = buildCanonical({
+      kind: "category",
+      tag,
+      postCount: 3,
+      page: 1,
+      totalPages: 1,
+    });
+    const doc = collectionPageSchema.parse(
+      buildCollectionPageSchema(canonical, "Name", "A description of the collection."),
+    );
     expect(doc["@type"]).toBe("CollectionPage");
-    expect(doc["isPartOf"]).toEqual({ "@id": WEBSITE_ID });
-    expect(doc["url"]).toBe(canonical);
+    expect(doc.isPartOf).toEqual({ "@id": WEBSITE_ID });
+    expect(doc.url).toBe(canonical);
   });
 });
 
 describe("buildPageMetadata", () => {
-  const listingTrail: SchemaCrumb[] = [
+  const categoryTrail: SchemaCrumb[] = [
     { label: "Home", href: "/" },
-    { label: "Blog", href: null },
+    { label: "Blog", href: "/blog" },
+    { label: tag.name, href: null },
+  ];
+  const authorTrail: SchemaCrumb[] = [
+    { label: "Home", href: "/" },
+    { label: "Blog", href: "/blog" },
+    { label: author.name, href: null },
   ];
 
   it("returns a complete PageMetadata for every kind", () => {
-    const inputs = [
+    const cases = [
       { input: { kind: "article", post } as const, trail: articleTrail(post) },
       { input: { kind: "listing", page: 1, totalPages: 2 } as const, trail: listingTrail },
       {
         input: { kind: "category", tag, postCount: 3, page: 1, totalPages: 1 } as const,
-        trail: [{ label: "Home", href: "/" }, { label: "Blog", href: "/blog" }, { label: tag.name, href: null }],
+        trail: categoryTrail,
       },
       {
         input: { kind: "author", author, postCount: 3, page: 1, totalPages: 1 } as const,
-        trail: [{ label: "Home", href: "/" }, { label: "Blog", href: "/blog" }, { label: author.name, href: null }],
+        trail: authorTrail,
       },
     ];
 
-    for (const { input, trail } of inputs) {
+    for (const { input, trail } of cases) {
       const meta = buildPageMetadata(input, trail);
       for (const [key, value] of Object.entries(meta)) {
         expect(value, `${input.kind}.${key}`).not.toBeUndefined();
       }
-      expect(meta.jsonLd).toHaveLength(2);
+      expect(meta.jsonLd, input.kind).toHaveLength(2);
     }
   });
 
   it("is deterministic", () => {
-    const a = buildPageMetadata({ kind: "article", post }, articleTrail(post));
-    const b = buildPageMetadata({ kind: "article", post }, articleTrail(post));
-    expect(a).toEqual(b);
+    expect(buildPageMetadata({ kind: "article", post }, articleTrail(post))).toEqual(
+      buildPageMetadata({ kind: "article", post }, articleTrail(post)),
+    );
   });
 
   it("uses one canonical everywhere it appears", () => {
     const meta = buildPageMetadata({ kind: "article", post }, articleTrail(post));
     expect(meta.openGraph["og:url"]).toBe(meta.canonical);
-
-    const breadcrumb = meta.jsonLd[1] as { itemListElement: { item: string }[] };
-    expect(breadcrumb.itemListElement.at(-1)?.item).toBe(meta.canonical);
-
-    const article = meta.jsonLd[0] as { "@id": string };
-    expect(article["@id"]).toBe(`${meta.canonical}#article`);
+    expect(breadcrumbListSchema.parse(meta.jsonLd[1]).itemListElement.at(-1)?.item).toBe(
+      meta.canonical,
+    );
+    expect(blogPostingSchema.parse(meta.jsonLd[0])["@id"]).toBe(`${meta.canonical}#article`);
   });
 
   it("mirrors title and description into OpenGraph", () => {
@@ -214,11 +239,11 @@ describe("buildPageMetadata", () => {
 
   it("emits BlogPosting for articles and CollectionPage for everything else", () => {
     const article = buildPageMetadata({ kind: "article", post }, articleTrail(post));
-    expect((article.jsonLd[0] as { "@type": string })["@type"]).toBe("BlogPosting");
-    expect((article.jsonLd[1] as { "@type": string })["@type"]).toBe("BreadcrumbList");
+    expect(article.jsonLd[0]?.["@type"]).toBe("BlogPosting");
+    expect(article.jsonLd[1]?.["@type"]).toBe("BreadcrumbList");
 
     const listing = buildPageMetadata({ kind: "listing", page: 1, totalPages: 1 }, listingTrail);
-    expect((listing.jsonLd[0] as { "@type": string })["@type"]).toBe("CollectionPage");
+    expect(listing.jsonLd[0]?.["@type"]).toBe("CollectionPage");
   });
 
   it("never emits ItemList or FAQPage", () => {
