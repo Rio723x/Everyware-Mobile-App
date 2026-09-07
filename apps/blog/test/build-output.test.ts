@@ -127,10 +127,14 @@ describe("every emitted page", () => {
     }
   });
 
-  it("ships no JavaScript", () => {
+  it("ships no executable JavaScript", () => {
+    // JSON-LD is data the browser never executes, so it is excluded here.
     for (const file of htmlFiles()) {
       const html = readFileSync(resolve(distDir, file), "utf8");
-      expect(html.match(/<script/g) ?? [], file).toEqual([]);
+      const executable = (html.match(/<script[^>]*>/g) ?? []).filter(
+        (tag) => !tag.includes("application/ld+json"),
+      );
+      expect(executable, file).toEqual([]);
     }
   });
 });
@@ -243,7 +247,10 @@ describe("related posts and CTA", () => {
     for (const file of htmlFiles()) {
       const html = readFileSync(resolve(distDir, file), "utf8");
       expect(html, file).toMatch(/aria-label="Get the EveryWare app"/);
-      expect(html.match(/<script/g) ?? [], file).toEqual([]);
+      const executable = (html.match(/<script[^>]*>/g) ?? []).filter(
+        (tag) => !tag.includes("application/ld+json"),
+      );
+      expect(executable, file).toEqual([]);
     }
   });
 });

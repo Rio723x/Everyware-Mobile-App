@@ -4,7 +4,9 @@ import Breadcrumbs from "../../../components/Breadcrumbs.astro";
 import DownloadCtaBand from "../../../components/DownloadCtaBand.astro";
 import Pagination from "../../../components/Pagination.astro";
 import PostGrid from "../../../components/PostGrid.astro";
+import SeoHead from "../../../components/SeoHead.astro";
 import BlogLayout from "../../../layouts/BlogLayout.astro";
+import { buildPageMetadata } from "@everyware/seo-core";
 import { listingTrail } from "../../../lib/breadcrumbs";
 import { ghost } from "../../../lib/content";
 import { extraPageNumbers, paginate } from "../../../lib/pagination";
@@ -23,11 +25,19 @@ export const getStaticPaths: GetStaticPaths = async () => {
 const posts = await ghost.listPosts();
 const pageNumber = Number(Astro.params.page);
 const page = paginate(posts, pageNumber, "/blog");
+
+const trail = listingTrail();
+const metadata = buildPageMetadata(
+  { kind: "listing", page: page.page, totalPages: page.totalPages },
+  trail,
+);
 ---
 
 <BlogLayout>
+  <SeoHead slot="head" metadata={metadata} />
+
   <div class="container">
-    <Breadcrumbs trail={listingTrail()} />
+    <Breadcrumbs trail={trail} />
 
     <header class="listing-header">
       <h1 class="blog-h1">Everyware Blog</h1>

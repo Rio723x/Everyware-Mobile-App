@@ -18,16 +18,31 @@
 
 ## Acceptance criteria
 
-- [ ] Every built blog page has exactly one `<title>`, one `<meta name="description">` and one
+- [x] Every built blog page has exactly one `<title>`, one `<meta name="description">` and one
       `<link rel="canonical">`.
-- [ ] The grep guard passes, and fails when a raw `<meta>` is planted in another component.
+- [x] The grep guard passes, and fails when a raw `<meta>` is planted in another component.
       Remove the plant afterwards.
-- [ ] JSON-LD script count per page matches `metadata.jsonLd.length`.
-- [ ] JSON-LD is emitted as valid JSON with no HTML-escaping corruption of `&`, `<` or quotes —
+- [x] JSON-LD script count per page matches `metadata.jsonLd.length`.
+- [x] JSON-LD is emitted as valid JSON with no HTML-escaping corruption of `&`, `<` or quotes —
       asserted by `JSON.parse` on the extracted text of every script on every page.
-- [ ] `SeoHead` renders nothing when a page does not pass it, so `BlogLayout` stays metadata-free.
-- [ ] Blog pages still ship zero JavaScript.
+- [x] `SeoHead` renders nothing when a page does not pass it, so `BlogLayout` stays metadata-free.
+- [x] Blog pages still ship zero JavaScript.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`. 259 tests; verify exits 0.
+
+### Notes
+
+- The grep guard allows exactly one exception: `BlogLayout.astro` keeps
+  `charset` and `viewport`. Those are document mechanics rather than SEO
+  metadata, never vary per page, and every audit rule requires them — so the
+  guard permits those two specifically and rejects any other `<meta>` there.
+- **"Ships no JavaScript" was refined to "ships no *executable* JavaScript".**
+  Adding JSON-LD made three assertions fail, correctly detecting a new
+  `<script>` tag. But `application/ld+json` is data the browser parses and never
+  runs, so it does not violate the zero-JS promise. The assertions now exclude
+  it by type rather than counting tags.
+- `SeoHead` annotates `Astro.props` explicitly. `Astro.props` is loosely typed
+  inside an `.astro` file, and without the annotation every `Object.entries`
+  value arrived as `unknown`.

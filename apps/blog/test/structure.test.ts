@@ -112,9 +112,14 @@ describe("every blog page", () => {
     }
   });
 
-  it("ships no JavaScript", () => {
+  it("ships no executable JavaScript", () => {
+    // application/ld+json is data, not code: the browser parses it and never
+    // executes it, so structured data does not violate the zero-JS promise.
     for (const page of blogPages) {
-      expect(doc(page.html).querySelectorAll("script").length, page.file).toBe(0);
+      const executable = [...doc(page.html).querySelectorAll("script")].filter(
+        (el) => el.getAttribute("type") !== "application/ld+json",
+      );
+      expect(executable.map((el) => el.outerHTML.slice(0, 80)), page.file).toEqual([]);
     }
   });
 
@@ -133,6 +138,54 @@ describe("every blog page", () => {
       for (const href of hrefs) {
         expect(served.has(href), `${page.file} links to ${href}, which was not emitted`).toBe(true);
       }
+    }
+  });
+});
+
+describe("emitted metadata", () => {
+  it("gives every blog page exactly one title, description and canonical", () => {
+    for (const page of blogPages) {
+      const d = doc(page.html);
+      expect(d.querySelectorAll("title").length, page.file).toBe(1);
+      expect(d.querySelectorAll('meta[name="description"]').length, page.file).toBe(1);
+      expect(d.querySelectorAll('link[rel="canonical"]').length, page.file).toBe(1);
+    }
+  });
+
+  it("makes every canonical self-referential", () => {
+    for (const page of blogPages) {
+      const canonical = doc(page.html)
+        .querySelector('link[rel="canonical"]')
+        ?.getAttribute("href");
+      expect(canonical, page.file).toBe(`https://everyware.in${page.path}`);
+    }
+  });
+
+  it("emits JSON-LD that parses, with no HTML-escaping corruption", () => {
+    for (const page of blogPages) {
+      const scripts = [...doc(page.html).querySelectorAll('script[type="application/ld+json"]')];
+      expect(scripts.length, page.file).toBe(2);
+      for (const script of scripts) {
+        expect(() => JSON.parse(script.textContent ?? ""), page.file).not.toThrow();
+      }
+    }
+  });
+
+  it("sets og:url to the canonical on every page", () => {
+    for (const page of blogPages) {
+      const d = doc(page.html);
+      expect(
+        d.querySelector('meta[property="og:url"]')?.getAttribute("content"),
+        page.file,
+      ).toBe(d.querySelector('link[rel="canonical"]')?.getAttribute("href"));
+    }
+  });
+
+  it("never emits noindex", () => {
+    for (const page of blogPages) {
+      const robots = doc(page.html).querySelector('meta[name="robots"]')?.getAttribute("content");
+      expect(robots, page.file).toBeTruthy();
+      expect(robots?.toLowerCase(), page.file).not.toContain("noindex");
     }
   });
 });

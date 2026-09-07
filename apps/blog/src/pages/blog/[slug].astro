@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
 import type { BlogPost } from "@everyware/ghost";
-import { prepareArticleHtml } from "@everyware/seo-core";
+import { buildPageMetadata, prepareArticleHtml } from "@everyware/seo-core";
 import AuthorByline from "../../components/AuthorByline.astro";
 import Breadcrumbs from "../../components/Breadcrumbs.astro";
 import TagChips from "../../components/TagChips.astro";
 import DownloadCtaBand from "../../components/DownloadCtaBand.astro";
+import SeoHead from "../../components/SeoHead.astro";
 import RelatedPosts from "../../components/RelatedPosts.astro";
 import BlogLayout from "../../layouts/BlogLayout.astro";
 import { articleTrail } from "../../lib/breadcrumbs";
@@ -45,11 +46,16 @@ const HERO_WIDTH = 1200;
 const HERO_HEIGHT = 630;
 
 const related = relatedPosts(post, await ghost.listPosts());
+
+const trail = articleTrail(post);
+const metadata = buildPageMetadata({ kind: "article", post }, trail);
 ---
 
 <BlogLayout>
+  <SeoHead slot="head" metadata={metadata} />
+
   <div class="container">
-    <Breadcrumbs trail={articleTrail(post)} />
+    <Breadcrumbs trail={trail} />
 
     <article class="article">
       <header class="article-header">
