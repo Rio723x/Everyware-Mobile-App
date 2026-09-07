@@ -27,8 +27,23 @@ const countWords = (text: string): number => {
 export const readingTimeMinutes = (plaintext: string): number =>
   Math.max(1, Math.ceil(countWords(plaintext) / WORDS_PER_MINUTE));
 
-const toImage = (url: string | null, alt: string | null): FeatureImage | null =>
-  url === null || url === "" ? null : { url, alt: alt ?? "" };
+/**
+ * Pairs an image with alt text, falling back when the CMS has none.
+ *
+ * Ghost leaves `feature_image_alt` null far more often than editors expect -
+ * its own default post does. An empty alt makes the image invisible to screen
+ * readers and fails the `img-alt` audit rule, so the caller supplies a
+ * description of last resort. Real alt text from the editor always wins.
+ */
+const toImage = (
+  url: string | null,
+  alt: string | null,
+  fallbackAlt: string,
+): FeatureImage | null => {
+  if (url === null || url === "") return null;
+  const described = (alt ?? "").trim();
+  return { url, alt: described === "" ? fallbackAlt : described };
+};
 
 export const normalizeTag = (raw: unknown): BlogTag => {
   const parsed = ghostTagSchema.safeParse(raw);
@@ -55,7 +70,7 @@ export const normalizeAuthor = (raw: unknown): BlogAuthor => {
     slug: toSlug(author.slug),
     name: author.name,
     bio: author.bio,
-    profileImage: toImage(author.profile_image, `${author.name}, Everyware`),
+    profileImage: toImage(author.profile_image, null, `${author.name}, Everyware`),
   };
 };
 
@@ -94,7 +109,7 @@ export const normalizePost = (raw: unknown): BlogPost => {
     html: post.html ?? "",
     plaintext,
     excerpt,
-    featureImage: toImage(post.feature_image, post.feature_image_alt),
+    featureImage: toImage(post.feature_image, post.feature_image_alt, post.title),
     primaryAuthor: normalizeAuthor(primaryAuthorRaw),
     authors: authors.length > 0 ? authors : [normalizeAuthor(primaryAuthorRaw)],
     tags: post.tags.filter((tag) => !isInternalTag(tag)).map(normalizeTag),

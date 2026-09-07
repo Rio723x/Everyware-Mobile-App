@@ -11,16 +11,27 @@
  * than reproduced - a link that goes nowhere is worse than no link, and every
  * internal href here has to resolve for the audit rules in spec 02.
  */
+import { ghost } from "../lib/content";
+
 const year = new Date().getFullYear();
+
+/**
+ * Category links come from Ghost, never a hardcoded list.
+ *
+ * An earlier version hardcoded four tag slugs. They existed in the fixtures and
+ * did not exist in the live CMS, so every page shipped three links to URLs the
+ * build never emitted - caught by the `internal-links-resolve` rule on the
+ * first real-content build. A footer that lists whatever tags exist cannot
+ * drift from the site again.
+ */
+const tags = (await ghost.listTags()).slice(0, 4);
 
 const sections = [
   {
     heading: "Blog",
     links: [
       { label: "All articles", href: "/blog" },
-      { label: "Appliance maintenance", href: "/blog/category/appliance-maintenance" },
-      { label: "Service costs", href: "/blog/category/service-costs" },
-      { label: "Buying guides", href: "/blog/category/buying-guides" },
+      ...tags.map((tag) => ({ label: tag.name, href: `/blog/category/${tag.slug}` })),
     ],
   },
   {
@@ -39,7 +50,7 @@ const sections = [
       { label: "+91 9810290492", href: "tel:+919810290492" },
     ],
   },
-] as const;
+];
 ---
 
 <footer class="blog-footer">
