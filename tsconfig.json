@@ -19,6 +19,9 @@
     },
     {
       "path": "./packages/ghost"
+    },
+    {
+      "path": "./services/seo-worker"
     }
   ]
 }
