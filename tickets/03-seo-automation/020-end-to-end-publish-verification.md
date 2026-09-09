@@ -56,10 +56,27 @@ a live `everyware.in/blog` has been, against the real CMS.
       serverless-redis-http at `https://cms.everyware.in/_srh` — see
       `infra/redis/README.md`. Exercised through the real store adapter:
       idempotency claim then replay, debounce round-trip, counter increments.
-- [ ] Production env vars still to set: `GHOST_WEBHOOK_SECRET`,
-      `GEMINI_API_KEY`, `SEO_WORKER_TOKEN`, `VERCEL_DEPLOY_HOOK_URL`,
+- [x] Production env vars set on all three Vercel environments:
+      `GHOST_WEBHOOK_SECRET`, `GEMINI_API_KEY`, `SEO_WORKER_TOKEN`,
       `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
       `SEO_STORE_DRIVER=redis`.
+- [x] Four Ghost webhooks created on the integration, all pointing at
+      `https://everyware.in/api/webhooks/ghost`: `post.published`,
+      `post.published.edited`, `post.unpublished`, `post.deleted`.
+- [x] The blog is live. `everyware.in/blog` and every child path return 200 with
+      no redirect, and `npm run seo:audit -- --base-url https://everyware.in`
+      scores 99/100 and exits 0.
+- [x] The pipeline runs end to end against live Ghost, live Redis, live Gemini
+      and the live site: `technicalScore` 99, `validationStatus` `validated`,
+      a complete advisory analysis, and `npm run seo:report -- --slug
+      coming-soon` reading it back out of Redis with exit 0.
+- [ ] `VERCEL_DEPLOY_HOOK_URL` — the only variable still unset. Creating a
+      deploy hook needs dashboard access; `triggerDeploy` returns a failed
+      result rather than throwing without it, so everything else runs.
+- [ ] The Ghost author display name is still `fixolutions_admin` and appears in
+      the public byline and JSON-LD. The slug is already `everyware-editorial`,
+      but Ghost answers 501 to user edits made with an integration key, so the
+      name needs the admin UI.
 - [ ] Four Ghost webhooks pointed at `https://everyware.in/api/webhooks/ghost`.
 - [ ] Publish → 202 within 3s → deploy → live page → report with score ≥ 95.
 - [ ] Edit and republish: one deploy, one fresh report, replay recorded as duplicate.
@@ -76,3 +93,13 @@ a live `everyware.in/blog` has been, against the real CMS.
    check was string-matching a marker that the fix above had renamed. Replaced
    with `isUnreadable(audit)` — asking the engine, which already knows whether
    any rule was able to run.
+
+## A third bug the live run found
+
+**The advisory analysis was silently null.** Google closed `gemini-2.5-flash` to
+new API keys — it still appears in the models listing, but `generateContent`
+404s. Because the analyzer is wrapped so a failure degrades the field rather
+than the pipeline, the report came back complete and correct in every other
+respect, with `analysis: null`. Nothing short of a live call with a new key
+would have surfaced it. Fixed by moving to `gemini-3.6-flash`, whose thinking
+control is `thinkingLevel` rather than a budget.
