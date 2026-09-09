@@ -5,6 +5,7 @@ export {
 } from "./analyzer.js";
 export {
   GEMINI_MODEL,
+  GEMINI_THINKING,
   createAnalyzerFromEnv,
   createGeminiAnalyzer,
   responseJsonSchema,
