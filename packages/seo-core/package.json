@@ -14,5 +14,10 @@
   },
   "scripts": {
     "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@everyware/ghost": "*",
+    "linkedom": "^0.18.13",
+    "zod": "^4.1.5"
   }
 }
