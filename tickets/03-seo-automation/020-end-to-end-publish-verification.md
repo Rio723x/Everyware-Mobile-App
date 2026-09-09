@@ -52,9 +52,14 @@ a live `everyware.in/blog` has been, against the real CMS.
 
 ### Remaining, all gated on the Vercel deployment
 
-- [ ] Production env vars: `GHOST_WEBHOOK_SECRET`, `GEMINI_API_KEY`,
-      `SEO_WORKER_TOKEN`, `VERCEL_DEPLOY_HOOK_URL`, `UPSTASH_REDIS_REST_URL`,
-      `UPSTASH_REDIS_REST_TOKEN`, `SEO_STORE_DRIVER=redis`.
+- [x] Redis provisioned and proven. Self-hosted on the Ghost VM behind
+      serverless-redis-http at `https://cms.everyware.in/_srh` — see
+      `infra/redis/README.md`. Exercised through the real store adapter:
+      idempotency claim then replay, debounce round-trip, counter increments.
+- [ ] Production env vars still to set: `GHOST_WEBHOOK_SECRET`,
+      `GEMINI_API_KEY`, `SEO_WORKER_TOKEN`, `VERCEL_DEPLOY_HOOK_URL`,
+      `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`,
+      `SEO_STORE_DRIVER=redis`.
 - [ ] Four Ghost webhooks pointed at `https://everyware.in/api/webhooks/ghost`.
 - [ ] Publish → 202 within 3s → deploy → live page → report with score ≥ 95.
 - [ ] Edit and republish: one deploy, one fresh report, replay recorded as duplicate.
