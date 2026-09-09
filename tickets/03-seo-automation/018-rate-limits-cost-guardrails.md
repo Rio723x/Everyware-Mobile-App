@@ -19,14 +19,16 @@ loop, so guard that specifically.
 
 ## Acceptance criteria
 
-- [ ] The 21st analysis within an hour is skipped, with the reason recorded on the report.
-- [ ] A skipped analysis still produces a complete technical audit and a deploy.
-- [ ] The counter rolls over correctly after the hour with a mocked clock.
-- [ ] A `RateLimitError` is retried exactly once, then degrades to `null`.
-- [ ] Token usage is logged for every model call.
-- [ ] No scheduled or automatic re-analysis of existing posts exists — grep-asserted for cron or
+- [x] The 21st analysis within an hour is skipped, with the reason recorded on the report.
+- [x] A skipped analysis still produces a complete technical audit and a deploy.
+- [x] The counter rolls over correctly after the hour with a mocked clock.
+- [x] A `RateLimitError` is retried exactly once, then degrades to `null`.
+- [x] Token usage is logged for every model call.
+- [x] No scheduled or automatic re-analysis of existing posts exists — grep-asserted for cron or
       timer configuration.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Exceeding the hourly guard skips the advisory layer and still validates and reports. The guard protects a free-tier quota, not a bill.

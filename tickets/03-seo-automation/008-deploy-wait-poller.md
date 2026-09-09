@@ -18,15 +18,17 @@ confidently wrong results, which is worse than reporting none.
 
 ## Acceptance criteria
 
-- [ ] Against a mocked fetch that returns stale HTML twice then fresh HTML, it resolves `ready` after
+- [x] Against a mocked fetch that returns stale HTML twice then fresh HTML, it resolves `ready` after
       exactly 3 polls.
-- [ ] With permanently stale HTML it returns `timeout` after the configured window, not a hang and
+- [x] With permanently stale HTML it returns `timeout` after the configured window, not a hang and
       not a throw.
-- [ ] A 404 during the window is treated as not-yet-deployed and retried, not as a fatal error.
-- [ ] A page with no parseable `BlogPosting` is treated as not ready.
-- [ ] The poll interval and timeout are injectable so tests run in milliseconds.
-- [ ] It never sleeps past the timeout.
+- [x] A 404 during the window is treated as not-yet-deployed and retried, not as a fatal error.
+- [x] A page with no parseable `BlogPosting` is treated as not ready.
+- [x] The poll interval and timeout are injectable so tests run in milliseconds.
+- [x] It never sleeps past the timeout.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Matches the page's own `dateModified` against the post's `updated_at`. A 200 only proves *a* deploy exists, not that it contains *this* edit.

@@ -18,14 +18,16 @@ The production adapter behind the same interface — the second adapter that mak
 
 ## Acceptance criteria
 
-- [ ] The conformance suite passes against `FileSeoStore` and, when Upstash credentials are present,
+- [x] The conformance suite passes against `FileSeoStore` and, when Upstash credentials are present,
       against `UpstashRedisStore`. It skips (not fails) the Redis run when credentials are absent.
-- [ ] `claimIdempotencyKey` uses `NX EX` in a single command — asserted against a mocked client.
-- [ ] Reports round-trip through Redis deep-equal.
-- [ ] `SEO_STORE_DRIVER=redis` without credentials throws a clear configuration error at startup,
+- [x] `claimIdempotencyKey` uses `NX EX` in a single command — asserted against a mocked client.
+- [x] Reports round-trip through Redis deep-equal.
+- [x] `SEO_STORE_DRIVER=redis` without credentials throws a clear configuration error at startup,
       not at first use.
-- [ ] Default outside production is `file`.
+- [x] Default outside production is `file`.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+One conformance suite runs against both adapters. `claimIdempotencyKey` is asserted to issue a single `SET key 1 NX EX ttl`.

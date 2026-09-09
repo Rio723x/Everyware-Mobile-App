@@ -25,16 +25,18 @@ HTTP server and out of reach of the CLI.
 
 ## Acceptance criteria
 
-- [ ] A valid signed `post.published` returns `202`, triggers a deploy, and dispatches processing.
-- [ ] An invalid signature, a stale timestamp and a missing header each return `401` with no deploy
+- [x] A valid signed `post.published` returns `202`, triggers a deploy, and dispatches processing.
+- [x] An invalid signature, a stale timestamp and a missing header each return `401` with no deploy
       and no dispatch.
-- [ ] Replaying the same `post.id:updated_at` returns `200 {"status":"duplicate"}` and dispatches nothing.
-- [ ] `post.unpublished` and `post.deleted` trigger a deploy but **no** analysis dispatch.
-- [ ] The handler returns in under 3 seconds with a mocked slow downstream — proving dispatch is not
+- [x] Replaying the same `post.id:updated_at` returns `200 {"status":"duplicate"}` and dispatches nothing.
+- [x] `post.unpublished` and `post.deleted` trigger a deploy but **no** analysis dispatch.
+- [x] The handler returns in under 3 seconds with a mocked slow downstream — proving dispatch is not
       awaited.
-- [ ] A malformed JSON body returns `400`, not `500`.
-- [ ] The handler file is under 60 lines and contains no analysis, validation or scoring logic.
+- [x] A malformed JSON body returns `400`, not `500`.
+- [x] The handler file is under 60 lines and contains no analysis, validation or scoring logic.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Payload parsing moved into `services/seo-worker/src/webhook/payload.ts` so the handler is 54 lines and the parsing is testable without an HTTP server.

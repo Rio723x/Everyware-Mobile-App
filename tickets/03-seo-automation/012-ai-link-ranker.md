@@ -22,17 +22,19 @@ a `responseJsonSchema`, thinking disabled). Failure returns an empty list, never
 
 ## Acceptance criteria
 
-- [ ] A mocked response containing an off-corpus `targetUrl` yields that suggestion dropped and
+- [x] A mocked response containing an off-corpus `targetUrl` yields that suggestion dropped and
       `droppedSuggestions` incremented.
-- [ ] A mocked response whose `anchorText` does not occur in the article body is likewise dropped.
-- [ ] Anchor matching is case-sensitive on the article text and does not match across element
+- [x] A mocked response whose `anchorText` does not occur in the article body is likewise dropped.
+- [x] Anchor matching is case-sensitive on the article text and does not match across element
       boundaries.
-- [ ] At most 5 suggestions are returned even when the model returns more.
-- [ ] `confidence` outside 0-1 fails schema validation.
-- [ ] An API failure returns an empty list and records the error; it does not throw.
-- [ ] With `GEMINI_API_KEY` absent, the ranker is skipped and the deterministic candidate list is
+- [x] At most 5 suggestions are returned even when the model returns more.
+- [x] `confidence` outside 0-1 fails schema validation.
+- [x] An API failure returns an empty list and records the error; it does not throw.
+- [x] With `GEMINI_API_KEY` absent, the ranker is skipped and the deterministic candidate list is
       still recorded on the report.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Both constraints are enforced **after** the response, not requested in the prompt. A prompt is a request; this is a guarantee.

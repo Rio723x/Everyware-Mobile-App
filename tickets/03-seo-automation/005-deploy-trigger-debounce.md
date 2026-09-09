@@ -17,13 +17,15 @@
 
 ## Acceptance criteria
 
-- [ ] The first call POSTs to the hook and returns `triggered`.
-- [ ] A second call within 60s returns `debounced` and issues **no** HTTP request.
-- [ ] A call after the window returns `triggered` again.
-- [ ] Five calls in rapid succession produce exactly one POST.
-- [ ] A non-2xx hook response returns `failed` without throwing.
-- [ ] A missing `VERCEL_DEPLOY_HOOK_URL` returns `failed` with a clear configuration message.
+- [x] The first call POSTs to the hook and returns `triggered`.
+- [x] A second call within 60s returns `debounced` and issues **no** HTTP request.
+- [x] A call after the window returns `triggered` again.
+- [x] Five calls in rapid succession produce exactly one POST.
+- [x] A non-2xx hook response returns `failed` without throwing.
+- [x] A missing `VERCEL_DEPLOY_HOOK_URL` returns `failed` with a clear configuration message.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+The debounce timestamp is written *before* the HTTP call, so a slow hook cannot let a burst through while the first request is in flight.

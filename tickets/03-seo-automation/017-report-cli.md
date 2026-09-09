@@ -17,14 +17,16 @@ Also supports `--all` (summary table of every stored report) and `--json` (raw r
 
 ## Acceptance criteria
 
-- [ ] `--slug` on a clean report prints the report and exits 0.
-- [ ] `--slug` on a report with error failures exits non-zero and lists each failing rule with its
+- [x] `--slug` on a clean report prints the report and exits 0.
+- [x] `--slug` on a report with error failures exits non-zero and lists each failing rule with its
       observed value.
-- [ ] `--slug` on an unknown slug exits non-zero with a clear message, not a stack trace.
-- [ ] `--all` prints one row per stored report, sorted by score ascending so the worst is first.
-- [ ] `--json` output parses as JSON and validates against the report schema.
-- [ ] The CLI runs against `FileSeoStore` with no credentials.
+- [x] `--slug` on an unknown slug exits non-zero with a clear message, not a stack trace.
+- [x] `--all` prints one row per stored report, sorted by score ascending so the worst is first.
+- [x] `--json` output parses as JSON and validates against the report schema.
+- [x] The CLI runs against `FileSeoStore` with no credentials.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Exits non-zero when the technical audit has error-severity failures, so it works as a pre-publish gate rather than only a read-out.

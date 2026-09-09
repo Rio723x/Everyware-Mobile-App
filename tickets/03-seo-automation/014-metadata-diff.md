@@ -18,16 +18,18 @@ repository, or to a rendered page.
 
 ## Acceptance criteria
 
-- [ ] A live title identical to the suggestion produces no diff.
-- [ ] A live title over 70 characters produces a diff citing the observed length even when the
+- [x] A live title identical to the suggestion produces no diff.
+- [x] A live title over 70 characters produces a diff citing the observed length even when the
       analyzer failed and `analysis` is `null`.
-- [ ] `analysis: null` produces only rule-derived diffs, never a crash.
-- [ ] A suggested slug differing from the live slug produces a diff flagged as
+- [x] `analysis: null` produces only rule-derived diffs, never a crash.
+- [x] A suggested slug differing from the live slug produces a diff flagged as
       non-actionable-without-a-redirect, since changing a published slug breaks existing links.
-- [ ] Diffs are ordered deterministically by field.
-- [ ] The module performs no writes of any kind — grep-asserted for Ghost Admin API usage and
+- [x] Diffs are ordered deterministically by field.
+- [x] The module performs no writes of any kind — grep-asserted for Ghost Admin API usage and
       filesystem writes.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Rule-derived diffs are produced even when `analysis` is null: a 71-character title is worth flagging whether or not a model had an opinion.

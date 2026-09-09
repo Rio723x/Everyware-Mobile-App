@@ -22,15 +22,17 @@ This half does the real work; the model in T-03-012 only ranks and explains what
 
 ## Acceptance criteria
 
-- [ ] Identical rankings across 10 runs on the same corpus — asserted explicitly.
-- [ ] The source article never appears in its own candidate list.
-- [ ] An article already linked from the source body is excluded.
-- [ ] Two articles with identical scores are ordered by slug, not by input order.
-- [ ] Hand-computed expected scores for a small fixture corpus match to 6 decimal places.
-- [ ] `recencyBoost` returns 1.0 for today, 0.5 at ~182 days, and clamps to 0.0 beyond 365 days.
-- [ ] A corpus of 1 article returns an empty candidate list rather than throwing.
-- [ ] At most 10 candidates are returned.
+- [x] Identical rankings across 10 runs on the same corpus — asserted explicitly.
+- [x] The source article never appears in its own candidate list.
+- [x] An article already linked from the source body is excluded.
+- [x] Two articles with identical scores are ordered by slug, not by input order.
+- [x] Hand-computed expected scores for a small fixture corpus match to 6 decimal places.
+- [x] `recencyBoost` returns 1.0 for today, 0.5 at ~182 days, and clamps to 0.0 beyond 365 days.
+- [x] A corpus of 1 article returns an empty candidate list rather than throwing.
+- [x] At most 10 candidates are returned.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+The final slug tiebreak is what makes ranking reproducible; without it two equally-scored posts could reorder between runs.

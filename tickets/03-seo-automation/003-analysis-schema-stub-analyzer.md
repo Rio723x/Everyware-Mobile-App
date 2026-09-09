@@ -22,16 +22,18 @@ rest of the pipeline can be developed and tested with no API key.
 
 ## Acceptance criteria
 
-- [ ] `seoAnalysisSchema` rejects a 61-character `suggestedTitle`, a 161-character
+- [x] `seoAnalysisSchema` rejects a 61-character `suggestedTitle`, a 161-character
       `suggestedDescription`, a `searchIntent` outside the four allowed values, and a
       `suggestedSlug` containing uppercase or underscores.
-- [ ] `StubAnalyzer` output validates against the schema for every fixture post.
-- [ ] `StubAnalyzer` is deterministic: identical output across 10 runs for the same post.
-- [ ] The system instruction is a module-level constant, identical across calls.
-- [ ] The user message contains the article `plaintext` **untruncated**.
-- [ ] The prompt text contains explicit instructions not to invent facts or schema — asserted by a
+- [x] `StubAnalyzer` output validates against the schema for every fixture post.
+- [x] `StubAnalyzer` is deterministic: identical output across 10 runs for the same post.
+- [x] The system instruction is a module-level constant, identical across calls.
+- [x] The user message contains the article `plaintext` **untruncated**.
+- [x] The prompt text contains explicit instructions not to invent facts or schema — asserted by a
       test so a future edit cannot quietly drop them.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Schema bounds mirror spec 02's *optimal* thresholds, so a suggestion the validator would flag is refused at the boundary rather than shown to an editor.

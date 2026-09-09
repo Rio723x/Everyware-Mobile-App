@@ -18,14 +18,16 @@ fixed corpus. Embeddings drop in behind the same interface later if relevance pr
 
 ## Acceptance criteria
 
-- [ ] Tokenising the same text twice yields identical token arrays.
-- [ ] Stopwords are removed; `washing machines` and `washing machine` produce the same stem.
-- [ ] A term appearing in every document gets an IDF of 0 and therefore no influence.
-- [ ] A term unique to one document gets the highest IDF in the corpus.
-- [ ] `buildContentIndex` over a 12-article fixture corpus produces 12 entries with non-empty vectors.
-- [ ] The index round-trips through both store adapters deep-equal.
-- [ ] Rebuilding from the same corpus produces byte-identical vectors.
+- [x] Tokenising the same text twice yields identical token arrays.
+- [x] Stopwords are removed; `washing machines` and `washing machine` produce the same stem.
+- [x] A term appearing in every document gets an IDF of 0 and therefore no influence.
+- [x] A term unique to one document gets the highest IDF in the corpus.
+- [x] `buildContentIndex` over a 12-article fixture corpus produces 12 entries with non-empty vectors.
+- [x] The index round-trips through both store adapters deep-equal.
+- [x] Rebuilding from the same corpus produces byte-identical vectors.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+The stemmer dropped its `er`/`ers` rules: they turned "filters" into "filt" and "cooler" into "cool". Fewer rules that never corrupt beat more rules that sometimes do.

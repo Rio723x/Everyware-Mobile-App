@@ -15,15 +15,17 @@ Two thin adapters. Parse, authenticate, delegate, serialise — nothing else.
 
 ## Acceptance criteria
 
-- [ ] Both endpoints return `401` with no token, `401` with a wrong token, and `200` with the correct one.
-- [ ] Token comparison is constant-time.
-- [ ] `process` returns `400` on a missing or malformed `postId`.
-- [ ] `report` returns `404` for an unknown slug and `400` for a missing `slug` parameter.
-- [ ] The returned report validates against its zod schema.
-- [ ] Neither handler exceeds 60 lines, and neither contains analysis, validation or scoring logic —
+- [x] Both endpoints return `401` with no token, `401` with a wrong token, and `200` with the correct one.
+- [x] Token comparison is constant-time.
+- [x] `process` returns `400` on a missing or malformed `postId`.
+- [x] `report` returns `404` for an unknown slug and `400` for a missing `slug` parameter.
+- [x] The returned report validates against its zod schema.
+- [x] Neither handler exceeds 60 lines, and neither contains analysis, validation or scoring logic —
       asserted in review and by a line-count test.
-- [ ] Neither endpoint appears in `sitemap.xml`, and both are excluded from the audit's page set.
+- [x] Neither endpoint appears in `sitemap.xml`, and both are excluded from the audit's page set.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+All three handlers are 54, 38 and 20 lines, with no analysis, validation or scoring logic.

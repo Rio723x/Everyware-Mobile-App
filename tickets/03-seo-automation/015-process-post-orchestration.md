@@ -19,19 +19,21 @@ are recorded, while validation and the report still complete.
 
 ## Acceptance criteria
 
-- [ ] A full run against fixtures plus a locally served `dist` produces a complete `SeoReport` with
+- [x] A full run against fixtures plus a locally served `dist` produces a complete `SeoReport` with
       `technicalScore === 100`.
-- [ ] With the analyzer forced to throw, the run still completes with `analysis: null`,
+- [x] With the analyzer forced to throw, the run still completes with `analysis: null`,
       `analysisError` set, and a full technical audit.
-- [ ] With the link ranker forced to throw, the run still completes with empty suggestion lists.
-- [ ] With the deploy timing out, the report records `deploy-timeout` and does not grade stale HTML.
-- [ ] `report.technicalScore === report.technical.score` for every run.
-- [ ] The report validates against its zod schema and round-trips through the store deep-equal.
-- [ ] Running `processPost` twice for the same post produces reports that differ only in
+- [x] With the link ranker forced to throw, the run still completes with empty suggestion lists.
+- [x] With the deploy timing out, the report records `deploy-timeout` and does not grade stale HTML.
+- [x] `report.technicalScore === report.technical.score` for every run.
+- [x] The report validates against its zod schema and round-trips through the store deep-equal.
+- [x] Running `processPost` twice for the same post produces reports that differ only in
       `generatedAt`.
-- [ ] No code path in the whole worker calls the Ghost **Admin** API — grep-asserted. This is what
+- [x] No code path in the whole worker calls the Ghost **Admin** API — grep-asserted. This is what
       makes webhook loops structurally impossible.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+`technicalScore` is copied from the audit, never recomputed. **Proven byte-identical builds** with the analyzer on and off.

@@ -17,16 +17,18 @@
 
 ## Acceptance criteria
 
-- [ ] Every `SeoStore` method is implemented by `FileSeoStore`.
-- [ ] `claimIdempotencyKey("k", 60)` returns `true` then `false` on an immediate second call.
-- [ ] With the clock advanced past the TTL, the same key claims `true` again.
-- [ ] Concurrent claims of the same key from 10 parallel calls yield exactly one `true`.
-- [ ] `getReport` returns `null` for an unknown slug rather than throwing.
-- [ ] Saved and reloaded reports are deep-equal, with dates surviving the JSON round trip as
+- [x] Every `SeoStore` method is implemented by `FileSeoStore`.
+- [x] `claimIdempotencyKey("k", 60)` returns `true` then `false` on an immediate second call.
+- [x] With the clock advanced past the TTL, the same key claims `true` again.
+- [x] Concurrent claims of the same key from 10 parallel calls yield exactly one `true`.
+- [x] `getReport` returns `null` for an unknown slug rather than throwing.
+- [x] Saved and reloaded reports are deep-equal, with dates surviving the JSON round trip as
       `IsoDateTime`.
-- [ ] `.seo-store/` is gitignored.
-- [ ] `npm run typecheck`, `lint`, `test` exit 0; no `any`.
+- [x] `.seo-store/` is gitignored.
+- [x] `npm run typecheck`, `lint`, `test` exit 0; no `any`.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+File claims use the `wx` write flag, giving the same atomicity Redis provides with `SET NX`. Ten concurrent claims yield exactly one winner.

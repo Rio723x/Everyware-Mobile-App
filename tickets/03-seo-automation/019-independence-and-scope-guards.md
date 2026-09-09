@@ -23,16 +23,18 @@ the separation is a convention, and conventions erode.
 
 ## Acceptance criteria
 
-- [ ] The independence test passes: both builds produce byte-identical `dist/` trees, compared by
+- [x] The independence test passes: both builds produce byte-identical `dist/` trees, compared by
       per-file hash.
-- [ ] Planting an import of `services/seo-worker` inside `apps/blog` fails the isolation test.
+- [x] Planting an import of `services/seo-worker` inside `apps/blog` fails the isolation test.
       Remove the plant afterwards.
-- [ ] The Admin API guard fails when a call to `/ghost/api/admin/` is planted. Remove it afterwards.
-- [ ] The deferred-scope guard fails when a `GOOGLE_SEARCH_CONSOLE_*` env reference is planted.
+- [x] The Admin API guard fails when a call to `/ghost/api/admin/` is planted. Remove it afterwards.
+- [x] The deferred-scope guard fails when a `GOOGLE_SEARCH_CONSOLE_*` env reference is planted.
       Remove it afterwards.
-- [ ] The secret scan passes on the clean tree and fails on a planted `sk-ant-` literal.
-- [ ] All five guards run in `npm run test` and in CI.
+- [x] The secret scan passes on the clean tree and fails on a planted `sk-ant-` literal.
+- [x] All five guards run in `npm run test` and in CI.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Five guards: import isolation, no analyzer output in shipped HTML, no Ghost Admin API path anywhere, no phase 9-11 code, and no committed secrets or .env files.

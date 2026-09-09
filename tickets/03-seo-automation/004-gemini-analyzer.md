@@ -42,21 +42,23 @@ const response = await ai.models.generateContent({
 
 ## Acceptance criteria
 
-- [ ] Against a recorded fixture response, `analyze()` returns a `SeoAnalysis` valid against the schema.
-- [ ] A malformed first response triggers **exactly one** retry, and a malformed second response
+- [x] Against a recorded fixture response, `analyze()` returns a `SeoAnalysis` valid against the schema.
+- [x] A malformed first response triggers **exactly one** retry, and a malformed second response
       yields `null` plus a populated error — not a throw.
-- [ ] The request config contains `model: "gemini-2.5-flash"`, `responseMimeType:
+- [x] The request config contains `model: "gemini-2.5-flash"`, `responseMimeType:
       "application/json"`, a `responseJsonSchema` matching `z.toJSONSchema(seoAnalysisSchema)`,
       and `thinkingConfig.thinkingBudget: 0` — asserted against a mocked client.
-- [ ] `systemInstruction` is byte-identical across two consecutive calls. `[m]`
-- [ ] The full article `plaintext` reaches `contents` **untruncated**; a post that would exceed
+- [x] `systemInstruction` is byte-identical across two consecutive calls. `[m]`
+- [x] The full article `plaintext` reaches `contents` **untruncated**; a post that would exceed
       the context window is reported as an error rather than silently cut.
-- [ ] A `429` is retried exactly once, then degrades to `analysis: null` with the reason recorded.
-- [ ] A live smoke test (skipped without `GEMINI_API_KEY`) returns a schema-valid analysis for
+- [x] A `429` is retried exactly once, then degrades to `analysis: null` with the reason recorded.
+- [x] A live smoke test (skipped without `GEMINI_API_KEY`) returns a schema-valid analysis for
       one fixture post, and logs `usageMetadata` token counts.
-- [ ] The strings `anthropic` and `claude` appear nowhere in `services/seo-worker` — grep-asserted,
+- [x] The strings `anthropic` and `claude` appear nowhere in `services/seo-worker` — grep-asserted,
       so the provider swap cannot be half-done.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+The response is parsed with zod even though the provider enforced a schema: provider-side constraint is best-effort, and the parse is what makes it true.

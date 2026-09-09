@@ -21,16 +21,18 @@ and does nothing but wire them to the live site.
 
 ## Acceptance criteria
 
-- [ ] `validateArticle` returns a `PageAudit` produced by `packages/seo-core`, not a locally
+- [x] `validateArticle` returns a `PageAudit` produced by `packages/seo-core`, not a locally
       constructed object.
-- [ ] `services/seo-worker` contains no rule implementations — grep-asserted for rule ids and for
+- [x] `services/seo-worker` contains no rule implementations — grep-asserted for rule ids and for
       any second definition of the scoring formula.
-- [ ] Against a local server serving deliberately broken HTML (missing canonical, `noindex`, two
+- [x] Against a local server serving deliberately broken HTML (missing canonical, `noindex`, two
       `<h1>`s, a 301), the exact expected rule ids fail.
-- [ ] A `301` on the canonical URL produces an error result naming the redirect target.
-- [ ] A deploy timeout yields a result marked `deploy-timeout` and does **not** grade the stale page.
-- [ ] `validateSite` detects a sitemap missing a newly published article.
+- [x] A `301` on the canonical URL produces an error result naming the redirect target.
+- [x] A deploy timeout yields a result marked `deploy-timeout` and does **not** grade the stale page.
+- [x] `validateSite` detects a sitemap missing a newly published article.
 
 ## Status
 
-Not started
+**Done** — commit on `feat/everyware-blog-platform`.
+
+Imports spec 02's rule registry rather than reimplementing anything. If the build gate and the production validator could disagree about "correct", neither would be trustworthy.
