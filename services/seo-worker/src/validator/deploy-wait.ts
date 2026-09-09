@@ -1,5 +1,20 @@
 export const POLL_INTERVAL_MS = 15_000;
-export const POLL_TIMEOUT_MS = 10 * 60 * 1000;
+
+/**
+ * How long to wait for a deploy to carry the edit.
+ *
+ * This must stay comfortably under the `maxDuration` of the function doing the
+ * waiting - 300s for `api/seo/process` - because the report is written *after*
+ * validation. A wait longer than the function's own lifetime cannot ever produce
+ * a report: the instance is killed mid-poll and nothing is stored, with no error
+ * anywhere to explain the silence. It was originally ten minutes, which is
+ * exactly that trap.
+ *
+ * Three and a half minutes is roughly four times a normal deploy here (~50s),
+ * and leaves about ninety seconds inside the budget for the analysis, the link
+ * ranking and the audit that follow.
+ */
+export const POLL_TIMEOUT_MS = 3.5 * 60 * 1000;
 
 export type DeployWaitResult =
   | { readonly status: "ready"; readonly polls: number }

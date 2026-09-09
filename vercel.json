@@ -8,6 +8,9 @@
   "functions": {
     "api/seo/process.ts": {
       "maxDuration": 300
+    },
+    "api/webhooks/ghost.ts": {
+      "maxDuration": 300
     }
   }
 }
