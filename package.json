@@ -15,7 +15,7 @@
   "scripts": {
     "dev:site": "npm run dev -w apps/site",
     "dev:blog": "npm run dev -w apps/blog",
-    "build": "npm run build -w apps/site && npm run build -w apps/blog && node scripts/merge-dist.mjs && npm run seo:audit -- --dist dist --format json",
+    "build": "tsc -b && npm run build -w apps/site && npm run build -w apps/blog && node scripts/merge-dist.mjs && npm run seo:audit -- --dist dist --format json",
     "typecheck": "tsc -b && tsc -p api/tsconfig.json && npm run astro-check -w apps/blog",
     "test": "npm run build:fixtures && vitest run",
     "lint": "eslint .",

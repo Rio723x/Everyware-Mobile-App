@@ -42,4 +42,25 @@ export default defineConfig({
   trailingSlash: "never",
   build: { format: "file" },
   integrations: [react()],
+  vite: {
+    resolve: {
+      /**
+       * Point the workspace packages at their TypeScript source explicitly.
+       *
+       * Those packages declare a `node` export condition resolving to `dist/`,
+       * which is what lets plain-Node scripts import them. Vite's SSR resolver
+       * also matches `node`, so without these aliases the build would demand
+       * compiled output that does not exist on a clean checkout - and it failed
+       * exactly that way on the first deploy.
+       *
+       * Aliasing here decouples the two consumers: the bundler always reads
+       * source, Node always reads dist, and neither depends on the other having
+       * been built first.
+       */
+      alias: {
+        "@everyware/seo-core": resolve(monorepoRoot, "packages/seo-core/src/index.ts"),
+        "@everyware/ghost": resolve(monorepoRoot, "packages/ghost/src/index.ts"),
+      },
+    },
+  },
 });

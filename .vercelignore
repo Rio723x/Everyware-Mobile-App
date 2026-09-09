@@ -1,0 +1,17 @@
+# The SEO automation layer is not part of going live.
+#
+# api/ holds the Ghost webhook receiver and the report endpoints. They need
+# GHOST_WEBHOOK_SECRET, GEMINI_API_KEY, SEO_WORKER_TOKEN, VERCEL_DEPLOY_HOOK_URL
+# and Upstash credentials, none of which are configured yet - so deploying them
+# adds failure surface for no current benefit.
+#
+# The blog itself is entirely static and needs none of it.
+#
+# To enable the automation layer later: delete this file, set those five
+# variables, and configure the four Ghost webhooks (see specs/03-seo-automation.md).
+api/
+
+# Never needed at build time.
+specs/
+tickets/
+infra/
