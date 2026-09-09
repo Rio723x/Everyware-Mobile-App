@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { linkSuggestionSchema, type LinkSuggestion } from "../report/types.js";
 import type { GenerateContentClient } from "../analyzer/gemini-analyzer.js";
-import { GEMINI_MODEL } from "../analyzer/gemini-analyzer.js";
+import { GEMINI_MODEL, GEMINI_THINKING } from "../analyzer/gemini-analyzer.js";
 import type { IndexedArticle, ScoredCandidate } from "./types.js";
 
 export const MAX_SUGGESTIONS = 5;
@@ -97,7 +97,7 @@ export const createLinkRanker = (config: RankerConfig) => {
             systemInstruction: RANKER_INSTRUCTION,
             responseMimeType: "application/json",
             responseJsonSchema: z.toJSONSchema(modelSuggestionSchema),
-            thinkingConfig: { thinkingBudget: 0 },
+            thinkingConfig: GEMINI_THINKING,
           },
         });
         raw = response.text ?? "";

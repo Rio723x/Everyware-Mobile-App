@@ -4,7 +4,27 @@ import { seoAnalysisSchema } from "../report/types.js";
 import { SYSTEM_INSTRUCTION, buildArticlePrompt } from "./prompt.js";
 import type { AnalysisOutcome, SeoAnalyzer } from "./analyzer.js";
 
-export const GEMINI_MODEL = "gemini-2.5-flash";
+export const GEMINI_MODEL = "gemini-3.6-flash";
+
+/**
+ * Thinking, held at the floor.
+ *
+ * Both this and the link ranker want the same thing: no reasoning tokens. These
+ * are extraction tasks over supplied text, and thinking tokens are the largest
+ * avoidable draw on a free quota. They share one constant so the two callers
+ * cannot drift into different settings.
+ *
+ * Expressed as `thinkingLevel` rather than the `thinkingBudget: 0` this used
+ * originally. Budgets are model-dependent, and Gemini 3 flash rejects a zero
+ * budget outright with a bare `INVALID_ARGUMENT` — the level is the Gemini 3
+ * mechanism. `LOW` is measured, not assumed: it reports
+ * `thoughtsTokenCount: 0`, which is what the budget bought before.
+ */
+export type ThinkingLevelName = "MINIMAL" | "LOW" | "MEDIUM" | "HIGH";
+
+export const GEMINI_THINKING = { thinkingLevel: "LOW" } as const satisfies {
+  thinkingLevel: ThinkingLevelName;
+};
 
 /**
  * The slice of `@google/genai` this uses.
@@ -22,7 +42,7 @@ export interface GenerateContentClient {
         systemInstruction: string;
         responseMimeType: string;
         responseJsonSchema: unknown;
-        thinkingConfig: { thinkingBudget: number };
+        thinkingConfig: { readonly thinkingLevel: ThinkingLevelName };
       };
     }): Promise<{ text?: string | undefined; usageMetadata?: unknown }>;
   };
@@ -53,9 +73,7 @@ const isRateLimited = (error: unknown): boolean => {
 /**
  * Gemini-backed analyzer, on the free tier.
  *
- * Thinking is disabled: this is extraction from supplied text, which needs no
- * reasoning budget, and thinking tokens are the largest avoidable draw on a
- * free quota.
+ * Thinking is held at its floor - see GEMINI_THINKING.
  *
  * The response is parsed with zod even though the provider enforced a schema.
  * A schema the provider applies and a schema this codebase trusts must be
@@ -76,7 +94,7 @@ export const createGeminiAnalyzer = (config: GeminiAnalyzerConfig): SeoAnalyzer 
         systemInstruction: SYSTEM_INSTRUCTION,
         responseMimeType: "application/json",
         responseJsonSchema,
-        thinkingConfig: { thinkingBudget: 0 },
+        thinkingConfig: GEMINI_THINKING,
       },
     });
     log("gemini usage", response.usageMetadata);
@@ -162,7 +180,34 @@ export const createAnalyzerFromEnv = async (
     return fallback;
   }
 
-  const { GoogleGenAI } = await import("@google/genai");
-  const client: GenerateContentClient = new GoogleGenAI({ apiKey });
+  /**
+   * The one place this codebase crosses into the SDK's own types.
+   *
+   * `GoogleGenAI` is not assignable to `GenerateContentClient` directly:
+   * `thinkingLevel` is a nominal string enum, so no plain string literal
+   * satisfies it. The enum arrives as a value on this same dynamic import, so
+   * the level is looked up here by the name the caller asked for - which keeps
+   * the analyzer and ranker free of SDK types, keeps the package off the
+   * module graph until a key exists, and needs no type assertion.
+   */
+  const { GoogleGenAI, ThinkingLevel } = await import("@google/genai");
+  const genai = new GoogleGenAI({ apiKey });
+
+  const client: GenerateContentClient = {
+    models: {
+      generateContent: (request) =>
+        genai.models.generateContent({
+          model: request.model,
+          contents: request.contents,
+          config: {
+            systemInstruction: request.config.systemInstruction,
+            responseMimeType: request.config.responseMimeType,
+            responseJsonSchema: request.config.responseJsonSchema,
+            thinkingConfig: { thinkingLevel: ThinkingLevel[request.config.thinkingConfig.thinkingLevel] },
+          },
+        }),
+    },
+  };
+
   return createGeminiAnalyzer(log === undefined ? { client } : { client, log });
 };

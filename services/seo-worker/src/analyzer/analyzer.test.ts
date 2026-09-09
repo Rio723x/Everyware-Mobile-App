@@ -114,7 +114,7 @@ describe("createGeminiAnalyzer", () => {
     const request = requests[0];
     expect(request?.model).toBe(GEMINI_MODEL);
     expect(request?.config.responseMimeType).toBe("application/json");
-    expect(request?.config.thinkingConfig).toEqual({ thinkingBudget: 0 });
+    expect(request?.config.thinkingConfig).toEqual({ thinkingLevel: "LOW" });
     expect(request?.config.systemInstruction).toBe(SYSTEM_INSTRUCTION);
     expect(request?.config.responseJsonSchema).toEqual(responseJsonSchema);
   });

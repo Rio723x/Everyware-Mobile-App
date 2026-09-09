@@ -17,7 +17,7 @@ Gemini and returns at most 5 `LinkSuggestion`s (`targetUrl`, `anchorText`, `reas
 A suggestion violating either is dropped and counted in `droppedSuggestions`. The model therefore
 cannot invent a URL, and cannot propose an anchor the editor would have to write from scratch.
 
-Same model configuration as T-03-004 (`gemini-2.5-flash`, `responseMimeType: "application/json"`,
+Same model configuration as T-03-004 (`gemini-3.6-flash`, `responseMimeType: "application/json"`,
 a `responseJsonSchema`, thinking disabled). Failure returns an empty list, never a throw.
 
 ## Acceptance criteria

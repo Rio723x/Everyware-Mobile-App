@@ -147,10 +147,10 @@ Note that the length bounds mirror Spec 02's *optimal* thresholds. A suggestion 
 **Model call — Gemini, free tier:**
 
 - SDK **`@google/genai`**; client `new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY })`.
-- Model **`gemini-2.5-flash`**. This is a bounded extraction task over one article, not a reasoning marathon, and Flash is the tier the free quota is generous on.
+- Model **`gemini-3.6-flash`**. This is a bounded extraction task over one article, not a reasoning marathon, and Flash is the tier the free quota is generous on. (Originally `gemini-2.5-flash`, which Google closed to new API keys — a live 404 named 3.6-flash as its replacement.)
 - Call shape: `ai.models.generateContent({ model, contents, config })`.
 - **Structured output** via `config.responseMimeType: "application/json"` plus `config.responseJsonSchema`, derived from `seoAnalysisSchema` with `z.toJSONSchema()`. The model is constrained to the schema at generation time; the response is then parsed with the zod schema anyway, because a schema the provider enforces and a schema this codebase trusts must be verified to be the same schema, not assumed to be.
-- `config.thinkingConfig: { thinkingBudget: 0 }` — thinking is off. Extraction from supplied text needs none, and it is the largest avoidable draw on a free quota.
+- `config.thinkingConfig: { thinkingLevel: "LOW" }` — thinking at its floor. Extraction from supplied text needs none, and it is the largest avoidable draw on a free quota. Gemini 3 rejects the `thinkingBudget: 0` this began as; `LOW` is verified to report `thoughtsTokenCount: 0`.
 - `config.systemInstruction` carries the stable brand and grounding rules; the article goes in `contents`.
 - On a schema-validation failure: retry once with the validation error appended; on a second failure, record `analysis: null` with the error in the report and continue. **A failed analysis must never fail the pipeline** — validation and deployment are independent of it.
 - Free-tier rate limits are per-minute and per-day. A `429` is retried once after a short backoff, then degrades to `analysis: null`. The pipeline treats exhausted quota as an ordinary Tuesday, not an incident.
@@ -357,7 +357,7 @@ Two Gemini calls per publish (analysis + link ranking), on the free tier. At eve
 **Analyzer (advisory)**
 
 - [ ] `analyze()` returns a `SeoAnalysis` valid against `seoAnalysisSchema` for every fixture post. `[m]`
-- [ ] Uses `@google/genai` with `gemini-2.5-flash`, `responseMimeType: "application/json"`, a `responseJsonSchema` derived from `seoAnalysisSchema`, and `thinkingConfig.thinkingBudget: 0`. `[m]`
+- [ ] Uses `@google/genai` with `gemini-3.6-flash`, `responseMimeType: "application/json"`, a `responseJsonSchema` derived from `seoAnalysisSchema`, and `thinkingConfig.thinkingLevel: "LOW"`. `[m]`
 - [ ] Malformed model output → one retry → `analysis: null` + `analysisError` set, **and the pipeline still completes**. `[m]`
 - [ ] **The independence test passes:** with the analyzer forced to throw, `npm run build` output is byte-identical to a successful run. `[m]`
 - [ ] `services/seo-worker` is imported by nothing under `apps/blog` — grep-asserted, so AI output structurally cannot reach a rendered page. `[m]`
