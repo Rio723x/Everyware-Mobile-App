@@ -107,12 +107,43 @@ export const httpPageSource = async (
     }
   };
 
+  const sitemapXml = await asset("sitemap.xml");
+
+  /**
+   * Every path the deployed site is known to have - not just the ones being
+   * graded on this run.
+   *
+   * The dist source reads this off the emitted files; over HTTP the sitemap is
+   * the equivalent inventory, so it is used here rather than assuming the
+   * requested pages are the whole site. Without this, auditing one article
+   * reports each of its links to other articles as unresolvable, because the
+   * only path the audit had ever heard of was the article itself.
+   */
+  const allPaths = new Set([
+    ...paths,
+    ...(sitemapXml === null ? [] : pathsFromSitemap(sitemapXml, baseUrl)),
+  ]);
+
   return {
     pages,
-    allPaths: new Set(paths),
-    sitemapXml: await asset("sitemap.xml"),
+    allPaths,
+    sitemapXml,
     robotsTxt: await asset("robots.txt"),
   };
 };
 
 export const FETCH_FAILED_MARKER = FETCH_FAILED;
+
+/**
+ * The paths a sitemap advertises, relative to `baseUrl`.
+ *
+ * Exported because the CLI needs the same list to decide what to fetch, and two
+ * parsers of one document would be one too many.
+ */
+export const pathsFromSitemap = (xml: string, baseUrl: string): readonly string[] => {
+  const origin = baseUrl.replace(/\/+$/, "");
+  return [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/g)]
+    .map((match) => match[1]?.trim() ?? "")
+    .filter((loc) => loc !== "")
+    .map((loc) => (loc.startsWith(origin) ? loc.slice(origin.length) : loc) || "/");
+};

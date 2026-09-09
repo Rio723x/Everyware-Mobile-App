@@ -81,7 +81,7 @@ describe("buildTitle", () => {
 
   it("builds listing titles, with a page number past page 1", () => {
     expect(buildTitle({ kind: "listing", page: 1, totalPages: 3 })).toBe(
-      "Everyware Blog — Appliance Care, Repair Costs & Buying Guides",
+      "Everyware Blog — Appliance Care, Repair Costs, Buying Guides",
     );
     expect(buildTitle({ kind: "listing", page: 2, totalPages: 3 })).toBe("Everyware Blog — Page 2");
   });

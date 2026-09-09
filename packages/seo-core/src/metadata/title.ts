@@ -17,7 +17,7 @@ const SUFFIX_THRESHOLD = 45;
 
 const SUFFIX = ` | ${BLOG_NAME}`;
 
-const LISTING_TITLE = `${BLOG_NAME} — Appliance Care, Repair Costs & Buying Guides`;
+const LISTING_TITLE = `${BLOG_NAME} — Appliance Care, Repair Costs, Buying Guides`;
 
 /**
  * Builds a page title deterministically.

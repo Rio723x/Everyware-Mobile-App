@@ -5,9 +5,17 @@ import { AI_USER_AGENTS, SITE_URL } from "../config.js";
 import { buildRobotsTxt } from "../robots.js";
 import { buildSitemapXml, type SitemapEntry } from "../sitemap.js";
 import { toIsoDateTime } from "../brand.js";
-import { auditPage, auditSite, kindOfPath, scoreOf, type SiteAuditInput } from "./audit.js";
+import {
+  auditPage,
+  auditSite,
+  isGradedPath,
+  kindOfPath,
+  scoreOf,
+  type SiteAuditInput,
+} from "./audit.js";
 import { PAGE_RULES } from "./audit.js";
 import { RULE_IDS, type PageContext, type RuleId, type RuleResult } from "./registry.js";
+import { httpPageSource, pathsFromSitemap } from "./http-source.js";
 import { SITE_RULES } from "./rules/site.js";
 
 /**
@@ -627,5 +635,72 @@ describe("an unreadable page reports rather than throwing", () => {
 
   it("still audits a real page normally", () => {
     expect(auditPage(buildPage(), ctx).results.length).toBeGreaterThan(20);
+  });
+});
+
+describe("the graded page set is the same over HTTP as it is from dist", () => {
+  // Found by auditing production after the first deploy: the same content
+  // scored 99 from dist and 95 over HTTP, because only the dist source knew
+  // that "/" is out of scope. A gate that disagrees with the validator grading
+  // production teaches people to ignore it.
+
+  it("grades the blog but not the React SPA at the root", () => {
+    expect(isGradedPath("/blog")).toBe(true);
+    expect(isGradedPath("/blog/a-post")).toBe(true);
+    expect(isGradedPath("/blog/category/news")).toBe(true);
+    expect(isGradedPath("/")).toBe(false);
+    expect(isGradedPath("/pricing")).toBe(false);
+  });
+
+  const lastmod = toIsoDateTime("2026-01-01T00:00:00.000Z");
+  const sitemap = buildSitemapXml([
+    { loc: toAbsoluteUrl(`${SITE_URL}/`), lastmod, changefreq: "weekly", priority: 1 },
+    { loc: toAbsoluteUrl(`${SITE_URL}/blog`), lastmod, changefreq: "daily", priority: 0.8 },
+    { loc: toAbsoluteUrl(`${SITE_URL}/blog/a-post`), lastmod, changefreq: "monthly", priority: 0.6 },
+  ] satisfies SitemapEntry[]);
+
+  it("reads the advertised paths back out of a sitemap", () => {
+    expect(pathsFromSitemap(sitemap, SITE_URL)).toEqual(["/", "/blog", "/blog/a-post"]);
+  });
+
+  const respondWith = (body: string) =>
+    new Response(body, { status: 200, headers: { "content-type": "text/html" } });
+
+  /** Annotated rather than asserted: this repo's lint rule forbids assertions. */
+  const fetcherFor = (respond: (href: string) => Response): typeof globalThis.fetch => {
+    const fake: typeof globalThis.fetch = (input) => Promise.resolve(respond(String(input)));
+    return fake;
+  };
+
+  it("knows about paths it was not asked to grade, so their links resolve", async () => {
+    // The defect this pins: auditing one article used to set allPaths to that
+    // one article, so every link it made to another page was reported as
+    // pointing at a URL the site does not have.
+    const input = await httpPageSource(["/blog/a-post"], {
+      baseUrl: SITE_URL,
+      fetch: fetcherFor((href) => {
+        if (href.endsWith("/sitemap.xml")) return respondWith(sitemap);
+        if (href.endsWith("/robots.txt")) return respondWith("User-agent: *\n");
+        return respondWith(buildPage());
+      }),
+    });
+
+    expect(input.pages).toHaveLength(1);
+    expect(input.allPaths.has("/")).toBe(true);
+    expect(input.allPaths.has("/blog")).toBe(true);
+    expect(input.allPaths.has("/blog/a-post")).toBe(true);
+  });
+
+  it("falls back to the requested paths when there is no sitemap", async () => {
+    const input = await httpPageSource(["/blog/a-post"], {
+      baseUrl: SITE_URL,
+      fetch: fetcherFor((href) =>
+        href.endsWith("/sitemap.xml") || href.endsWith("/robots.txt")
+          ? new Response("", { status: 404 })
+          : respondWith(buildPage()),
+      ),
+    });
+
+    expect([...input.allPaths]).toEqual(["/blog/a-post"]);
   });
 });
