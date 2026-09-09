@@ -103,3 +103,65 @@ than the pipeline, the report came back complete and correct in every other
 respect, with `analysis: null`. Nothing short of a live call with a new key
 would have surfaced it. Fixed by moving to `gemini-3.6-flash`, whose thinking
 control is `thinkingLevel` rather than a budget.
+
+## Live verification against production
+
+Everything except the two content-dependent steps is now proven against the
+deployed system: real Vercel functions, real self-hosted Redis, real Gemini,
+real `everyware.in`.
+
+### The webhook chain
+
+A delivery signed exactly as Ghost 5.130.6 signs one:
+
+| Delivery | Result |
+| --- | --- |
+| genuine `post.published` | `202 {"status":"accepted","deploy":"triggered"}` |
+| the same delivery replayed | `200 {"status":"duplicate"}` |
+| tampered signature | `401` |
+
+The deploy hook fired from inside the function, and a production build started.
+
+### The dispatch survives the response
+
+`dispatchProcess` sends its request without awaiting it, on the reasoning that
+Ghost times out after two seconds while processing takes minutes. Whether that
+survives a serverless function returning was an open question, since a frozen
+instance would drop the in-flight request and no report would ever appear.
+
+It survives. Sixteen seconds after the 202, the stored report's `generatedAt`
+was sixteen seconds old - the pipeline had run on Vercel and written to Redis.
+No `waitUntil` is needed, and it was not added on suspicion.
+
+### Endpoint behaviour
+
+| Request | Status |
+| --- | --- |
+| `GET /api/seo/report` with no token | 401 |
+| `GET /api/seo/report` with the token | 200, full report from Redis |
+| `POST /api/seo/process` with no token | 401 |
+| `DELETE /api/seo/report` | 405, from the runtime |
+
+### Still content-dependent
+
+Two criteria cannot be met without more than one published article, and one
+without an edit to a real post:
+
+- at least one internal-link suggestion - a lone article has nothing to link to
+- unpublish removing the URL and its sitemap entry
+- edit-and-republish producing exactly one deploy and one fresh report
+
+### A fourth bug the live run found
+
+**Every endpoint returned 500, and one hung for the full 300s `maxDuration`.**
+Vercel's Node runtime chooses between the Web `Request`/`Response` signature and
+legacy `(req, res)` by inspecting the module for a named HTTP-method export or a
+`fetch` export. These handlers used `export default`, which matches neither, so
+they were invoked with an `IncomingMessage` - no `.text()`, no `.headers.get()` -
+and the returned `Response` was discarded. The discarded return is what turned
+`report` into a hang rather than an error: nothing ever wrote to `res`.
+
+No test in this repo could have caught it. It is a property of how the platform
+invokes the module, not of the handler bodies, and 491 passing tests said
+nothing about it. Found by calling the deployed endpoints and reading the runtime
+log, which named the cause outright.
