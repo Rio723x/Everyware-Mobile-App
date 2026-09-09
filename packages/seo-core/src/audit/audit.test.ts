@@ -5,7 +5,7 @@ import { AI_USER_AGENTS, SITE_URL } from "../config.js";
 import { buildRobotsTxt } from "../robots.js";
 import { buildSitemapXml, type SitemapEntry } from "../sitemap.js";
 import { toIsoDateTime } from "../brand.js";
-import { auditSite, kindOfPath, scoreOf, type SiteAuditInput } from "./audit.js";
+import { auditPage, auditSite, kindOfPath, scoreOf, type SiteAuditInput } from "./audit.js";
 import { PAGE_RULES } from "./audit.js";
 import { RULE_IDS, type PageContext, type RuleId, type RuleResult } from "./registry.js";
 import { SITE_RULES } from "./rules/site.js";
@@ -598,5 +598,34 @@ describe("rule coverage", () => {
     expect(unregistered).toEqual([]);
     // 34 page + site rules run; the registry may list ids reserved for later.
     expect(emitted.size).toBeGreaterThanOrEqual(30);
+  });
+});
+
+describe("an unreadable page reports rather than throwing", () => {
+  // Found by running the pipeline against a URL that was not deployed yet: the
+  // fetch-failed marker parses to a document with a null documentElement, and a
+  // rule that touched it crashed the whole audit. One unreachable page must
+  // never mean no report at all.
+  const ctx = context();
+
+  it("does not throw on the fetch-failed marker", () => {
+    expect(() => auditPage("<!-- fetch-failed -->", ctx)).not.toThrow();
+  });
+
+  it("reports why, and scores zero", () => {
+    const audit = auditPage("<!-- fetch-failed -->", ctx);
+    expect(audit.score).toBe(0);
+    expect(audit.results).toHaveLength(1);
+    expect(audit.results[0]?.status).toBe("fail");
+    expect(audit.results[0]?.message).toContain("could not be fetched");
+  });
+
+  it("does not throw on an empty body", () => {
+    expect(() => auditPage("", ctx)).not.toThrow();
+    expect(auditPage("", ctx).results[0]?.message).toContain("could not be parsed");
+  });
+
+  it("still audits a real page normally", () => {
+    expect(auditPage(buildPage(), ctx).results.length).toBeGreaterThan(20);
   });
 });

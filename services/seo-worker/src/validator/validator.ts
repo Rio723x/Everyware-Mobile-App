@@ -2,6 +2,7 @@ import {
   SITE_RULES,
   auditSite,
   httpPageSource,
+  isUnreadable,
   type PageAudit,
   type SiteAudit,
 } from "@everyware/seo-core";
@@ -21,8 +22,6 @@ export interface ValidatorConfig {
   /** Skip the deploy wait, for a validation that is not following an edit. */
   readonly skipDeployWait?: boolean;
 }
-
-const FETCH_FAILED_MARKER = "<!-- fetch-failed -->";
 
 /**
  * Grades the live site with spec 02's rules.
@@ -70,7 +69,9 @@ export const createValidator = (config: ValidatorConfig = {}) => {
       if (audit === undefined) {
         return { status: "fetch-failed", audit: null };
       }
-      if (audit.results.some((r) => r.message.includes(FETCH_FAILED_MARKER))) {
+      // Asked of the audit rather than sniffed from a message string: the
+      // engine already knows whether any rule was able to run.
+      if (isUnreadable(audit)) {
         return { status: "fetch-failed", audit };
       }
       return { status: "validated", audit };

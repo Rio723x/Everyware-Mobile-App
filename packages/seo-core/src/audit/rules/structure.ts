@@ -1,7 +1,9 @@
 import { check, fail, pass, type PageRule } from "../registry.js";
 
 export const htmlLang: PageRule = (doc) => {
-  const lang = doc.documentElement.getAttribute("lang")?.trim() ?? "";
+  // Defensive as well as guarded upstream: a rule must never be the thing that
+  // throws, because one bad page would then produce no report at all.
+  const lang = doc.documentElement?.getAttribute("lang")?.trim() ?? "";
   return check("html-lang", "error", lang !== "", "<html> has no lang attribute", `lang="${lang}"`);
 };
 

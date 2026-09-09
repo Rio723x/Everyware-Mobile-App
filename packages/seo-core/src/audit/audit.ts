@@ -57,8 +57,44 @@ export const kindOfPath = (path: string): PageKind | "unknown" => {
   return "unknown";
 };
 
+/**
+ * A page that could not be fetched or parsed.
+ *
+ * Returned instead of running the rules, because a rule handed an empty
+ * document has nothing to say about it - and a rule that throws takes the whole
+ * audit down with it, turning "one page was unreachable" into "no report at
+ * all". Reported as a single failing result so it still counts against the score.
+ */
+export const UNREADABLE_PREFIX = "could not audit";
+
+/** True when a page was not fetchable or parseable, so no rule could run. */
+export const isUnreadable = (audit: PageAudit): boolean =>
+  audit.results.length === 1 && (audit.results[0]?.message.startsWith(UNREADABLE_PREFIX) ?? false);
+
+const unreadablePage = (ctx: PageContext, reason: string): PageAudit => {
+  const results: RuleResult[] = [
+    {
+      id: "canonical-present",
+      severity: "error",
+      status: "fail",
+      message: `${UNREADABLE_PREFIX} ${ctx.url}: ${reason}`,
+    },
+  ];
+  return { url: ctx.url, path: ctx.path, file: ctx.file, kind: ctx.kind, results, score: 0 };
+};
+
 export const auditPage = (html: string, ctx: PageContext): PageAudit => {
   const { document } = parseHTML(html);
+
+  // linkedom yields a document with a null documentElement for empty or
+  // unparseable input - which is what a failed fetch produces.
+  if (document.documentElement === null) {
+    return unreadablePage(
+      ctx,
+      html.includes("fetch-failed") ? "the page could not be fetched" : "the page could not be parsed",
+    );
+  }
+
   const results = PAGE_RULES.map((rule) => rule(document, ctx));
 
   return {

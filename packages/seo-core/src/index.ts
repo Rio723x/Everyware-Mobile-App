@@ -102,9 +102,11 @@ export {
 
 export {
   PAGE_RULES,
+  UNREADABLE_PREFIX,
   auditPage,
   auditSite,
   hasErrors,
+  isUnreadable,
   kindOfPath,
   scoreOf,
   type SiteAuditInput,
