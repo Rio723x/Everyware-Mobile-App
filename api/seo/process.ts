@@ -10,13 +10,16 @@ import {
 } from "@everyware/seo-worker";
 import { isAuthorised, json } from "../_lib/auth.js";
 
-export const config = { runtime: "nodejs", maxDuration: 300 };
-
 const bodySchema = z.object({ slug: z.string().min(1) });
 
-/** Thin adapter: authenticate, parse, delegate to processPost, serialise. */
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== "POST") return json({ error: "method not allowed" }, 405);
+/**
+ * Thin adapter: authenticate, parse, delegate to processPost, serialise.
+ *
+ * Exported as `POST` rather than as a default, so Vercel invokes it with a Web
+ * `Request` - see the note in webhooks/ghost.ts. `maxDuration` moved to
+ * vercel.json, which is where the schema documents it for these functions.
+ */
+export async function POST(request: Request): Promise<Response> {
   if (!isAuthorised(request.headers.get("authorization"))) {
     return json({ error: "unauthorised" }, 401);
   }
