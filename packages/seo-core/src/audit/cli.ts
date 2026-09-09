@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import { writeFileSync } from "node:fs";
 import { z } from "zod";
-import { auditSite, hasErrors, type SiteAuditInput } from "./audit.js";
+import { auditSite, hasErrors, isGradedPath, type SiteAuditInput } from "./audit.js";
 import { distPageSource } from "./dist-source.js";
-import { httpPageSource } from "./http-source.js";
+import { httpPageSource, pathsFromSitemap } from "./http-source.js";
 import { SITE_RULES } from "./rules/site.js";
 import type { PageAudit, RuleResult, SiteAudit } from "./registry.js";
 
@@ -141,13 +141,6 @@ export const parseArgs = (argv: readonly string[]): CliOptions => {
   };
 };
 
-/** Paths to audit over HTTP, taken from a locally built sitemap when present. */
-const pathsFromSitemap = (xml: string, baseUrl: string): readonly string[] =>
-  [...xml.matchAll(/<loc>([\s\S]*?)<\/loc>/g)]
-    .map((match) => match[1]?.trim() ?? "")
-    .filter((loc) => loc !== "")
-    .map((loc) => loc.replace(baseUrl, "") || "/");
-
 export const runCli = async (argv: readonly string[]): Promise<number> => {
   const options = parseArgs(argv);
 
@@ -167,9 +160,11 @@ export const runCli = async (argv: readonly string[]): Promise<number> => {
   } else {
     const baseUrl = options.baseUrl ?? "";
     const probe = await httpPageSource([], { baseUrl });
-    const paths =
+    const advertised =
       probe.sitemapXml === null ? ["/blog"] : pathsFromSitemap(probe.sitemapXml, baseUrl);
-    input = await httpPageSource(paths, { baseUrl });
+    // Grade the same set the dist audit grades. The rest of the sitemap still
+    // reaches the audit as `allPaths`, so links into it resolve.
+    input = await httpPageSource(advertised.filter(isGradedPath), { baseUrl });
     source = { type: "http", baseUrl };
   }
 

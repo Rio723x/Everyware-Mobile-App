@@ -106,6 +106,7 @@ export {
   auditPage,
   auditSite,
   hasErrors,
+  isGradedPath,
   isUnreadable,
   kindOfPath,
   scoreOf,
@@ -120,7 +121,11 @@ export { buildRobotsTxt } from "./robots.js";
 
 export { distPageSource } from "./audit/dist-source.js";
 
-export { httpPageSource, type HttpSourceOptions } from "./audit/http-source.js";
+export {
+  httpPageSource,
+  pathsFromSitemap,
+  type HttpSourceOptions,
+} from "./audit/http-source.js";
 
 export {
   auditReportSchema,

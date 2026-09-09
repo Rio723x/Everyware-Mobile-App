@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { toAbsoluteUrl } from "../brand.js";
 import { SITE_URL } from "../config.js";
 import { fileToPath, listHtmlFiles } from "../dist-files.js";
-import type { SiteAuditInput, SitePage } from "./audit.js";
+import { isGradedPath, type SiteAuditInput, type SitePage } from "./audit.js";
 
 /**
  * Reads a built site off disk for auditing.
@@ -19,7 +19,7 @@ export const distPageSource = (distDir: string): SiteAuditInput => {
     .filter((file) => file !== "404.html")
     // The React SPA at "/" is out of scope for spec 02 - it keeps its existing
     // hand-written head - so it is not graded, only linked to.
-    .filter((file) => fileToPath(file).startsWith("/blog"))
+    .filter((file) => isGradedPath(fileToPath(file)))
     .map((file) => {
       const path = fileToPath(file);
       return {

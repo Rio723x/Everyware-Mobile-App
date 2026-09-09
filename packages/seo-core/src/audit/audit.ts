@@ -107,6 +107,18 @@ export const auditPage = (html: string, ctx: PageContext): PageAudit => {
   };
 };
 
+/**
+ * Whether a path is one spec 02 grades.
+ *
+ * Spec 02 §2 puts the React SPA's own `<head>` out of scope, so `/` is emitted
+ * and linked to but never graded. Both page sources ask this one function
+ * rather than each testing the prefix themselves: when only the dist source
+ * knew the rule, the same content scored 99 from a directory and 95 over HTTP,
+ * and a gate that disagrees with the validator grading production is worse than
+ * no gate at all.
+ */
+export const isGradedPath = (path: string): boolean => path.startsWith("/blog");
+
 export interface SitePage {
   readonly url: AbsoluteUrl;
   readonly path: string;
