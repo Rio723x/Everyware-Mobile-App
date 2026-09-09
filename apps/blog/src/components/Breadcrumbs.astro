@@ -1,0 +1,25 @@
+---
+import type { Crumb } from "../lib/breadcrumbs";
+
+interface Props {
+  readonly trail: readonly Crumb[];
+}
+
+const { trail } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    {
+      trail.map((crumb) => (
+        <li>
+          {crumb.href === null ? (
+            <span aria-current="page">{crumb.label}</span>
+          ) : (
+            <a href={crumb.href}>{crumb.label}</a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

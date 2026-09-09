@@ -1,0 +1,36 @@
+---
+interface Props {
+  readonly page: number;
+  readonly totalPages: number;
+  readonly prevHref: string | null;
+  readonly nextHref: string | null;
+}
+
+const { page, totalPages, prevHref, nextHref } = Astro.props;
+---
+
+{
+  totalPages > 1 && (
+    <nav class="pagination" aria-label="Pagination">
+      {prevHref === null ? (
+        <span />
+      ) : (
+        <a class="pagination-link" rel="prev" href={prevHref}>
+          &larr; Newer
+        </a>
+      )}
+
+      <span class="blog-meta">
+        Page {page} of {totalPages}
+      </span>
+
+      {nextHref === null ? (
+        <span />
+      ) : (
+        <a class="pagination-link" rel="next" href={nextHref}>
+          Older &rarr;
+        </a>
+      )}
+    </nav>
+  )
+}

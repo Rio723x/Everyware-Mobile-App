@@ -1,0 +1,101 @@
+---
+/**
+ * Static CTA band. The marketing app opens a QR modal here, which needs React
+ * state and a click handler; on an article page that would mean shipping a
+ * bundle to every reader for one button. A link to the home page's download
+ * section does the same job with no JavaScript.
+ */
+---
+
+<section class="cta-band" aria-label="Get the EveryWare app">
+  <div class="cta-inner">
+    <div>
+      <h2 class="cta-heading">Book a verified technician in one tap</h2>
+      <p class="cta-copy">
+        Live tracking, fixed pricing and verified technicians for every major
+        appliance brand in India.
+      </p>
+    </div>
+
+    <div class="cta-actions">
+      <a class="cta-primary" href="/#download">Get the app</a>
+      <a class="cta-secondary" href="/#info">Browse brand directory</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band {
+    margin-top: 72px;
+    background: var(--canvas-deep);
+    color: var(--canvas-card);
+    border-radius: var(--radius-xl);
+    padding: 44px 36px;
+  }
+
+  .cta-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 900px) {
+    .cta-inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+  }
+
+  .cta-heading {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .cta-copy {
+    color: var(--text-light);
+    max-width: 46ch;
+    line-height: 1.6;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .cta-primary,
+  .cta-secondary {
+    padding: 12px 26px;
+    border-radius: var(--radius-pill);
+    font-weight: 700;
+    font-size: 0.93rem;
+    white-space: nowrap;
+    transition: all var(--transition-fast);
+  }
+
+  .cta-primary {
+    background: var(--accent-coral);
+    color: var(--canvas-card);
+  }
+
+  .cta-primary:hover {
+    background: var(--accent-coral-hover);
+  }
+
+  .cta-secondary {
+    border: 1px solid color-mix(in srgb, var(--canvas-card) 28%, transparent);
+    color: var(--canvas-card);
+  }
+
+  .cta-secondary:hover {
+    border-color: var(--brand-cyan);
+    color: var(--brand-cyan);
+  }
+</style>

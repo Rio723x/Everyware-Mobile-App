@@ -1,0 +1,47 @@
+---
+/**
+ * The shell every blog page renders into.
+ *
+ * It deliberately emits NO metadata of its own - no <title>, no description,
+ * no canonical, no OpenGraph, no Twitter tags, no JSON-LD. Those are spec 02's
+ * job, and they arrive through the `head` slot below as a single SeoHead
+ * component. Keeping this layout metadata-free is what makes SeoHead the only
+ * place in the app that can write a meta tag, which is in turn what makes the
+ * spec 02 rule engine enforceable rather than aspirational.
+ *
+ * The charset and viewport metas are the exception: they are document
+ * mechanics rather than SEO metadata, they never vary per page, and the audit
+ * rules require them on every page.
+ */
+import BlogFooter from "../components/BlogFooter.astro";
+import BlogHeader from "../components/BlogHeader.astro";
+import "../styles/blog.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/webp" href="/Everywware.webp" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap"
+    />
+
+    <slot name="head" />
+  </head>
+
+  <body>
+    <BlogHeader />
+
+    <main class="blog-main">
+      <slot />
+    </main>
+
+    <BlogFooter />
+  </body>
+</html>

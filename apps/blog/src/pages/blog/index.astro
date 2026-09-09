@@ -1,0 +1,57 @@
+---
+import Breadcrumbs from "../../components/Breadcrumbs.astro";
+import DownloadCtaBand from "../../components/DownloadCtaBand.astro";
+import Pagination from "../../components/Pagination.astro";
+import PostGrid from "../../components/PostGrid.astro";
+import SeoHead from "../../components/SeoHead.astro";
+import BlogLayout from "../../layouts/BlogLayout.astro";
+import { buildPageMetadata } from "@everyware/seo-core";
+import { listingTrail } from "../../lib/breadcrumbs";
+import { ghost } from "../../lib/content";
+import { paginate } from "../../lib/pagination";
+
+const posts = await ghost.listPosts();
+const page = paginate(posts, 1, "/blog");
+
+const trail = listingTrail();
+const metadata = buildPageMetadata(
+  { kind: "listing", page: page.page, totalPages: page.totalPages },
+  trail,
+);
+---
+
+<BlogLayout>
+  <SeoHead slot="head" metadata={metadata} />
+
+  <div class="container">
+    <Breadcrumbs trail={trail} />
+
+    <header class="listing-header">
+      <h1 class="blog-h1">Everyware Blog</h1>
+      <p class="blog-lead">
+        Appliance care, repair costs and buying guides for Indian households —
+        written by people who have spent years around service desks.
+      </p>
+    </header>
+
+    <PostGrid posts={page.items} />
+
+    <Pagination
+      page={page.page}
+      totalPages={page.totalPages}
+      prevHref={page.prevHref}
+      nextHref={page.nextHref}
+    />
+
+    <DownloadCtaBand />
+  </div>
+</BlogLayout>
+
+<style>
+  .listing-header {
+    margin: 28px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>

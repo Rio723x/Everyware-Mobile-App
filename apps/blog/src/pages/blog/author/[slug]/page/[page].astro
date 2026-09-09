@@ -1,0 +1,77 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { BlogAuthor, BlogPost } from "@everyware/ghost";
+import { buildPageMetadata } from "@everyware/seo-core";
+import Breadcrumbs from "../../../../../components/Breadcrumbs.astro";
+import SeoHead from "../../../../../components/SeoHead.astro";
+import DownloadCtaBand from "../../../../../components/DownloadCtaBand.astro";
+import Pagination from "../../../../../components/Pagination.astro";
+import PostGrid from "../../../../../components/PostGrid.astro";
+import BlogLayout from "../../../../../layouts/BlogLayout.astro";
+import { authorTrail } from "../../../../../lib/breadcrumbs";
+import { ghost } from "../../../../../lib/content";
+import { extraPageNumbers, paginate } from "../../../../../lib/pagination";
+
+/** Pages 2..n only; page 1 is /blog/author/<slug>. */
+export const getStaticPaths: GetStaticPaths = async () => {
+  const authors = await ghost.listAuthors();
+  const routes = await Promise.all(
+    authors.map(async (author) => {
+      const posts = await ghost.listPostsByAuthor(author.slug);
+      return extraPageNumbers(posts.length).map((page) => ({
+        params: { slug: author.slug, page: String(page) },
+        props: { author, posts, pageNumber: page },
+      }));
+    }),
+  );
+  return routes.flat();
+};
+
+interface Props {
+  readonly author: BlogAuthor;
+  readonly posts: readonly BlogPost[];
+  readonly pageNumber: number;
+}
+
+const { author, posts, pageNumber } = Astro.props satisfies Props;
+const page = paginate(posts, pageNumber, `/blog/author/${author.slug}`);
+
+const trail = authorTrail(author);
+const metadata = buildPageMetadata(
+  { kind: "author", author, postCount: posts.length, page: page.page, totalPages: page.totalPages },
+  trail,
+);
+---
+
+<BlogLayout>
+  <SeoHead slot="head" metadata={metadata} />
+
+  <div class="container">
+    <Breadcrumbs trail={trail} />
+
+    <header class="collection-header">
+      <h1 class="blog-h1">{author.name}</h1>
+      <p class="blog-lead">Page {page.page} of {page.totalPages}</p>
+    </header>
+
+    <PostGrid posts={page.items} />
+
+    <Pagination
+      page={page.page}
+      totalPages={page.totalPages}
+      prevHref={page.prevHref}
+      nextHref={page.nextHref}
+    />
+
+    <DownloadCtaBand />
+  </div>
+</BlogLayout>
+
+<style>
+  .collection-header {
+    margin: 28px 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>

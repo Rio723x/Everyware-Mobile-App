@@ -1,0 +1,7 @@
+{
+  "_source": "Generated inside the running Ghost 5.130.6 container by replicating core/server/services/webhooks/WebhookTrigger.js line 123 verbatim. The header below is what Ghost itself produces for this payload, secret and timestamp - not a shape invented here. The secret is a throwaway used only for this fixture.",
+  "payload": "{\"post\":{\"current\":{\"id\":\"abc123\",\"slug\":\"washing-machine-service-frequency\",\"updated_at\":\"2026-09-07T10:00:00.000Z\"}}}",
+  "secret": "test-webhook-secret-value",
+  "timestampMs": 1789000000000,
+  "header": "sha256=fa5e6e894189cf85f4aed0aae2177f9343c568738aabbc48a99dfb3dd93ef4fb, t=1789000000000"
+}

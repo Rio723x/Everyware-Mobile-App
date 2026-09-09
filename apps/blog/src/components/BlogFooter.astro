@@ -1,0 +1,158 @@
+---
+/**
+ * Blog footer.
+ *
+ * Mirrors the marketing app's EditorialFooter column structure and contact
+ * details, rebuilt rather than reused: that component's site links are bare
+ * `#home` / `#experiences` / `#info` anchors, and it requires an onOpenQrModal
+ * prop whose modal state lives in App.jsx (spec 01, §2.3).
+ *
+ * The three dead `href="#"` social links in the original are dropped rather
+ * than reproduced - a link that goes nowhere is worse than no link, and every
+ * internal href here has to resolve for the audit rules in spec 02.
+ */
+import { ghost } from "../lib/content";
+
+const year = new Date().getFullYear();
+
+/**
+ * Category links come from Ghost, never a hardcoded list.
+ *
+ * An earlier version hardcoded four tag slugs. They existed in the fixtures and
+ * did not exist in the live CMS, so every page shipped three links to URLs the
+ * build never emitted - caught by the `internal-links-resolve` rule on the
+ * first real-content build. A footer that lists whatever tags exist cannot
+ * drift from the site again.
+ */
+const tags = (await ghost.listTags()).slice(0, 4);
+
+const sections = [
+  {
+    heading: "Blog",
+    links: [
+      { label: "All articles", href: "/blog" },
+      ...tags.map((tag) => ({ label: tag.name, href: `/blog/category/${tag.slug}` })),
+    ],
+  },
+  {
+    heading: "EveryWare",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "User experiences", href: "/#experiences" },
+      { label: "Brand directory", href: "/#info" },
+      { label: "FAQ", href: "/#faq" },
+    ],
+  },
+  {
+    heading: "Contact",
+    links: [
+      { label: "admin@everyware.in", href: "mailto:admin@everyware.in" },
+      { label: "+91 9810290492", href: "tel:+919810290492" },
+    ],
+  },
+];
+---
+
+<footer class="blog-footer">
+  <div class="container">
+    <div class="blog-footer-grid">
+      <div class="blog-footer-brand">
+        <p class="blog-footer-wordmark">EveryWare</p>
+        <p class="blog-footer-tagline">
+          Verified home appliance repair and support, across India.
+        </p>
+      </div>
+
+      {
+        sections.map((section) => (
+          <nav class="blog-footer-col" aria-label={section.heading}>
+            <h2 class="blog-footer-heading">{section.heading}</h2>
+            <ul>
+              {section.links.map((link) => (
+                <li>
+                  <a href={link.href}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <p class="blog-footer-legal">
+      &copy; {year} Fixolutions Systems Private Limited. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .blog-footer {
+    background: var(--canvas-deep);
+    color: var(--canvas-card);
+    padding: 64px 0 36px;
+    margin-top: 88px;
+  }
+
+  .blog-footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  @media (min-width: 768px) {
+    .blog-footer-grid {
+      grid-template-columns: 1.4fr repeat(3, 1fr);
+      gap: 32px;
+    }
+  }
+
+  .blog-footer-wordmark {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .blog-footer-tagline {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    max-width: 32ch;
+    line-height: 1.6;
+  }
+
+  .blog-footer-heading {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-cyan);
+    margin-bottom: 14px;
+  }
+
+  .blog-footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .blog-footer-col a {
+    color: var(--text-light);
+    font-size: 0.93rem;
+    transition: color var(--transition-fast);
+  }
+
+  .blog-footer-col a:hover {
+    color: var(--canvas-card);
+  }
+
+  .blog-footer-legal {
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid color-mix(in srgb, var(--canvas-card) 12%, transparent);
+    color: var(--text-light);
+    font-size: 0.82rem;
+  }
+</style>

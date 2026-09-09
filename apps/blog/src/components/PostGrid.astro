@@ -1,0 +1,23 @@
+---
+import type { BlogPost } from "@everyware/ghost";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  readonly posts: readonly BlogPost[];
+  readonly emptyMessage?: string;
+}
+
+const { posts, emptyMessage = "No articles here yet." } = Astro.props;
+---
+
+{
+  posts.length === 0 ? (
+    <p class="blog-lead">{emptyMessage}</p>
+  ) : (
+    <div class="post-grid">
+      {posts.map((post, index) => (
+        <PostCard post={post} eager={index === 0} />
+      ))}
+    </div>
+  )
+}

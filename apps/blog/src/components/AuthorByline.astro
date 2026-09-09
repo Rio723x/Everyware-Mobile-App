@@ -1,0 +1,78 @@
+---
+import type { BlogPost } from "@everyware/ghost";
+
+interface Props {
+  readonly post: BlogPost;
+}
+
+const { post } = Astro.props;
+const author = post.primaryAuthor;
+
+// Ghost stamps updated_at on publish, so it equals published_at for a post that
+// has never been edited. Showing "Updated" then would be noise at best and a
+// freshness claim the content does not support at worst.
+const wasUpdated = Date.parse(post.updatedAt) > Date.parse(post.publishedAt);
+
+const formatDate = (iso: string): string =>
+  new Date(iso).toLocaleDateString("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "Asia/Kolkata",
+  });
+---
+
+<div class="byline">
+  {
+    author.profileImage !== null && (
+      <img
+        class="byline-avatar"
+        src={author.profileImage.url}
+        alt={author.profileImage.alt}
+        width="40"
+        height="40"
+        loading="lazy"
+        decoding="async"
+      />
+    )
+  }
+
+  <div class="byline-text">
+    <a class="byline-name" href={`/blog/author/${author.slug}`}>{author.name}</a>
+    <p class="blog-meta">
+      <time datetime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+      {
+        wasUpdated && (
+          <>
+            {" · Updated "}
+            <time datetime={post.updatedAt}>{formatDate(post.updatedAt)}</time>
+          </>
+        )
+      }
+      {` · ${String(post.readingTimeMinutes)} min read`}
+    </p>
+  </div>
+</div>
+
+<style>
+  .byline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .byline-avatar {
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+  }
+
+  .byline-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+  }
+
+  .byline-name:hover {
+    color: var(--brand-cyan);
+  }
+</style>

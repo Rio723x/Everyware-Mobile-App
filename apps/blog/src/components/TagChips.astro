@@ -1,0 +1,23 @@
+---
+import type { BlogTag } from "@everyware/ghost";
+
+interface Props {
+  readonly tags: readonly BlogTag[];
+}
+
+const { tags } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class="tag-chips">
+      {tags.map((tag) => (
+        <li>
+          <a class="tag-chip" href={`/blog/category/${tag.slug}`}>
+            {tag.name}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )
+}

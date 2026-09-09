@@ -1,0 +1,22 @@
+{
+  "name": "@everyware/ghost",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "node": "./dist/index.js",
+      "default": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@everyware/seo-core": "*",
+    "zod": "^4.1.5"
+  },
+  "scripts": {
+    "typecheck": "tsc -b"
+  }
+}

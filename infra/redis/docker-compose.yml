@@ -1,0 +1,60 @@
+# Redis for the Everyware SEO worker, behind an Upstash-REST-compatible shim.
+#
+# The worker runs as a Vercel function, which has no persistent disk and no
+# process to hold a connection pool - so it talks HTTP, not the Redis wire
+# protocol. serverless-redis-http speaks Upstash's REST dialect, which is what
+# the worker's store adapter already implements; nothing in the app changes if
+# this is later swapped for hosted Upstash.
+#
+# Redis itself is deliberately NOT on the proxy network: only the shim is
+# reachable from nginx, and only over the token-authenticated REST surface.
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: seo-redis
+    restart: unless-stopped
+    # appendonly, because these are SEO reports and idempotency claims that must
+    # survive a restart. noeviction rather than an LRU policy: silently dropping
+    # a stored report would be worse than a loud write failure.
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 128mb
+      --maxmemory-policy noeviction
+      --save ""
+    volumes:
+      - redis-data:/data
+    networks:
+      - redis-internal
+    mem_limit: 192m
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  srh:
+    image: hiett/serverless-redis-http:latest
+    container_name: seo-redis-http
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: ${SRH_TOKEN:?SRH_TOKEN must be set in .env}
+      SRH_CONNECTION_STRING: "redis://redis:6379"
+    networks:
+      - redis-internal
+      - proxy
+    mem_limit: 128m
+
+volumes:
+  redis-data:
+
+networks:
+  redis-internal:
+    driver: bridge
+  proxy:
+    external: true

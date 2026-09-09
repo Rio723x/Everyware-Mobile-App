@@ -1,0 +1,94 @@
+---
+import type { GetStaticPaths } from "astro";
+import type { BlogAuthor, BlogPost } from "@everyware/ghost";
+import { buildPageMetadata } from "@everyware/seo-core";
+import Breadcrumbs from "../../../components/Breadcrumbs.astro";
+import SeoHead from "../../../components/SeoHead.astro";
+import DownloadCtaBand from "../../../components/DownloadCtaBand.astro";
+import Pagination from "../../../components/Pagination.astro";
+import PostGrid from "../../../components/PostGrid.astro";
+import BlogLayout from "../../../layouts/BlogLayout.astro";
+import { authorTrail } from "../../../lib/breadcrumbs";
+import { ghost } from "../../../lib/content";
+import { paginate } from "../../../lib/pagination";
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const authors = await ghost.listAuthors();
+  return Promise.all(
+    authors.map(async (author) => ({
+      params: { slug: author.slug },
+      props: { author, posts: await ghost.listPostsByAuthor(author.slug) },
+    })),
+  );
+};
+
+interface Props {
+  readonly author: BlogAuthor;
+  readonly posts: readonly BlogPost[];
+}
+
+const { author, posts } = Astro.props satisfies Props;
+const page = paginate(posts, 1, `/blog/author/${author.slug}`);
+
+const trail = authorTrail(author);
+const metadata = buildPageMetadata(
+  { kind: "author", author, postCount: posts.length, page: page.page, totalPages: page.totalPages },
+  trail,
+);
+---
+
+<BlogLayout>
+  <SeoHead slot="head" metadata={metadata} />
+
+  <div class="container">
+    <Breadcrumbs trail={trail} />
+
+    <header class="author-header">
+      {
+        author.profileImage !== null && (
+          <img
+            class="author-avatar"
+            src={author.profileImage.url}
+            alt={author.profileImage.alt}
+            width="88"
+            height="88"
+            loading="eager"
+            decoding="async"
+          />
+        )
+      }
+
+      <div>
+        <h1 class="blog-h1">{author.name}</h1>
+        {author.bio !== null && <p class="blog-lead">{author.bio}</p>}
+      </div>
+    </header>
+
+    <PostGrid posts={page.items} emptyMessage={`${author.name} has not published yet.`} />
+
+    <Pagination
+      page={page.page}
+      totalPages={page.totalPages}
+      prevHref={page.prevHref}
+      nextHref={page.nextHref}
+    />
+
+    <DownloadCtaBand />
+  </div>
+</BlogLayout>
+
+<style>
+  .author-header {
+    margin: 28px 0 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+
+  .author-avatar {
+    border-radius: var(--radius-pill);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+</style>

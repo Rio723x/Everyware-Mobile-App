@@ -1,0 +1,138 @@
+---
+/**
+ * Blog header.
+ *
+ * Deliberately not a reuse of the marketing app's Navbar.jsx: that component
+ * hardcodes `#`-anchors, mutates window.location.hash on click, and runs an
+ * IntersectionObserver scroll-spy over home-page section ids. On a /blog/* URL
+ * those handlers would set a fragment on the blog URL instead of navigating
+ * home (spec 01, §2.3 and D7).
+ *
+ * Every href here is root-absolute, so it resolves identically from /blog,
+ * /blog/washing-machine-care and /blog/category/service-costs. Zero JavaScript:
+ * the mobile layout is CSS only, which is also the right answer for article
+ * CLS and Core Web Vitals.
+ */
+import logo from "../assets/everyware-logo.webp";
+
+const navItems = [
+  { label: "Blog", href: "/blog" },
+  { label: "Experiences", href: "/#experiences" },
+  { label: "Brand Directory", href: "/#info" },
+  { label: "How It Works", href: "/#how-it-works" },
+] as const;
+---
+
+<header class="blog-header">
+  <div class="container blog-header-inner">
+    <a class="blog-brand" href="/">
+      <img src={logo.src} alt="EveryWare" width="32" height="32" />
+      <span>EveryWare</span>
+    </a>
+
+    <nav aria-label="Primary">
+      <ul class="blog-nav">
+        {
+          navItems.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="blog-header-cta" href="/#download">Get the app</a>
+  </div>
+</header>
+
+<style>
+  .blog-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--canvas-base) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid color-mix(in srgb, var(--brand-ink) 8%, transparent);
+  }
+
+  .blog-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 68px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .blog-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    color: var(--text-dark);
+  }
+
+  .blog-brand img {
+    border-radius: var(--radius-sm);
+  }
+
+  .blog-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 22px;
+    list-style: none;
+  }
+
+  .blog-nav a {
+    font-size: 0.93rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+  }
+
+  .blog-nav a:hover {
+    color: var(--text-dark);
+  }
+
+  .blog-header-cta {
+    padding: 9px 20px;
+    border-radius: var(--radius-pill);
+    background: var(--brand-ink);
+    color: var(--canvas-card);
+    font-size: 0.88rem;
+    font-weight: 700;
+    transition: background var(--transition-fast);
+  }
+
+  .blog-header-cta:hover {
+    background: var(--canvas-deep-card);
+  }
+
+  /* No hamburger, no JavaScript: below 640px the nav simply wraps onto its own
+     row. Four links fit comfortably, and a menu toggle would mean shipping a
+     script to every article page for no benefit. */
+  @media (max-width: 639px) {
+    .blog-header-inner {
+      justify-content: center;
+      text-align: center;
+    }
+
+    .blog-nav {
+      gap: 16px;
+      justify-content: center;
+      width: 100%;
+      order: 3;
+    }
+
+    .blog-nav a {
+      font-size: 0.86rem;
+    }
+  }
+</style>

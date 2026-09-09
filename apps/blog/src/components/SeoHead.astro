@@ -1,0 +1,41 @@
+---
+import type { JsonLdDocument, PageMetadata } from "@everyware/seo-core";
+
+/**
+ * The only place in this app that writes a meta tag.
+ *
+ * A test greps `src/` and fails if `<meta`, `<title` or `application/ld+json`
+ * appears anywhere else. That guard is what makes the spec 02 rule engine
+ * enforceable rather than aspirational: the rules grade emitted HTML, and they
+ * would be worthless if any page could quietly add tags of its own.
+ */
+interface Props {
+  readonly metadata: PageMetadata;
+}
+
+// Annotated rather than inferred: Astro.props is loosely typed inside an
+// .astro file, and without this the entries below arrive as `unknown`.
+const { metadata }: Props = Astro.props;
+
+const openGraph: readonly (readonly [string, string])[] = Object.entries(metadata.openGraph);
+const twitter: readonly (readonly [string, string])[] = Object.entries(metadata.twitter);
+const jsonLd: readonly JsonLdDocument[] = metadata.jsonLd;
+---
+
+<title>{metadata.title}</title>
+<meta name="description" content={metadata.description} />
+<link rel="canonical" href={metadata.canonical} />
+<meta name="robots" content={metadata.robots} />
+
+{metadata.prev !== null && <link rel="prev" href={metadata.prev} />}
+{metadata.next !== null && <link rel="next" href={metadata.next} />}
+
+{openGraph.map(([property, content]) => <meta property={property} content={content} />)}
+
+{twitter.map(([name, content]) => <meta name={name} content={content} />)}
+
+{
+  jsonLd.map((doc) => (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(doc)} />
+  ))
+}

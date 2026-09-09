@@ -1,26 +1,40 @@
 {
-  "name": "everyware-react-app",
+  "name": "everyware",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+  "description": "Everyware website monorepo: React/Vite marketing app, Astro blog, and SEO tooling.",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/*"
+  ],
+  "engines": {
+    "node": ">=20"
   },
-  "dependencies": {
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "framer-motion": "^11.11.17",
-    "lucide-react": "^0.460.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+  "scripts": {
+    "dev:site": "npm run dev -w apps/site",
+    "dev:blog": "npm run dev -w apps/blog",
+    "build": "tsc -b && npm run build -w apps/site && npm run build -w apps/blog && node scripts/merge-dist.mjs && npm run seo:audit -- --dist dist --format json",
+    "typecheck": "tsc -b && tsc -p api/tsconfig.json && npm run astro-check -w apps/blog",
+    "test": "npm run build:fixtures && vitest run",
+    "lint": "eslint .",
+    "test:unit": "vitest run",
+    "verify": "npm run typecheck && npm run lint && npm run test",
+    "build:fixtures": "cross-env GHOST_FIXTURES=1 npm run build",
+    "seo:audit": "tsc -b packages/seo-core && node scripts/seo-audit.mjs",
+    "seo:report": "tsc -b services/seo-worker && node scripts/seo-report.mjs"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
-    "sharp": "^0.35.3",
-    "vite": "^5.4.11"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.4.1",
+    "astro-eslint-parser": "^3.1.0",
+    "cross-env": "^10.1.0",
+    "eslint": "^10.10.0",
+    "eslint-plugin-astro": "^3.1.0",
+    "globals": "^17.12.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.69.0",
+    "vitest": "^5.0.0"
   }
 }

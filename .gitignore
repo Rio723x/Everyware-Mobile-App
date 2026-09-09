@@ -14,6 +14,9 @@ jspm_packages/
 # Build outputs
 dist/
 dist-ssr/
+.astro/
+.vercel/
+.seo-store/
 *.local
 out/
 
@@ -36,3 +39,19 @@ Thumbs.db
 .env.development.local
 .env.test.local
 .env.production.local
+
+# TS incremental build info
+*.tsbuildinfo
+
+# Generated audit artifact
+seo-audit.json
+.seo-store/
+
+# Vercel CLI link + pulled env snapshots
+.vercel
+
+# Real secrets. The tracked .env.example files stay tracked; the negation keeps
+# a future `git add` of them working even though they are already in the index.
+.env
+.env.*
+!.env.example
