@@ -2,11 +2,13 @@ import { toSlug } from "@everyware/seo-core";
 import { createStore } from "@everyware/seo-worker";
 import { isAuthorised, json } from "../_lib/auth.js";
 
-export const config = { runtime: "nodejs" };
-
-/** Thin adapter: authenticate, read one report from the store, serialise. */
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== "GET") return json({ error: "method not allowed" }, 405);
+/**
+ * Thin adapter: authenticate, read one report from the store, serialise.
+ *
+ * Exported as `GET` rather than as a default - see the note in
+ * webhooks/ghost.ts for why the default export could never work here.
+ */
+export async function GET(request: Request): Promise<Response> {
   if (!isAuthorised(request.headers.get("authorization"))) {
     return json({ error: "unauthorised" }, 401);
   }

@@ -7,18 +7,21 @@ import {
 } from "@everyware/seo-worker";
 import { dispatchProcess, json } from "../_lib/auth.js";
 
-export const config = { runtime: "nodejs" };
-
 /**
  * Ghost webhook receiver.
  *
  * Verify, deduplicate, dispatch, return. Ghost waits two seconds and retries up
  * to five times, so nothing slow can happen before the response - analysis takes
  * tens of seconds and validation waits on a deploy that takes minutes.
+ *
+ * Exported as `POST` rather than as a default. Vercel's Node runtime selects the
+ * Web `Request`/`Response` signature only when it finds a named HTTP-method or a
+ * `fetch` export; with a default export it invokes the handler as legacy
+ * `(req, res)`, so `request.text()` does not exist and every delivery 500s. The
+ * method check goes with it - the runtime answers 405 itself for a verb with no
+ * matching export.
  */
-export default async function handler(request: Request): Promise<Response> {
-  if (request.method !== "POST") return json({ error: "method not allowed" }, 405);
-
+export async function POST(request: Request): Promise<Response> {
   // The raw body, before any parsing: Ghost signs the exact bytes it sent.
   const rawBody = await request.text();
 
