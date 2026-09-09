@@ -33,6 +33,18 @@ services:
       # nginx terminates TLS and forwards the original scheme.
       server__host: 0.0.0.0
       server__port: 2368
+      # Staff sign-in verification is OFF, and this is a temporary state.
+      #
+      # Ghost 5.130 emails a code on every sign-in from a new device. Mail
+      # transport here is "Direct", which means this VM would deliver the mail
+      # itself - and the host's provider blocks outbound port 25, so the code
+      # can never arrive. With verification on and no working mail, a correct
+      # password returns a 500 and nobody can ever sign in again.
+      #
+      # Turning it off restores password-only access. That is weaker, so the
+      # fix is not finished: configure real SMTP (mail__transport,
+      # mail__options__*, mail__from) and then set this back to "true".
+      security__staffDeviceVerification: "false"
     volumes:
       - ghost-content:/var/lib/ghost/content
     networks:

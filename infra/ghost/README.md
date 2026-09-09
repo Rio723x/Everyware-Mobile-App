@@ -138,3 +138,39 @@ Ghost migrates its own schema on boot. Take a database dump first.
 Pinned to `ghost:5-alpine`. The Content API path this project calls,
 `/ghost/api/content/`, is unchanged in Ghost 6, so moving the pin later needs no
 code change — take a backup and read Ghost's major-version upgrade notes first.
+
+## Staff sign-in verification is off, on purpose, for now
+
+Ghost 5.130 emails a verification code on every staff sign-in from a new device.
+This instance's mail transport is `Direct`, meaning the VM would deliver that
+mail itself — and the host blocks outbound port 25, so the code never arrives.
+
+The failure mode is worth stating plainly, because it does not look like an auth
+problem: a **correct** password returns `500 EmailError: Failed to send email`,
+while a wrong one returns `422 ValidationError: Your password is incorrect`. The
+500 comes from a step *after* the password is accepted, so the account is not
+locked — it is unreachable. Nobody can create a new session at all.
+
+`security__staffDeviceVerification: "false"` in the compose environment restores
+password-only sign-in. Ghost reads config through nconf, which layers env vars
+over `config.production.json`, so the file on disk still reads `true` and only
+behaviour reveals the override — check by signing in, not by reading the file.
+
+### Finishing this properly
+
+Password-only access to a publicly reachable admin panel is weaker than what was
+there before, so this is half a fix. To complete it, set real SMTP credentials
+and turn verification back on:
+
+```yaml
+mail__transport: SMTP
+mail__options__host: smtp-relay.brevo.com   # or any provider
+mail__options__port: 587
+mail__options__auth__user: <user>
+mail__options__auth__pass: <key>
+mail__from: "Everyware <noreply@everyware.in>"
+security__staffDeviceVerification: "true"
+```
+
+Working mail is worth having regardless: without it there is also no password
+reset, so a forgotten password means editing the database by hand.
